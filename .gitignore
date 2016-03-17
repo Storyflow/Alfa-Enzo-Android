@@ -5,3 +5,31 @@
 .DS_Store
 /build
 /captures
+
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# IDEA files
+.idea/
+out/
+*.iml
+proguard_logs/
+
+# Local configuration file (sdk path, etc)
+local.properties
+default.properties
+build.properties
+
+library/build/
+build/
