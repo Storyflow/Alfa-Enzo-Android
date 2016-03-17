@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Storyflow</string>
+    <string name="crash_message">Please send us the diagnostic report to help improve Storyflow.</string>
+
 </resources>
