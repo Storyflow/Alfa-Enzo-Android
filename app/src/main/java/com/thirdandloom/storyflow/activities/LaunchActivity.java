@@ -13,7 +13,5 @@ public class LaunchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
-
-        ImageView textView = (ImageView)findViewById(R.id.activity_launch_textview);
     }
 }

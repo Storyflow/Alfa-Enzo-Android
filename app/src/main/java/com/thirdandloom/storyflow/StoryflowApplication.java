@@ -1,7 +1,9 @@
 package com.thirdandloom.storyflow;
 
+import com.crashlytics.android.Crashlytics;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.utils.Timber;
+import io.fabric.sdk.android.Fabric;
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
@@ -28,6 +30,7 @@ public class StoryflowApplication extends Application {
 
         initTimber();
         initAcra();
+        Fabric.with(this, new Crashlytics());
     }
 
     private void initTimber() {
