@@ -1,15 +1,19 @@
 package com.thirdandloom.storyflow;
 
+import android.app.Application;
+
 import com.crashlytics.android.Crashlytics;
 import com.thirdandloom.storyflow.config.Config;
+import com.thirdandloom.storyflow.rest.IRestClient;
+import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.utils.Timber;
-import io.fabric.sdk.android.Fabric;
+
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
-import android.app.Application;
+import io.fabric.sdk.android.Fabric;
 
 @ReportsCrashes(formKey = "",
         mailTo = "a.tkachenko@mobidev.biz",
@@ -18,6 +22,8 @@ import android.app.Application;
         resToastText = 1)
 public class StoryflowApplication extends Application {
     private static StoryflowApplication instance;
+
+    private IRestClient restClient;
 
     public static StoryflowApplication getInstance() {
         return instance;
@@ -31,6 +37,11 @@ public class StoryflowApplication extends Application {
         initTimber();
         initAcra();
         Fabric.with(this, new Crashlytics());
+        this.restClient = new RestClient();
+    }
+
+    public static IRestClient restClient() {
+        return instance.restClient;
     }
 
     private void initTimber() {
@@ -50,20 +61,20 @@ public class StoryflowApplication extends Application {
 
     private class CrashReportingTree extends Timber.Tree {
         @Override public void i(String message, Object... args) {
-            // TODO e.g., Crashlytics.log(String.format(message, args));
+            Crashlytics.log(String.format(message, args));
         }
 
         @Override public void i(Throwable t, String message, Object... args) {
-            i(message, args); // Just add to the log.
+            i(message, args);
         }
 
         @Override public void e(String message, Object... args) {
-            i("ERROR: " + message, args); // Just add to the log.
+            i("ERROR: " + message, args);
         }
 
         @Override public void e(Throwable t, String message, Object... args) {
             e(message, args);
-            // TODO e.g., Crashlytics.logException(t);
+            Crashlytics.logException(t);
         }
 
         @Override
