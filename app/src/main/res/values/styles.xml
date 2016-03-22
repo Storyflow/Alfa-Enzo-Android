@@ -2,11 +2,32 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme"
-           parent="Theme.AppCompat.Light.DarkActionBar">
+           parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/greyDark</item>
+        <item name="colorPrimaryDark">@color/yellowMain</item>
+        <item name="colorAccent">@color/greyDarker</item>
+        <item name="android:windowBackground">@color/yellowMain</item>
+
+    </style>
+
+    <style name="NoTitleWhite" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+    <style name="Button">
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">@dimen/buttonSizeNormal</item>
+        <item name="android:textSize">@dimen/textSizeNormal</item>
+        <item name="android:layout_marginLeft">@dimen/buttonMarging</item>
+        <item name="android:layout_marginRight">@dimen/buttonMarging</item>
+    </style>
+
+    <style name="DarkGreyButton" parent="Button" >
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/selector_button_rounded_darkgrey</item>
     </style>
 
 </resources>

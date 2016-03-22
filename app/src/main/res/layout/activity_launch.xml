@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".LaunchActivity">
 
-    <TextView
-        android:id="@+id/activity_launch_textview"
-        android:text="Hello World!"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <include
+        android:id="@+id/launch_layout"
+        layout="@layout/launch_layout">
+    </include>
+
 </FrameLayout>

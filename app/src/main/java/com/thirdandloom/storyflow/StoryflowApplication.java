@@ -1,19 +1,17 @@
 package com.thirdandloom.storyflow;
 
-import android.app.Application;
-
 import com.crashlytics.android.Crashlytics;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.rest.IRestClient;
 import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.utils.Timber;
-
+import io.fabric.sdk.android.Fabric;
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
-import io.fabric.sdk.android.Fabric;
+import android.app.Application;
 
 @ReportsCrashes(formKey = "",
         mailTo = "a.tkachenko@mobidev.biz",

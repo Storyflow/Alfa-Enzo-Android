@@ -1,15 +1,17 @@
 package com.thirdandloom.storyflow.rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.rest.gson.GsonConverterFactory;
 import com.thirdandloom.storyflow.rest.requestmodels.LoginRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.SignUpRequestModel;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.http.Body;
@@ -25,10 +27,17 @@ public class RestClient implements IRestClient {
     public RestClient() {
         Retrofit client = new Retrofit.Builder()
                 .baseUrl(Config.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(createGsonFactory())
                 .client(createOkClient())
                 .build();
         apiService = client.create(ApiService.class);
+    }
+
+    private Converter.Factory createGsonFactory() {
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                .create();
+        return GsonConverterFactory.create(gson);
     }
 
     private static OkHttpClient createOkClient() {

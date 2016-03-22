@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Storyflow</string>
     <string name="crash_message">Please send us the diagnostic report to help improve Storyflow.</string>
+    <string name="app_first_letter">S</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="already_have_account">I already have an account</string>
+    <string name="privacy_policy_full_text">By using Storyflow you agree to the Privacy Policy and the Term of Service</string>
+    <string name="privacy_policy_clickable_privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_clickable_terms_of_service">Term of Service</string>
+
 
 </resources>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/activity_signup_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/activity_signup_center_large_s"
+            android:text="@string/app_first_letter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="156sp"
+            android:textColor="@color/yellowMain"
+            />
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:padding="@dimen/sizeTiny"
+                  android:textSize="@dimen/testSizeXXL"
+                  android:textColor="@color/greyDarker"
+                  android:gravity="center"
+                  android:text="@string/app_name"
+            />
+        <View android:layout_width="0dp"
+              android:layout_height="0dp"
+              android:layout_weight="1"
+            />
+        <TextView
+            android:id="@+id/activity_signup_signup_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/DarkGreyButton"
+            android:text="@string/sign_up"
+            />
+        <TextView
+            android:id="@+id/activity_signup_already_have_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/sizeNormal"
+            android:text="@string/already_have_account"
+            android:textSize="@dimen/textSizeSmall"
+            android:textColor="@drawable/selector_lightgrey_default_text"
+            />
+        <TextView
+            android:id="@+id/activity_signup_privacy_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/sizeLarge"
+            android:layout_marginBottom="@dimen/sizeMedium"
+            android:paddingLeft="@dimen/sizeMedium"
+            android:paddingRight="@dimen/sizeMedium"
+            android:textSize="@dimen/textSizeTiny"
+            android:textColor="@color/greyLight"
+            tools:text="@string/privacy_policy_full_text"
+            />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/launch_layout"
+        layout="@layout/launch_layout"
+        tools:visibility="gone">
+    </include>
+
+</FrameLayout>
