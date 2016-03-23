@@ -4,7 +4,6 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.SpannableUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 
 import android.content.Intent;

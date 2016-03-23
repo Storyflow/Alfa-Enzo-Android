@@ -21,8 +21,8 @@ public class QuickAlertView extends FrameLayout {
     private static final Map<Type, Integer> backgroundColors;
     static {
         Map<Type, Integer> map = new HashMap<>();
-        map.put(Type.WARNING, R.color.blueMain);
-        map.put(Type.ERROR, R.color.redMain);
+        map.put(Type.WARNING, R.color.blue);
+        map.put(Type.ERROR, R.color.red);
         backgroundColors = Collections.unmodifiableMap(map);
     }
 
@@ -48,7 +48,7 @@ public class QuickAlertView extends FrameLayout {
 
     private void init() {
         inflate(getContext(), R.layout.quick_alert_view, this);
-        mMessageTextView = (TextView)findViewById(R.id.alert_text);
+        mMessageTextView = (TextView) findViewById(R.id.alert_text);
     }
 
     private void initGui() {

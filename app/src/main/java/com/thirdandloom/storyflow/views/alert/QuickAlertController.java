@@ -3,11 +3,11 @@ package com.thirdandloom.storyflow.views.alert;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.CancelableRunnable;
+import com.thirdandloom.storyflow.utils.ViewUtils;
 
 import android.graphics.PixelFormat;
 import android.support.annotation.UiThread;
 import android.view.Gravity;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -15,7 +15,7 @@ public class QuickAlertController {
     private static final int ALERT_DISPLAYING_TIME = 2000;
 
     private Window window;
-    private QuickAlertView mQuickAlertView;
+    private QuickAlertView quickAlertView;
     private CancelableRunnable hideAlerRunnable;
 
     public QuickAlertController(Window window) {
@@ -27,27 +27,26 @@ public class QuickAlertController {
         hidePreviousAlert();
         showQuickAlert(message, type);
         hideAlerRunnable = createHideAlertRunnable();
-        mQuickAlertView.postDelayed(hideAlerRunnable, ALERT_DISPLAYING_TIME);
-        mQuickAlertView.setOnClickListener(v -> hideAlertAnimate());
+        quickAlertView.postDelayed(hideAlerRunnable, ALERT_DISPLAYING_TIME);
+        quickAlertView.setOnClickListener(v -> hideAlertAnimate());
     }
 
     public void hide() {
-        if (mQuickAlertView != null && mQuickAlertView.isOnScreen()) {
-            ViewGroup viewGroup = (ViewGroup) mQuickAlertView.getParent();
-            viewGroup.removeView(mQuickAlertView);
+        if (quickAlertView != null && quickAlertView.isOnScreen()) {
+            ViewUtils.removeFromParent(quickAlertView);
         }
     }
 
     private void showQuickAlert(String message, QuickAlertView.Type type) {
-        mQuickAlertView = new QuickAlertView(StoryflowApplication.getInstance());
-        mQuickAlertView.setText(message, type);
-        window.addContentView(mQuickAlertView, createLayoutParams());
-        mQuickAlertView.measure(0, 0);
-        AnimationUtils.showHeader(mQuickAlertView, 200);
+        quickAlertView = new QuickAlertView(StoryflowApplication.getInstance());
+        quickAlertView.setText(message, type);
+        window.addContentView(quickAlertView, createLayoutParams());
+        quickAlertView.measure(0, 0);
+        AnimationUtils.showHeader(quickAlertView, 200);
     }
 
     private void hidePreviousAlert() {
-        if (mQuickAlertView != null) {
+        if (quickAlertView != null) {
             cancelPreviousRunnable();
             hideAlertAnimate();
         }
@@ -58,7 +57,7 @@ public class QuickAlertController {
     }
 
     private void hideAlertAnimate() {
-        AnimationUtils.hideHeader(mQuickAlertView, 200);
+        AnimationUtils.hideHeader(quickAlertView, 200);
         hide();
     }
 
@@ -78,9 +77,7 @@ public class QuickAlertController {
         layoutParams.y = 0;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         layoutParams.format = PixelFormat.OPAQUE;
         layoutParams.windowAnimations = 0;
         return layoutParams;

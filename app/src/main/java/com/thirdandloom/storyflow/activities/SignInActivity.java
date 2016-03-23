@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.utils.Validation;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +33,11 @@ public class SignInActivity extends BaseActivity {
     private void initGui() {
         setToolBarTitle(R.string.sign_in);
         continueButton.setOnClickListener(v -> {
-            showWarning("Attention please, this feature is under development!");
+            String userNameOrEmail = loginEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            Validation.loginCredentials(userNameOrEmail, password, this::showWarning, () -> {
+                showWarning("Credentials are valid");
+            });
         });
         forgotPasswordView.setOnClickListener(v -> {
             showWarning("Attention please, this feature is under development!");

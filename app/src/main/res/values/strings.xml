@@ -12,6 +12,11 @@
     <string name="hint_password">Password</string>
     <string name="forgot_password">Forgot your password?</string>
     <string name="continue_button">Continue</string>
+    <string name="email_or_username_cannot_be_empty">Email or username cannot be empty</string>
+    <string name="password_cannot_be_empty">Password cannot be empty</string>
+    <string name="password_is_invalid">Your password is invalid</string>
+    <string name="email_or_username_is_invalid">Your email or username is invalid</string>
+
 
 
 
