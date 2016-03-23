@@ -47,7 +47,7 @@ public class QuickAlertView extends FrameLayout {
     }
 
     private void init() {
-        inflate(getContext(), R.layout.quick_alert_view, this);
+        inflate(getContext(), R.layout.view_quick_alert, this);
         mMessageTextView = (TextView) findViewById(R.id.alert_text);
     }
 

@@ -6,8 +6,9 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:titleTextColor="@color/greyDark"
-    android:background="@color/white"
+    app:titleTextColor="@color/white"
+    app:theme="@style/Toolbar"
+    android:background="@color/yellow"
     tools:title="Login">
 
 </android.support.v7.widget.Toolbar>

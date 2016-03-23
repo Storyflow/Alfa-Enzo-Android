@@ -6,9 +6,16 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/greyDark</item>
         <item name="colorPrimaryDark">@color/yellow</item>
-        <item name="colorAccent">@color/greyDarker</item>
+        <item name="colorAccent">@color/greyDark</item>
         <item name="android:windowBackground">@color/yellow</item>
+    </style>
 
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    </style>
+
+    <style name="ProgressBar">
+        <item name="colorAccent">@color/greyDark</item>
     </style>
 
     <style name="NoTitleWhite" parent="AppTheme">

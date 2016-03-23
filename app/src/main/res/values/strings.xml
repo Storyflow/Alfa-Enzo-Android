@@ -16,7 +16,7 @@
     <string name="password_cannot_be_empty">Password cannot be empty</string>
     <string name="password_is_invalid">Your password is invalid</string>
     <string name="email_or_username_is_invalid">Your email or username is invalid</string>
-
+    <string name="no_internet_connection">No internet connection. Please try again later.</string>
 
 
 

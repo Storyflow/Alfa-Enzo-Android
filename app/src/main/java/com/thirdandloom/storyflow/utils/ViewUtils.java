@@ -6,6 +6,7 @@ import rx.functions.Action2;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 
 public class ViewUtils {
 
@@ -24,6 +25,16 @@ public class ViewUtils {
 
     public static void show(View view) {
         setHidden(view, false);
+    }
+
+
+    public static WindowManager.LayoutParams getFullScreenLayoutParams() {
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.x = 0;
+        layoutParams.y = 0;
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        return layoutParams;
     }
 
     public static void getMeasuredSize(View view, Action2<Integer, Integer> action) {

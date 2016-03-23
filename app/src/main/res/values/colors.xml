@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="yellow">#FDC716</color>
+    <color name="yellowDark">#CA9400</color>
     <color name="greyDark">#14181C</color>
     <color name="greyDarker">#181818</color>
     <color name="greyLight">#7E828F</color>
     <color name="white">#FFFFFF</color>
     <color name="blue">#4778FE</color>
     <color name="red">#FF5555</color>
+    <color name="transparent">#00000000</color>
 
 </resources>

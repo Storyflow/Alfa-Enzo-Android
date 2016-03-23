@@ -2,7 +2,7 @@ package com.thirdandloom.storyflow.rest.requestmodels;
 
 import com.google.gson.annotations.SerializedName;
 
-public class LoginRequestModel extends BaseRequestModel {
+public class SignInRequestMode extends BaseRequestModel {
     @SerializedName("login")
     public String login;
     @SerializedName("password")
@@ -16,7 +16,7 @@ public class LoginRequestModel extends BaseRequestModel {
 
     public static class Wrapper {
         @SerializedName("swan_user")
-        public LoginRequestModel userData;
+        public SignInRequestMode userData;
     }
 
 }
