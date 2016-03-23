@@ -8,7 +8,7 @@
 
     <include
         android:id="@+id/launch_layout"
-        layout="@layout/launch_layout">
+        layout="@layout/layout_launch">
     </include>
 
 </FrameLayout>

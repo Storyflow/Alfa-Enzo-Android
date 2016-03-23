@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <include layout="@layout/layout_toolbar"
+        />
+
+    <EditText
+        android:id="@+id/activity_login_login_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sizeMedium"
+        android:layout_marginRight="@dimen/sizeMedium"
+        android:inputType="textEmailAddress"
+        android:hint="@string/hint_email_or_user_name"
+        android:textColor="@color/greyDark"
+        />
+
+    <EditText
+        android:id="@+id/activity_login_password_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sizeMedium"
+        android:layout_marginRight="@dimen/sizeMedium"
+        android:inputType="textPassword"
+        android:hint="@string/hint_password"
+        android:textColor="@color/greyDark"
+        />
+
+    <TextView
+        android:id="@+id/activity_login_forgot_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sizeMedium"
+        android:layout_marginRight="@dimen/sizeMedium"
+        android:padding="@dimen/sizeNormal"
+        android:text="@string/forgot_password"
+        android:textColor="@drawable/selector_lightgrey_default_text"
+        />
+
+    <View android:layout_width="0dp"
+          android:layout_height="0dp"
+          android:layout_weight="1"
+        />
+
+    <TextView
+        android:id="@+id/activity_login_continue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/DarkGreyButton"
+        android:text="@string/continue_button"
+        android:layout_marginBottom="@dimen/sizeMedium"
+        />
+
+</LinearLayout>

@@ -5,5 +5,7 @@
     <color name="greyDarker">#181818</color>
     <color name="greyLight">#7E828F</color>
     <color name="white">#FFFFFF</color>
+    <color name="blueMain">#4778FE</color>
+    <color name="redMain">#FF5555</color>
 
 </resources>

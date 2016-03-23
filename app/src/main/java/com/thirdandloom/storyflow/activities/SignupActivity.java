@@ -17,14 +17,14 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
 
-public class SignupActivity extends BaseActivity {
+public class SignUpActivity extends BaseActivity {
 
     private View signUpView;
     private View haveAccountView;
     private TextView privacyTextView;
 
     public static Intent newInstance() {
-        return new Intent(StoryflowApplication.getInstance(), SignupActivity.class);
+        return new Intent(StoryflowApplication.getInstance(), SignUpActivity.class);
     }
 
     @Override
@@ -44,10 +44,10 @@ public class SignupActivity extends BaseActivity {
 
     private void initGui() {
         signUpView.setOnClickListener(v -> {
-            Timber.d("onclick sign up");
+            showWarning("Attention please, this feature is under development!");
         });
         haveAccountView.setOnClickListener(v -> {
-            Timber.d("onclick already have account");
+            startActivity(SignInActivity.newInstance());
         });
         initPrivacyPolicyTextView();
     }
@@ -69,7 +69,7 @@ public class SignupActivity extends BaseActivity {
     private final ClickableSpan onTermsOfServiceClicked = new ClickableSpan() {
         @Override
         public void onClick(View textView) {
-            Timber.d("on onTermsOfServiceClicked");
+            showWarning("Attention please, this feature is under development!");
         }
         @Override
         public void updateDrawState(TextPaint ds) {
@@ -82,7 +82,7 @@ public class SignupActivity extends BaseActivity {
     private final ClickableSpan onPrivacyPolicyClicked = new ClickableSpan() {
         @Override
         public void onClick(View textView) {
-            Timber.d("on onPrivacyPolicyClicked");
+            showWarning("Attention please, this feature is under development!");
         }
         @Override
         public void updateDrawState(TextPaint ds) {

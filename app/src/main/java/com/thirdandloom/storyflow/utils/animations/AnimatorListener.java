@@ -1,4 +1,4 @@
-package com.thirdandloom.storyflow.utils;
+package com.thirdandloom.storyflow.utils.animations;
 
 import android.animation.Animator;
 

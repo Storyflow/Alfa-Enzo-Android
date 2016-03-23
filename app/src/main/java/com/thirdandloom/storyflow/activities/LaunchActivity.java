@@ -1,7 +1,7 @@
 package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
-import com.thirdandloom.storyflow.utils.AnimatorListener;
+import com.thirdandloom.storyflow.utils.animations.AnimatorListener;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 
 import android.animation.Animator;
@@ -64,7 +64,7 @@ public class LaunchActivity extends BaseActivity {
                 if (repeatCount >= 1) {
                     animation.end();
                     circleView.setLayerType(View.LAYER_TYPE_NONE, null);
-                    startActivity(SignupActivity.newInstance());
+                    startActivity(SignUpActivity.newInstance());
                     overridePendingTransition(0, 0);
                     LaunchActivity.this.finish();
                 }

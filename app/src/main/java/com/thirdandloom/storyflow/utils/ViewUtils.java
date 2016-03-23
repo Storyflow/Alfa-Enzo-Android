@@ -22,6 +22,10 @@ public class ViewUtils {
         setHidden(view, true);
     }
 
+    public static void show(View view) {
+        setHidden(view, false);
+    }
+
     public static void getMeasuredSize(View view, Action2<Integer, Integer> action) {
         int spec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         view.measure(spec, spec);

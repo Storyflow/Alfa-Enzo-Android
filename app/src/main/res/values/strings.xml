@@ -3,10 +3,17 @@
     <string name="crash_message">Please send us the diagnostic report to help improve Storyflow.</string>
     <string name="app_first_letter">S</string>
     <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
     <string name="already_have_account">I already have an account</string>
     <string name="privacy_policy_full_text">By using Storyflow you agree to the Privacy Policy and the Term of Service</string>
     <string name="privacy_policy_clickable_privacy_policy">Privacy Policy</string>
     <string name="privacy_policy_clickable_terms_of_service">Term of Service</string>
+    <string name="hint_email_or_user_name">Email or username</string>
+    <string name="hint_password">Password</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="continue_button">Continue</string>
+
+
 
 
 </resources>
