@@ -87,6 +87,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @UiThread
     public void showError(String message) {
+        hideProgress();
         quickAlert.show(message, QuickAlertView.Type.ERROR);
     }
 

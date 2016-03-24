@@ -12,7 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class QuickAlertController {
-    private static final int ALERT_DISPLAYING_TIME = 2000;
+    private static final int ALERT_DISPLAYING_TIME = 4000;
 
     private Window window;
     private QuickAlertView quickAlertView;
@@ -43,6 +43,7 @@ public class QuickAlertController {
         window.addContentView(quickAlertView, createLayoutParams());
         quickAlertView.measure(0, 0);
         AnimationUtils.showHeader(quickAlertView, 200);
+        quickAlertView.setOnClickListener(v -> hidePreviousAlert());
     }
 
     private void hidePreviousAlert() {

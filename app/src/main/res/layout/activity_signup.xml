@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/sizeTiny"
                 android:textSize="@dimen/testSizeXXL"
-                android:textColor="@color/greyDarker"
+                android:textColor="@color/greyDark"
                 android:gravity="center"
                 android:text="@string/app_name"
                 android:layout_below="@+id/activity_signup_center_large_s"

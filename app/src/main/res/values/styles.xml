@@ -4,18 +4,22 @@
     <style name="AppTheme"
            parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/greyDark</item>
+        <item name="colorPrimary">@color/grey</item>
         <item name="colorPrimaryDark">@color/yellow</item>
-        <item name="colorAccent">@color/greyDark</item>
+        <item name="colorAccent">@color/grey</item>
         <item name="android:windowBackground">@color/yellow</item>
+
+        <item name="colorControlNormal">@color/greyLight</item>
+        <item name="colorControlActivated">@color/yellow</item>
+
     </style>
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
 
     </style>
 
-    <style name="ProgressBar">
-        <item name="colorAccent">@color/greyDark</item>
+    <style name="GreyProgressBar">
+        <item name="colorControlActivated">@color/grey</item>
     </style>
 
     <style name="NoTitleWhite" parent="AppTheme">
@@ -35,6 +39,13 @@
     <style name="DarkGreyButton" parent="Button" >
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/selector_button_rounded_darkgrey</item>
+    </style>
+
+    <style name="LightGreyOvalEditText">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:padding">@dimen/sizeXNormal</item>
+        <item name="android:background">@drawable/shape_light_grey</item>
+        <item name="android:textSize">@dimen/textSizeNormal</item>
     </style>
 
 </resources>

@@ -73,7 +73,7 @@ public class SignUpActivity extends BaseActivity {
         @Override
         public void updateDrawState(TextPaint ds) {
             super.updateDrawState(ds);
-            ds.setColor(getResources().getColor(R.color.greyDarker));
+            ds.setColor(getResources().getColor(R.color.greyDark));
             ds.setUnderlineText(false);
         }
     };
@@ -86,7 +86,7 @@ public class SignUpActivity extends BaseActivity {
         @Override
         public void updateDrawState(TextPaint ds) {
             super.updateDrawState(ds);
-            ds.setColor(getResources().getColor(R.color.greyDarker));
+            ds.setColor(getResources().getColor(R.color.greyDark));
             ds.setUnderlineText(false);
         }
     };

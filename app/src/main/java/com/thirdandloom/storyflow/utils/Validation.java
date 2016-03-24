@@ -39,7 +39,7 @@ public class Validation {
         }
     }
 
-    private static boolean isValidEmail(@NonNull String email) {
+    public static boolean isValidEmail(@NonNull String email) {
         return emailPattern.matcher(email).matches();
     }
 

@@ -11,31 +11,34 @@
         android:id="@+id/activity_login_login_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sizeMedium"
-        android:layout_marginRight="@dimen/sizeMedium"
+        android:layout_marginTop="@dimen/sizeLarge"
+        android:layout_marginLeft="@dimen/sizeLarge"
+        android:layout_marginRight="@dimen/sizeLarge"
         android:inputType="textEmailAddress"
         android:hint="@string/hint_email_or_user_name"
-        android:textColor="@color/greyDark"
+        style="@style/LightGreyOvalEditText"
         />
 
     <EditText
         android:id="@+id/activity_login_password_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sizeMedium"
-        android:layout_marginRight="@dimen/sizeMedium"
+        android:layout_marginTop="@dimen/sizeNormal"
+        android:layout_marginLeft="@dimen/sizeLarge"
+        android:layout_marginRight="@dimen/sizeLarge"
         android:inputType="textPassword"
         android:hint="@string/hint_password"
-        android:textColor="@color/greyDark"
+        style="@style/LightGreyOvalEditText"
         />
 
     <TextView
         android:id="@+id/activity_login_forgot_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sizeMedium"
-        android:layout_marginRight="@dimen/sizeMedium"
-        android:padding="@dimen/sizeNormal"
+        android:layout_marginLeft="@dimen/sizeLarge"
+        android:layout_marginRight="@dimen/sizeLarge"
+        android:layout_marginTop="@dimen/sizeNormal"
+        android:padding="4dp"
         android:text="@string/forgot_password"
         android:textColor="@drawable/selector_lightgrey_default_text"
         />
@@ -51,7 +54,7 @@
         android:layout_height="wrap_content"
         style="@style/DarkGreyButton"
         android:text="@string/continue_button"
-        android:layout_marginBottom="@dimen/sizeMedium"
+        android:layout_marginBottom="@dimen/sizeLarge"
         />
 
 </LinearLayout>

@@ -12,12 +12,13 @@
     <dimen name="sizeTiny">2dp</dimen>
     <dimen name="sizeSmall">4dp</dimen>
     <dimen name="sizeNormal">8dp</dimen>
+    <dimen name="sizeXNormal">12dp</dimen>
     <dimen name="sizeMedium">16dp</dimen>
-    <dimen name="sizeLarge">32dp</dimen>
+    <dimen name="sizeLarge">24dp</dimen>
 
 
     <dimen name="roundCorner">8dp</dimen>
-    <dimen name="buttonMarging">16dp</dimen>
+    <dimen name="buttonMarging">24dp</dimen>
     <dimen name="buttonSizeNormal">48dp</dimen>
 
 

@@ -2,9 +2,8 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.utils.ColorUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.Validation;
+import com.thirdandloom.storyflow.views.dialog.ForgotPasswordDialog;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,7 +26,7 @@ public class SignInActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_sign_in);
 
         findViews();
         initGui();
@@ -43,7 +42,10 @@ public class SignInActivity extends BaseActivity {
             });
         });
         forgotPasswordView.setOnClickListener(v -> {
-            showWarning("Attention please, this feature is under development!");
+            ForgotPasswordDialog dialog = new ForgotPasswordDialog.Builder(this).onPositive((forgotPasswordDialog, which) -> {
+                resetPassword(((ForgotPasswordDialog) forgotPasswordDialog).getEmail());
+            }).build();
+            dialog.show();
         });
     }
 
@@ -51,10 +53,15 @@ public class SignInActivity extends BaseActivity {
         showProgress(Gravity.RIGHT);
         StoryflowApplication.restClient().signIn(userNameOrEmail, password, (user) -> {
             hideProgress();
-        }, (errorMessage) -> {
+        }, this::showError);
+    }
+
+    private void resetPassword(String email) {
+        showProgress(Gravity.RIGHT);
+        StoryflowApplication.restClient().checkEmail(email, (user) -> {
             hideProgress();
-            showError(errorMessage);
-        });
+            showWarning("Reset password success! Feature is under development.");
+        }, this::showError);
     }
 
     private void findViews() {

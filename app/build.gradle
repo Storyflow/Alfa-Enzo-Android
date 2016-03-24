@@ -55,15 +55,17 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.squareup.retrofit2:retrofit:2.0.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
-
-    compile (group: 'ch.acra', name: 'acra', version: '4.5.0') {
+    compile ('ch.acra:acra:4.5.0') {
         exclude group: 'org.json'
     }
-    compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
+    compile ('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
         transitive = true;
     }
     compile 'me.tatarka:gradle-retrolambda:3.2.5'
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'io.reactivex:rxandroid:1.1.0'
-
+    compile files ('libs/material-dialogs-1.0.0-sources.jar')
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.7@aar') {
+        transitive = true
+    }
 }

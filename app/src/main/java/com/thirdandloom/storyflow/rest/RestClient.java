@@ -7,9 +7,12 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.rest.gson.GsonConverterFactory;
+import com.thirdandloom.storyflow.rest.requestmodels.CheckEmailRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.SignInRequestMode;
 import com.thirdandloom.storyflow.rest.requestmodels.SignUpRequestModel;
+import com.thirdandloom.storyflow.utils.Timber;
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,6 +25,7 @@ import retrofit2.http.POST;
 
 import android.support.annotation.Nullable;
 
+import java.io.IOException;
 import java.net.ConnectException;
 
 public class RestClient implements IRestClient {
@@ -65,6 +69,14 @@ public class RestClient implements IRestClient {
         apiService.signIn(model.wrap()).enqueue(new ResponseCallback<>(success, failure));
     }
 
+    @Override
+    public void checkEmail(String email, ResponseCallback.ISuccess success, ResponseCallback.IFailure failure) {
+        CheckEmailRequestModel model = new CheckEmailRequestModel();
+        model.email = email;
+
+        apiService.checkEmail(model).enqueue(new ResponseCallback<>(success, failure));
+    }
+
     public static class ResponseCallback<T> implements Callback<T> {
         public interface ISuccess<T> {
             void sucess(T responseBody);
@@ -89,7 +101,10 @@ public class RestClient implements IRestClient {
             if (response.isSuccessful()) {
                 successAction.sucess(response.body());
             } else {
-                if (failureAction != null) failureAction.failure(response.message());
+                if (failureAction != null) {
+                    String message = ErrorHandler.getMessage(response);
+                    failureAction.failure(message);
+                }
             }
         }
 
@@ -110,6 +125,12 @@ public class RestClient implements IRestClient {
         })
         @POST("swan_user/sign_in")
         Call<User> signIn(@Body SignInRequestMode.Wrapper login);
+
+        @Headers({
+                "Accept: */*",
+        })
+        @POST("swan_user/lost_password")
+        Call<ResponseBody> checkEmail(@Body CheckEmailRequestModel email);
 
         @Headers({
                 "Accept: */*"
