@@ -1,38 +1,73 @@
 package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.animations.AnimatorListener;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
 public class LaunchActivity extends BaseActivity {
+    private static boolean RUN_SIGN_UP = true;
 
     private View circleView;
     private View textView;
+    private Intent launchedIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
         findViews();
+
+        if (RUN_SIGN_UP) {
+            startActivity(SignUpActivity.newInstance());
+            return;
+        }
+
         ViewUtils.getMeasuredSize(textView, (width, height) -> {
             ViewUtils.setViewFrame(circleView, height, height);
             applyCameraDistance();
             startRotateAnimation();
         });
-        //StoryflowApplication.restClient().signIn("rom", "fortest2", (user) -> {
-        //    Timber.d("RestClient.ResponseCallback.ResponseSuccessInterface sucess");
-        //}, () -> {
-        //    Timber.d("RestClient.ResponseCallback.ResponseSuccessInterface failure");
-        //});
+
+        signInWithSavedAccount();
     }
 
+    private void signInWithSavedAccount() {
+        String password = StoryflowApplication.account().getPassword();
+        String email = StoryflowApplication.account().getUser().getEmail();
+        if (!TextUtils.isEmpty(password)) {
+            signIn(email, password);
+        }
+    }
+
+    private void signIn(String email, String password) {
+        StoryflowApplication.restClient().signIn(email, password, user -> {
+            StoryflowApplication.account().updateProfile(user);
+            launchedIntent = BrowseStoriesActivity.newInstance();
+        }, errorMessage -> {
+            StoryflowApplication.account().resetAccount();
+            launchedIntent = SignUpActivity.newInstance();
+        });
+    }
+
+    @Override
+    protected boolean hasToolBar() {
+        return false;
+    }
+
+    @Override
+    protected int getStatusBarColor() {
+        return R.color.yellow;
+    }
 
     private void findViews() {
         View launchView = findViewById(R.id.launch_layout);
@@ -61,10 +96,10 @@ public class LaunchActivity extends BaseActivity {
             @Override
             public void onAnimationRepeat(Animator animation) {
                 repeatCount++;
-                if (repeatCount >= 1) {
+                if (repeatCount >= 2 && (launchedIntent != null)) {
                     animation.end();
                     circleView.setLayerType(View.LAYER_TYPE_NONE, null);
-                    startActivity(SignUpActivity.newInstance());
+                    startActivity(launchedIntent);
                     overridePendingTransition(0, 0);
                     LaunchActivity.this.finish();
                 }

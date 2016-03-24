@@ -2,17 +2,20 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.Validation;
 import com.thirdandloom.storyflow.views.dialog.ForgotPasswordDialog;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 
 public class SignInActivity extends BaseActivity {
+    private static final String USER_KEY = "user_key";
+    private static final String PASSWORD_KEY = "password_key";
 
     private EditText loginEditText;
     private EditText passwordEditText;
@@ -30,6 +33,16 @@ public class SignInActivity extends BaseActivity {
 
         findViews();
         initGui();
+    }
+
+    @Override
+    protected boolean hasToolBar() {
+        return true;
+    }
+
+    @Override
+    protected int getStatusBarColor() {
+        return R.color.greyMostLightest;
     }
 
     private void initGui() {
@@ -51,21 +64,40 @@ public class SignInActivity extends BaseActivity {
 
     private void signIn(String userNameOrEmail, String password) {
         showProgress(Gravity.RIGHT);
-        StoryflowApplication.restClient().signIn(userNameOrEmail, password, (user) -> {
-            hideProgress();
-        }, this::showError);
+        StoryflowApplication.restClient().signIn(userNameOrEmail, password, this::loginSuccess, this::showError);
     }
 
     private void resetPassword(String email) {
         showProgress(Gravity.RIGHT);
         StoryflowApplication.restClient().checkEmail(email, (user) -> {
             hideProgress();
-            showWarning("Reset password success! Feature is under development.");
+            showWarning(R.string.email_was_successfully_sent);
         }, this::showError);
     }
 
+    private void loginSuccess(User user) {
+        hideProgress();
+        setResult(RESULT_OK, getResultIntent(user));
+        finish();
+    }
+
+    private Intent getResultIntent(User user) {
+        Intent data = new Intent();
+        data.putExtra(USER_KEY, user);
+        data.putExtra(PASSWORD_KEY, passwordEditText.getText().toString());
+        return data;
+    }
+
+    public static User extractUser(Intent data) {
+        return (User) data.getExtras().getSerializable(USER_KEY);
+    }
+
+    @Nullable
+    public static String extractPassword(Intent data) {
+        return data.getExtras().getString(PASSWORD_KEY);
+    }
+
     private void findViews() {
-        setToolBar((Toolbar)findViewById(R.id.toolbar));
         loginEditText = (EditText)findViewById(R.id.activity_login_login_text_view);
         passwordEditText = (EditText)findViewById(R.id.activity_login_password_text_view);
         forgotPasswordView = findViewById(R.id.activity_login_forgot_password);

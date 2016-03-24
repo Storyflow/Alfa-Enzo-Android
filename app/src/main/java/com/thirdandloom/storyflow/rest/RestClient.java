@@ -2,35 +2,23 @@ package com.thirdandloom.storyflow.rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.thirdandloom.storyflow.R;
-import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.config.Config;
-import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.rest.gson.GsonConverterFactory;
 import com.thirdandloom.storyflow.rest.requestmodels.CheckEmailRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.SignInRequestMode;
-import com.thirdandloom.storyflow.rest.requestmodels.SignUpRequestModel;
-import com.thirdandloom.storyflow.utils.Timber;
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.http.Body;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
 
 import android.support.annotation.Nullable;
 
-import java.io.IOException;
-import java.net.ConnectException;
-
 public class RestClient implements IRestClient {
 
-    private final ApiService apiService;
+    private final IRestClient.ApiService apiService;
 
     public RestClient() {
         Retrofit client = new Retrofit.Builder()
@@ -50,10 +38,10 @@ public class RestClient implements IRestClient {
 
     private static OkHttpClient createOkClient() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        HttpLoggingInterceptor.Level logining = Config.REST_LOGGINING
+        HttpLoggingInterceptor.Level loggining = Config.REST_LOGGINING
                 ? HttpLoggingInterceptor.Level.BODY
                 : HttpLoggingInterceptor.Level.NONE;
-        interceptor.setLevel(logining);
+        interceptor.setLevel(loggining);
         OkHttpClient okClient = new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
                 .build();
@@ -102,40 +90,16 @@ public class RestClient implements IRestClient {
                 successAction.sucess(response.body());
             } else {
                 if (failureAction != null) {
-                    String message = ErrorHandler.getMessage(response);
-                    failureAction.failure(message);
+                    failureAction.failure(ErrorHandler.getMessage(response));
                 }
             }
         }
 
         @Override
         public void onFailure(Call call, Throwable t) {
-            if (failureAction == null) return;
-
-            if (t instanceof ConnectException) {
-                failureAction.failure(StoryflowApplication.getInstance().getResources().getString(R.string.no_internet_connection));
+            if (failureAction != null) {
+                failureAction.failure(ErrorHandler.getMessage(t));
             }
         }
-    }
-
-
-    private interface ApiService {
-        @Headers({
-                "Accept: */*",
-        })
-        @POST("swan_user/sign_in")
-        Call<User> signIn(@Body SignInRequestMode.Wrapper login);
-
-        @Headers({
-                "Accept: */*",
-        })
-        @POST("swan_user/lost_password")
-        Call<ResponseBody> checkEmail(@Body CheckEmailRequestModel email);
-
-        @Headers({
-                "Accept: */*"
-        })
-        @POST("/swan_user")
-        Call<User> signUp(@Body SignUpRequestModel.Wrapper signUp);
     }
 }

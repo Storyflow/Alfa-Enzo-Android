@@ -23,7 +23,9 @@
     <string name="lets_reset_your_password">Let\'s reset your password</string>
     <string name="enter_your_email_address">Enter your email address.</string>
     <string name="unknown_server_error">Unknown server error.</string>
+    <string name="unknown_error">Unknown error.</string>
     <string name="not_existent_email">This email does not exist.</string>
+    <string name="email_was_successfully_sent">Email was successfully sent.</string>
 
 
 </resources>

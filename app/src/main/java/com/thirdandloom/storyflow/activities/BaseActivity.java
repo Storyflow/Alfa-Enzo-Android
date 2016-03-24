@@ -7,6 +7,8 @@ import com.thirdandloom.storyflow.views.alert.QuickAlertView;
 import com.thirdandloom.storyflow.views.progress.ProgressBarController;
 
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
@@ -24,11 +26,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if (DeviceUtils.isLollipopOrHigher()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.yellowDark));
+            getWindow().setStatusBarColor(getResources().getColor(getStatusBarColor()));
         }
         initQuickAlertController();
         initProgressBar();
     }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        findToolBar();
+    }
+
+
+    @ColorRes
+    protected abstract int getStatusBarColor();
 
     @Override
     protected void onStop() {
@@ -40,13 +52,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         quickAlert = new QuickAlertController(getWindow());
     }
 
-    public void setToolBar(@Nullable Toolbar toolBar) {
-        if (toolBar != null) {
-            setSupportActionBar(toolBar);
+    private void findToolBar() {
+        if (hasToolBar()) {
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            if (toolbar == null) throw new UnsupportedOperationException("If activity has toolbar, u have to include layout_toolbar in content view");
+            setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            toolBar.setNavigationOnClickListener(v -> onUpButtonClicked());
+            toolbar.setNavigationOnClickListener(v -> onUpButtonClicked());
         }
     }
+
+    protected abstract boolean hasToolBar();
 
     protected void setToolBarTitle(@StringRes int resId) {
         getSupportActionBar().setTitle(resId);

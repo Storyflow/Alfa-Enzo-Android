@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.SpannableUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.widget.TextView;
 
 public class SignUpActivity extends BaseActivity {
+
+    private static final int SIGN_IN = 1;
 
     private View signUpView;
     private View haveAccountView;
@@ -35,6 +38,16 @@ public class SignUpActivity extends BaseActivity {
         initLaunchAnimation(savedInstanceState);
     }
 
+    @Override
+    protected boolean hasToolBar() {
+        return false;
+    }
+
+    @Override
+    protected int getStatusBarColor() {
+        return R.color.greyMostLightest;
+    }
+
     private void findViews() {
         signUpView = findViewById(R.id.activity_signup_signup_text_view);
         haveAccountView = findViewById(R.id.activity_signup_already_have_account);
@@ -46,7 +59,7 @@ public class SignUpActivity extends BaseActivity {
             showWarning("Attention please, this feature is under development!");
         });
         haveAccountView.setOnClickListener(v -> {
-            startActivity(SignInActivity.newInstance());
+            startActivityForResult(SignInActivity.newInstance(), SIGN_IN);
         });
         initPrivacyPolicyTextView();
     }
@@ -63,6 +76,25 @@ public class SignUpActivity extends BaseActivity {
         privacyTextView.setText(ss);
         privacyTextView.setMovementMethod(LinkMovementMethod.getInstance());
         privacyTextView.setHighlightColor(Color.TRANSPARENT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case SIGN_IN:
+                    storeUserData(SignInActivity.extractUser(data), SignInActivity.extractPassword(data));
+                    startActivity(BrowseStoriesActivity.newInstance());
+                    finish();
+                    break;
+            }
+        }
+    }
+
+    private void storeUserData(User user, String password) {
+        StoryflowApplication.account().updateProfile(user);
+        StoryflowApplication.account().setPassword(password);
     }
 
     private final ClickableSpan onTermsOfServiceClicked = new ClickableSpan() {

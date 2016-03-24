@@ -51,4 +51,85 @@ public class User extends BaseModel {
     //"coverImages":[  ],
     //"onlineImage":{  },
     //"chatImage":{  },
+
+    public int getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getLastRequestedAt() {
+        return lastRequestedAt;
+    }
+
+    public int getShipAddressId() {
+        return shipAddressId;
+    }
+
+    public int getBillAddressId() {
+        return billAddressId;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public int getDefaultMeasurementsId() {
+        return defaultMeasurementsId;
+    }
+
+    public boolean isContinueRegistrationToken() {
+        return continueRegistrationToken;
+    }
+
+    public String getPersonalQuote() {
+        return personalQuote;
+    }
+
+    public int getIdentityId() {
+        return identityId;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public String getCoverBackgroundColor() {
+        return coverBackgroundColor;
+    }
+
+    public String getLastSignOut() {
+        return lastSignOut;
+    }
+
+    public String getOnline() {
+        return online;
+    }
+
 }

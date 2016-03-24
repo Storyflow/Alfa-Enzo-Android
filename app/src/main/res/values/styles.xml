@@ -14,7 +14,7 @@
 
     </style>
 
-    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Light">
 
     </style>
 
