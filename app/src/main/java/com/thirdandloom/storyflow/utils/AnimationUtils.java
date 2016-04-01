@@ -10,7 +10,7 @@ import android.animation.Animator;
 import android.view.View;
 import android.view.animation.Animation;
 
-public class AnimationUtils {
+public class AnimationUtils extends BaseUtils {
     public static void showHeader(View header, int duration) {
         Animation animation = new ShowHeaderAnimation(header, duration);
         header.startAnimation(animation);

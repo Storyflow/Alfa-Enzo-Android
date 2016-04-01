@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.activities.registration.RegistrationActivity;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.SpannableUtils;
@@ -18,8 +19,8 @@ import android.view.View;
 import android.widget.TextView;
 
 public class SignUpActivity extends BaseActivity {
-
     private static final int SIGN_IN = 1;
+    private static final int REGISTRATION = SIGN_IN + 1;
 
     private View signUpView;
     private View haveAccountView;
@@ -45,7 +46,7 @@ public class SignUpActivity extends BaseActivity {
 
     @Override
     protected int getStatusBarColor() {
-        return R.color.greyMostLightest;
+        return R.color.greyLighter;
     }
 
     private void findViews() {
@@ -56,7 +57,7 @@ public class SignUpActivity extends BaseActivity {
 
     private void initGui() {
         signUpView.setOnClickListener(v -> {
-            showWarning("Attention please, this feature is under development!");
+            startActivityForResult(RegistrationActivity.newInstance(), REGISTRATION);
         });
         haveAccountView.setOnClickListener(v -> {
             startActivityForResult(SignInActivity.newInstance(), SIGN_IN);

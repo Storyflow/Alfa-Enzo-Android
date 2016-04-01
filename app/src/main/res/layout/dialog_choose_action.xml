@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_gravity="bottom"
+             android:padding="@dimen/sizeXLarge"
+             android:background="@color/transparent">
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_gravity="bottom">
+
+        <TextView
+            android:id="@+id/dialog_choose_action_take_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/take_new_profile_photo"
+            android:gravity="center"
+            android:padding="@dimen/sizeMedium"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/textSizeNormal"
+            android:background="@drawable/selector_button_rounded_grey_light"
+
+            />
+
+        <TextView
+            android:id="@+id/dialog_choose_action_upload_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/upload_profile_photo"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/sizeTiny"
+            android:padding="@dimen/sizeMedium"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/textSizeNormal"
+            android:background="@drawable/selector_button_rounded_grey_light"
+
+            />
+
+        <TextView
+            android:id="@+id/dialog_choose_action_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/sizeNormal"
+            android:padding="@dimen/sizeMedium"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/textSizeNormal"
+            android:background="@drawable/selector_button_rounded_grey_light"
+            />
+    </LinearLayout>
+
+</FrameLayout>

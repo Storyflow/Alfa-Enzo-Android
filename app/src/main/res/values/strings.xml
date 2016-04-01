@@ -12,6 +12,7 @@
     <string name="hint_password">Password</string>
     <string name="forgot_password">Forgot your password?</string>
     <string name="continue_button">Continue</string>
+    <string name="done_button">Done</string>
     <string name="email_or_username_cannot_be_empty">Email or username cannot be empty</string>
     <string name="password_cannot_be_empty">Password cannot be empty</string>
     <string name="password_is_invalid">Your password is invalid</string>
@@ -25,7 +26,29 @@
     <string name="unknown_server_error">Unknown server error.</string>
     <string name="unknown_error">Unknown error.</string>
     <string name="not_existent_email">This email does not exist.</string>
+    <string name="existing_account">This account already exist.</string>
+    <string name="empty_user_name">User name is empty.</string>
+    <string name="invalid_user_name">User name is invalid.</string>
+    <string name="user_name_exist">User name already exist.</string>
+    <string name="email_is_invalid">Email is invalid.</string>
+    <string name="email_is_already_taken">Email is already taken.</string>
     <string name="email_was_successfully_sent">Email was successfully sent.</string>
-
+    <string name="choose_user_name">Choose a user name</string>
+    <string name="email">Email</string>
+    <string name="password">Password (8+ characters)</string>
+    <string name="user_name_cannot_be_empty">User name cannot be empty;</string>
+    <string name="user_name_contains_incorrect_symbols_and_must_be_in_lowercase">User name contains incorrect symbols and must be in lowercase;</string>
+    <string name="email_cannot_be_empty">Email cannot be empty;</string>
+    <string name="invalid_email">Invalid email;</string>
+    <string name="profile_picture_and_name">Profile Picture &amp; Name</string>
+    <string name="whats_your_name">What\'s your name?</string>
+    <string name="name_should_contain_first_last_name_separated_by_space">Name should contain First &amp; Last name separated by space</string>
+    <string name="take_new_profile_photo">Take a New Profile Photo</string>
+    <string name="upload_profile_photo">Upload Profile Photo</string>
+    <string name="permissions_were_not_guaranteed">Permissions were not guaranteed</string>
+    <string name="select_picture">Select Picture</string>
+    <string name="set_profile_picture">Set Profile Picture</string>
+    <string name="move_and_scale_photo_to_fit">Move and Scale photo to fit</string>
+    <string name="error_while_loading_image">Error while uploading image.</string>
 
 </resources>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <include layout="@layout/layout_toolbar"
+        />
+
+    <com.thirdandloom.storyflow.views.RoundSquareStrokeCircleImageView
+        android:id="@+id/activity_set_profile_picture_avatar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/sizeXLarge"
+        android:scaleType="centerInside"
+        />
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:padding="@dimen/sizeNormal"
+              android:text="@string/move_and_scale_photo_to_fit"
+              android:textSize="@dimen/textSizeNormal"
+              android:textColor="@color/grey"
+        />
+
+    <View android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:layout_weight="1"
+        />
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/activity_set_profile_picture_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/sizeNormal"
+            android:text="@string/cancel"
+            android:textSize="@dimen/textSizeNormal"
+            android:textColor="@drawable/selector_lightgrey_default_text"
+            />
+
+        <TextView
+            android:id="@+id/activity_set_profile_picture_ok"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/sizeNormal"
+            android:text="@string/ok"
+            android:textSize="@dimen/textSizeNormal"
+            android:textColor="@drawable/selector_lightgrey_default_text"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

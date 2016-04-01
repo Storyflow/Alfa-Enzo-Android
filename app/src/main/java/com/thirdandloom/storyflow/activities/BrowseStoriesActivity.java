@@ -31,7 +31,7 @@ public class BrowseStoriesActivity extends BaseActivity {
 
     @Override
     protected int getStatusBarColor() {
-        return R.color.greyMostLightest;
+        return R.color.greyLighter;
     }
 
     @Override

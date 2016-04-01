@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
-public class ViewUtils {
+public class ViewUtils extends BaseUtils{
 
     public static void removeFromParent(View view) {
         ViewGroup parent = (ViewGroup)view.getParent();

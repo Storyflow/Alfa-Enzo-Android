@@ -3,22 +3,22 @@
     <dimen name="textSizeTiny">14sp</dimen>
     <dimen name="textSizeSmall">17sp</dimen>
     <dimen name="textSizeNormal">19sp</dimen>
-    <dimen name="textSizeL">22sp</dimen>
-    <dimen name="testSizeXL">24sp</dimen>
-    <dimen name="testSizeXXL">36sp</dimen>
-    <dimen name="testSizeXXXL">128sp</dimen>
+    <dimen name="textSizeLarge">22sp</dimen>
+    <dimen name="textSizeXLarge">24sp</dimen>
+    <dimen name="textSizeXXLarge">36sp</dimen>
+    <dimen name="textSizeXXXLarge">128sp</dimen>
 
 
     <dimen name="sizeTiny">2dp</dimen>
     <dimen name="sizeSmall">4dp</dimen>
     <dimen name="sizeNormal">8dp</dimen>
-    <dimen name="sizeXNormal">12dp</dimen>
-    <dimen name="sizeMedium">16dp</dimen>
-    <dimen name="sizeLarge">24dp</dimen>
+    <dimen name="sizeMedium">12dp</dimen>
+    <dimen name="sizeLarge">16dp</dimen>
+    <dimen name="sizeXLarge">24dp</dimen>
 
 
     <dimen name="roundCorner">8dp</dimen>
-    <dimen name="buttonMarging">24dp</dimen>
+    <dimen name="buttonMargin">24dp</dimen>
     <dimen name="buttonSizeNormal">48dp</dimen>
 
 

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <include layout="@layout/layout_toolbar"
+        />
+
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical">
+            <EditText
+                android:id="@+id/activity_registration_choose_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sizeXLarge"
+                android:layout_marginLeft="@dimen/sizeXLarge"
+                android:layout_marginRight="@dimen/sizeXLarge"
+                android:inputType="textNoSuggestions|textVisiblePassword"
+                android:hint="@string/choose_user_name"
+                style="@style/LightGreyOvalEditText"
+                />
+
+            <EditText
+                android:id="@+id/activity_registration_choose_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sizeNormal"
+                android:layout_marginLeft="@dimen/sizeXLarge"
+                android:layout_marginRight="@dimen/sizeXLarge"
+                android:inputType="textEmailAddress"
+                android:hint="@string/email"
+                style="@style/LightGreyOvalEditText"
+                />
+
+            <EditText
+                android:id="@+id/activity_registration_choose_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sizeNormal"
+                android:layout_marginLeft="@dimen/sizeXLarge"
+                android:layout_marginRight="@dimen/sizeXLarge"
+                android:inputType="textPassword"
+                android:hint="@string/password"
+                style="@style/LightGreyOvalEditText"
+                />
+
+            <View android:layout_width="0dp"
+                  android:layout_height="0dp"
+                  android:layout_weight="1"
+                />
+
+            <TextView
+                android:id="@+id/activity_registration_continue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/DarkGreyButton"
+                android:text="@string/continue_button"
+                android:layout_marginTop="@dimen/sizeNormal"
+                android:layout_marginBottom="@dimen/sizeXLarge"
+                />
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

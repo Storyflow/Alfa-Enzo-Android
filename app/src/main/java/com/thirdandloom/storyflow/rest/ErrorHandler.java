@@ -12,6 +12,7 @@ import android.text.TextUtils;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,7 @@ public class ErrorHandler {
     }
 
     public static String getMessage(Throwable t) {
-        if (t instanceof ConnectException) {
+        if (t instanceof ConnectException || t instanceof SocketTimeoutException) {
             return StoryflowApplication.resources().getString(R.string.no_internet_connection);
         } else {
             return StoryflowApplication.resources().getString(R.string.unknown_error);
@@ -75,6 +76,13 @@ public class ErrorHandler {
         static {
             Map<String, Integer> map = new HashMap<>();
             map.put("NOT_EXISTENT_EMAIL", R.string.not_existent_email);
+            map.put("EXISTING_ACCOUNT", R.string.existing_account);
+            map.put("EMPTY_USERNAME", R.string.empty_user_name);
+            map.put("INVALID_USERNAME", R.string.invalid_user_name);
+            map.put("EXISTING_USERNAME", R.string.user_name_exist);
+            map.put("INVALID_EMAIL", R.string.email_is_invalid);
+            map.put("THIS_EMAIL_IS_ALREADY_TAKEN", R.string.email_is_already_taken);
+
             codes = Collections.unmodifiableMap(map);
         }
     }

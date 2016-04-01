@@ -35,10 +35,35 @@
                   android:theme="@style/NoTitleWhite">
         </activity>
 
+        <activity android:name=".activities.registration.RegistrationActivity"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateVisible|adjustResize"
+                  android:theme="@style/NoTitleWhite">
+        </activity>
+
+        <activity android:name=".activities.registration.ChooseAvatarAndNameActivity"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateVisible|adjustResize"
+                  android:theme="@style/NoTitleWhite">
+        </activity>
+
+
+        <activity android:name=".activities.registration.ConfigureAvatarRectangleActivity"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateAlwaysHidden"
+                  android:theme="@style/NoTitleWhite">
+        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="007706a287637bde5afb1b4391bf89a8b946cf5f"/>
     </application>
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 </manifest>

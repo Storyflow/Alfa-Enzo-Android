@@ -2,7 +2,7 @@ package com.thirdandloom.storyflow.utils;
 
 import java.util.List;
 
-public class ArrayUtils {
+public class ArrayUtils extends BaseUtils {
     public static final int INDEX_NOT_FOUND = -1;
 
     public static boolean isEmpty(List list) {

@@ -9,9 +9,9 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 
-public class DeviceUtils {
+public class DeviceUtils extends BaseUtils {
     public static DisplayMetrics getDisplayMetrics() {
-        return StoryflowApplication.getInstance().getResources().getDisplayMetrics();
+        return getResources().getDisplayMetrics();
     }
 
     public static int getDisplayWidth() {
@@ -44,16 +44,15 @@ public class DeviceUtils {
         if (hasMenuKey() || hasHardwareBackKey() || resourceId <= 0) {
             return 0;
         }
-        return StoryflowApplication.getInstance().getResources().getDimensionPixelSize(resourceId);
+        return getResources().getDimensionPixelSize(resourceId);
     }
 
     public static int getNavigationBarResourceId() {
-        Resources resources = StoryflowApplication.getInstance().getResources();
-        return resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        return getResources().getIdentifier("navigation_bar_height", "dimen", "android");
     }
 
     public static boolean hasMenuKey() {
-        return ViewConfiguration.get(StoryflowApplication.getInstance()).hasPermanentMenuKey();
+        return ViewConfiguration.get(getContext()).hasPermanentMenuKey();
     }
 
     public static boolean hasHardwareBackKey() {

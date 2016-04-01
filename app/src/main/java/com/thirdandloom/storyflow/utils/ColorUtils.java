@@ -2,7 +2,7 @@ package com.thirdandloom.storyflow.utils;
 
 import android.graphics.Color;
 
-public class ColorUtils {
+public class ColorUtils extends BaseUtils {
 
     public static int getNegativeColor(int previousColor, int percent) {
         long addedValue = Math.round(2.55 * percent);

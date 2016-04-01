@@ -4,7 +4,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
 
-public class SpannableUtils {
+public class SpannableUtils extends BaseUtils {
     public static void setOnClick(SpannableString spannableString, ClickableSpan clickableSpan, String inString, String fromString) {
         int start = fromString.indexOf(inString);
         int end = start + inString.length();

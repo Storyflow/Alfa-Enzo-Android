@@ -15,7 +15,8 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
 public class LaunchActivity extends BaseActivity {
-    private static boolean RUN_SIGN_UP = true;
+    private static boolean RUN_SIGN_UP = false;
+    private static int FLIP_REPEAT_COUNT_MIN = 4;
 
     private View circleView;
     private View textView;
@@ -44,8 +45,12 @@ public class LaunchActivity extends BaseActivity {
     private void signInWithSavedAccount() {
         String password = StoryflowApplication.account().getPassword();
         String email = StoryflowApplication.account().getUser().getEmail();
+        //email = "ycycyv@xycy.hvvy";
+        //password = "chvhvhvhvhuvuv";
         if (!TextUtils.isEmpty(password)) {
             signIn(email, password);
+        } else {
+            launchedIntent = SignUpActivity.newInstance();
         }
     }
 
@@ -96,7 +101,7 @@ public class LaunchActivity extends BaseActivity {
             @Override
             public void onAnimationRepeat(Animator animation) {
                 repeatCount++;
-                if (repeatCount >= 2 && (launchedIntent != null)) {
+                if (repeatCount >= FLIP_REPEAT_COUNT_MIN && (launchedIntent != null)) {
                     animation.end();
                     circleView.setLayerType(View.LAYER_TYPE_NONE, null);
                     startActivity(launchedIntent);
