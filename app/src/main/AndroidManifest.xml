@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.SignUpActivity"
+        <activity android:name=".activities.WelcomeActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/NoTitleWhite">
         </activity>

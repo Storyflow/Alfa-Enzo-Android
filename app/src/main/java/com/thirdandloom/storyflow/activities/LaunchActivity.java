@@ -29,7 +29,7 @@ public class LaunchActivity extends BaseActivity {
         findViews();
 
         if (RUN_SIGN_UP) {
-            startActivity(SignUpActivity.newInstance());
+            startActivity(WelcomeActivity.newInstance());
             return;
         }
 
@@ -50,7 +50,7 @@ public class LaunchActivity extends BaseActivity {
         if (!TextUtils.isEmpty(password)) {
             signIn(email, password);
         } else {
-            launchedIntent = SignUpActivity.newInstance();
+            launchedIntent = WelcomeActivity.newInstance();
         }
     }
 
@@ -60,7 +60,7 @@ public class LaunchActivity extends BaseActivity {
             launchedIntent = BrowseStoriesActivity.newInstance(true);
         }, errorMessage -> {
             StoryflowApplication.account().resetAccount();
-            launchedIntent = SignUpActivity.newInstance();
+            launchedIntent = WelcomeActivity.newInstance();
         });
     }
 
