@@ -19,9 +19,6 @@ import android.view.View;
 import android.widget.TextView;
 
 public class SignUpActivity extends BaseActivity {
-    private static final int SIGN_IN = 1;
-    private static final int REGISTRATION = SIGN_IN + 1;
-
     private View signUpView;
     private View haveAccountView;
     private TextView privacyTextView;
@@ -57,10 +54,10 @@ public class SignUpActivity extends BaseActivity {
 
     private void initGui() {
         signUpView.setOnClickListener(v -> {
-            startActivityForResult(RegistrationActivity.newInstance(), REGISTRATION);
+            startActivity(RegistrationActivity.newInstance());
         });
         haveAccountView.setOnClickListener(v -> {
-            startActivityForResult(SignInActivity.newInstance(), SIGN_IN);
+            startActivity(SignInActivity.newInstance());
         });
         initPrivacyPolicyTextView();
     }
@@ -77,25 +74,6 @@ public class SignUpActivity extends BaseActivity {
         privacyTextView.setText(ss);
         privacyTextView.setMovementMethod(LinkMovementMethod.getInstance());
         privacyTextView.setHighlightColor(Color.TRANSPARENT);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case SIGN_IN:
-                    storeUserData(SignInActivity.extractUser(data), SignInActivity.extractPassword(data));
-                    startActivity(BrowseStoriesActivity.newInstance());
-                    finish();
-                    break;
-            }
-        }
-    }
-
-    private void storeUserData(User user, String password) {
-        StoryflowApplication.account().updateProfile(user);
-        StoryflowApplication.account().setPassword(password);
     }
 
     private final ClickableSpan onTermsOfServiceClicked = new ClickableSpan() {

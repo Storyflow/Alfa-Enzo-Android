@@ -57,7 +57,7 @@ public class LaunchActivity extends BaseActivity {
     private void signIn(String email, String password) {
         StoryflowApplication.restClient().signIn(email, password, user -> {
             StoryflowApplication.account().updateProfile(user);
-            launchedIntent = BrowseStoriesActivity.newInstance();
+            launchedIntent = BrowseStoriesActivity.newInstance(true);
         }, errorMessage -> {
             StoryflowApplication.account().resetAccount();
             launchedIntent = SignUpActivity.newInstance();

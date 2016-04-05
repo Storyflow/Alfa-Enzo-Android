@@ -26,8 +26,6 @@ import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapResource;
 
-import java.util.UUID;
-
 public class CropRectTransformation implements Transformation<Bitmap> {
 
     private BitmapPool bitmapPool;
@@ -64,5 +62,4 @@ public class CropRectTransformation implements Transformation<Bitmap> {
                 + ", top=" + destinationRect.top
                 + ")";
     }
-
 }

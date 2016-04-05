@@ -1,11 +1,16 @@
 package com.thirdandloom.storyflow.managers;
 
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.models.Avatar;
+import com.thirdandloom.storyflow.models.CroppedImage;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.preferences.CommonPreferences;
 import com.thirdandloom.storyflow.utils.StringUtils;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
+
+import java.util.ArrayList;
 
 public class AccountManager {
     private User currentUser;
@@ -20,6 +25,25 @@ public class AccountManager {
         currentUser = user;
         CommonPreferences preferences = StoryflowApplication.preferences();
         preferences.userProfile.set(currentUser);
+    }
+
+    public void updateProfile(@NonNull Avatar avatar) {
+        User user = getUser();
+        if (user.getProfileImages() == null) user.setProfileImages(new ArrayList<>());
+        if (user.getProfileImages().contains(avatar)) {
+            int index = user.getProfileImages().indexOf(avatar);
+            user.getProfileImages().set(index, avatar);
+        } else {
+            user.getProfileImages().add(avatar);
+        }
+
+        if (!TextUtils.isEmpty(avatar.getCroppedImage().url())) {
+            CroppedImage profileImage = new CroppedImage();
+            profileImage.setRect(avatar.getCroppedRect());
+            profileImage.setImageUrl(avatar.getCroppedImage().url());
+            user.setProfileImage(profileImage);
+        }
+        updateProfile(user);
     }
 
     @NonNull
@@ -54,4 +78,5 @@ public class AccountManager {
     public boolean isCurrentUser(String userUid){
         return getUser().getUid().equals(userUid);
     }
+
 }

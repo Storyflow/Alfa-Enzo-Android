@@ -54,6 +54,10 @@ public class AnimationUtils extends BaseUtils {
     }
 
     private static void startRevealCircleAnimation(View circleView, View contentView) {
+        if (circleView.getHeight() == 0) {
+            ViewUtils.hide(contentView);
+            return;
+        }
         circleView.setLayerType(View.LAYER_TYPE_NONE, null);
         int newRadius = DeviceUtils.getLargerDisplaySize();
         float delta = newRadius/circleView.getHeight();

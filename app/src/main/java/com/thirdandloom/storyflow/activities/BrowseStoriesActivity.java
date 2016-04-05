@@ -10,19 +10,34 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-public class BrowseStoriesActivity extends BaseActivity {
+import java.io.Serializable;
 
-    public static Intent newInstance() {
-        return new Intent(StoryflowApplication.getInstance(), BrowseStoriesActivity.class);
+public class BrowseStoriesActivity extends BaseActivity {
+    private SavedState state;
+
+    public static Intent newInstance(boolean continueAnimation) {
+        Intent intent = new Intent(StoryflowApplication.getInstance(), BrowseStoriesActivity.class);
+        SavedState state = new SavedState();
+        state.continueAnimation = continueAnimation;
+        putExtra(intent, state);
+        return intent;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_stories);
+        state = (SavedState) getState();
+        restoreState(savedInstanceState, restoredState -> {
+            state = (SavedState) restoredState;
+        });
+        if (state.continueAnimation) {
+            initLaunchAnimation(savedInstanceState);
+        } else {
+            ViewUtils.hide(findViewById(R.id.launch_layout));
+        }
 
         initGui();
-        initLaunchAnimation(savedInstanceState);
     }
 
     private void initGui() {
@@ -40,6 +55,7 @@ public class BrowseStoriesActivity extends BaseActivity {
     }
 
     private void initLaunchAnimation(Bundle savedInstanceState) {
+        state.continueAnimation = false;
         View launchView = findViewById(R.id.launch_layout);
         if (savedInstanceState == null) {
             View circleView = launchView.findViewById(R.id.launch_circle_view);
@@ -50,5 +66,17 @@ public class BrowseStoriesActivity extends BaseActivity {
         } else {
             ViewUtils.removeFromParent(launchView);
         }
+    }
+
+    @Nullable
+    @Override
+    protected Serializable getSavedState() {
+        return state;
+    }
+
+    private static class SavedState implements Serializable {
+        private static final long serialVersionUID = 5045141075880217652L;
+
+        boolean continueAnimation;
     }
 }

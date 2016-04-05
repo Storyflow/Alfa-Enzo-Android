@@ -1,18 +1,24 @@
 package com.thirdandloom.storyflow.rest;
 
+import android.graphics.RectF;
+
 import com.bumptech.glide.DrawableTypeRequest;
+import com.thirdandloom.storyflow.models.Avatar;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.rest.requestmodels.CheckEmailRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.ProfileImageRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.SignInRequestMode;
 import com.thirdandloom.storyflow.rest.requestmodels.SignUpRequestModel;
+import com.thirdandloom.storyflow.rest.requestmodels.UpdateProfileImageRequestModel;
+import com.thirdandloom.storyflow.utils.image.Size;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
-import rx.functions.Func1;
-import rx.functions.Func2;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public interface IRestClient {
     void signIn(String login, String password,
@@ -28,8 +34,16 @@ public interface IRestClient {
             RestClient.ResponseCallback.IFailure failure);
 
     void createProfileImage(DrawableTypeRequest glideRequest,
-            RestClient.ResponseCallback.ISuccess success,
+            Size imageSize,
+            RestClient.ResponseCallback.ISuccess<Avatar> success,
             RestClient.ResponseCallback.IFailure failure);
+
+    void createCroppedProfileImage(DrawableTypeRequest glideRequest,
+                            int id, Size imageSize, RectF croppedRect,
+                            RestClient.ResponseCallback.ISuccess<Avatar> success,
+                            RestClient.ResponseCallback.IFailure failure);
+
+    void clearCookies();
 
     interface ApiService {
         @Headers({
@@ -54,7 +68,13 @@ public interface IRestClient {
                 "Accept: */*"
         })
         @POST("/swan/account/profile_images/")
-        Call<ResponseBody> createProfileImage(@Body ProfileImageRequestModel signUp);
+        Call<Avatar> createProfileImage(@Body ProfileImageRequestModel signUp);
+
+        @Headers({
+                "Accept: */*"
+        })
+        @PUT("/swan/account/profile_images/{fullImageId}")
+        Call<Avatar> updateProfileImage(@Path("fullImageId") int fullImageId, @Body UpdateProfileImageRequestModel signUp);
     }
 }
 
