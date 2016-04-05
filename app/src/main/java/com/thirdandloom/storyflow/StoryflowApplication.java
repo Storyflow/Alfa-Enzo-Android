@@ -1,16 +1,13 @@
 package com.thirdandloom.storyflow;
 
 import com.crashlytics.android.Crashlytics;
-import com.squareup.leakcanary.LeakCanary;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.managers.AccountManager;
 import com.thirdandloom.storyflow.preferences.CommonPreferences;
 import com.thirdandloom.storyflow.rest.IRestClient;
 import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.utils.Timber;
-import com.thirdandloom.storyflow.utils.concurrent.IExecutor;
 import com.thirdandloom.storyflow.utils.concurrent.SimpleExecutor;
-import com.thirdandloom.storyflow.utils.concurrent.ThreadUtils;
 import io.fabric.sdk.android.Fabric;
 import org.acra.ACRA;
 import org.acra.ReportField;
@@ -64,7 +61,6 @@ public class StoryflowApplication extends Application {
 
         initTimber();
         initAcra();
-        initLeakCanary();
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics())
                 .debuggable(true)
@@ -73,12 +69,6 @@ public class StoryflowApplication extends Application {
         this.restClient = new RestClient(this);
         this.preferences = new CommonPreferences();
         this.accountManager = new AccountManager();
-    }
-
-    private void initLeakCanary() {
-        if (Config.LEAK_CANARY_ENABLED) {
-            LeakCanary.install(this);
-        }
     }
 
     private void initTimber() {
