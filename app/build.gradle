@@ -41,13 +41,12 @@ android {
         }
     }
     productFlavors {
-        qa {
-            applicationId 'com.thirdandloom.storyflow.qa'
-        }
-        dev {
-            applicationId 'com.thirdandloom.storyflow.dev'
-        }
+        qa {}
+        dev {}
     }
+
+    enforceUniquePackageName false
+
     lintOptions {
         abortOnError false
     }
