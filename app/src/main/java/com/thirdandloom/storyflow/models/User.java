@@ -2,6 +2,8 @@ package com.thirdandloom.storyflow.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+import java.util.List;
 
 public class User extends BaseModel {
     @SerializedName("id")
@@ -17,9 +19,9 @@ public class User extends BaseModel {
     @SerializedName("billAddressId")
     private int billAddressId;
     @SerializedName("createdAt")
-    private String createdAt;
+    private Date createdAt;
     @SerializedName("updatedAt")
-    private String updatedAt;
+    private Date updatedAt;
     @SerializedName("firstName")
     private String firstName;
     @SerializedName("lastName")
@@ -44,13 +46,18 @@ public class User extends BaseModel {
     private String coverBackgroundColor;
     @SerializedName("online")
     private String online;
-
-    //"profileImage":{  },
-    //"profileImages":[  ],
-    //"coverImage":{  },
-    //"coverImages":[  ],
-    //"onlineImage":{  },
-    //"chatImage":{  },
+    @SerializedName("profileImage")
+    private CroppedImage profileImage;
+    @SerializedName("profileImages")
+    private List<Avatar> profileImages;
+    @SerializedName("coverImage")
+    private CroppedImage coverImage;
+    @SerializedName("coverImages")
+    private List<Avatar> coverImages;
+    @SerializedName("onlineImage")
+    private WrappedImage onlineImage;
+    @SerializedName("chatImage")
+    private WrappedImage chatImage;
 
     public int getId() {
         return id;
@@ -76,11 +83,11 @@ public class User extends BaseModel {
         return billAddressId;
     }
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public String getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
@@ -132,4 +139,35 @@ public class User extends BaseModel {
         return online;
     }
 
+    public CroppedImage getProfileImage() {
+        return profileImage;
+    }
+
+    public List<Avatar> getProfileImages() {
+        return profileImages;
+    }
+
+    public void setProfileImages(List<Avatar> profileImages) {
+        this.profileImages = profileImages;
+    }
+
+    public CroppedImage getCoverImage() {
+        return coverImage;
+    }
+
+    public WrappedImage getOnlineImage() {
+        return onlineImage;
+    }
+
+    public List<Avatar> getCoverImages() {
+        return coverImages;
+    }
+
+    public WrappedImage getChatImage() {
+        return chatImage;
+    }
+
+    public void setProfileImage(CroppedImage profileImage) {
+        this.profileImage = profileImage;
+    }
 }

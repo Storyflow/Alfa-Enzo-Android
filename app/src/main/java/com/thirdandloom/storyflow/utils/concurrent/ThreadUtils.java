@@ -13,15 +13,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ThreadUtils {
+    public static void runOnUiThread(Runnable runnable) {
+        new Handler(Looper.getMainLooper()).post(runnable);
+    }
+
     public static ThreadFactory createThreadFactory(@NonNull String name) {
         return new ThreadFactoryBuilder()
                 .setNameFormat(name + " #%d")
                 .build();
-    }
-
-    public static ExecutorService newFixedThreadPool(int threadsAmount, @NonNull String name) {
-        ThreadFactory threadFactory = createThreadFactory(name);
-        LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
-        return new ThreadPoolExecutor(threadsAmount, threadsAmount, 0L, TimeUnit.MILLISECONDS, workQueue, threadFactory);
     }
 }

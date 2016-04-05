@@ -6,7 +6,6 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.activities.BaseActivity;
 import com.thirdandloom.storyflow.activities.BrowseStoriesActivity;
-import com.thirdandloom.storyflow.activities.SignUpActivity;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
 import com.thirdandloom.storyflow.utils.SerializableRectF;
 import com.thirdandloom.storyflow.utils.Validation;
@@ -148,30 +147,38 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
 
     private void registerUser(String firstName, String lastName) {
         showProgress(Gravity.RIGHT);
+        StoryflowApplication.restClient().clearCookies(); //clear cookies for sign up
         StoryflowApplication.restClient().signUp(state.email, state.userName, state.password, firstName, lastName, user -> {
-            //StoryflowApplication.account().updateProfile(user);
+            StoryflowApplication.account().updateProfile(user);
+            StoryflowApplication.account().setPassword(state.password);
             if (state.imageTaken()) {
                 uploadFullImage();
             } else {
-                hideProgress();
-                //start browsing
+                startBrowsing();
             }
 
         }, this::showError);
     }
 
     private void uploadFullImage() {
-        StoryflowApplication.restClient().createProfileImage(createGlideRequest(this, state.takenAction, state.imageUrl), responseBody -> {
-            uploadCroppedAvatar();
-        }, errorMessage -> {
-            hideProgress();
-            //start browsing
-        });
+        StoryflowApplication.restClient().createProfileImage(createGlideRequest(this, state.takenAction, state.imageUrl), state.cachedSize, avatar -> {
+            StoryflowApplication.account().updateProfile(avatar);
+            uploadCroppedAvatar(avatar.getId());
+        }, errorMessage -> startBrowsing());
     }
 
-    private void uploadCroppedAvatar() {
-        //hideProgress();
+    private void uploadCroppedAvatar(int id) {
+        StoryflowApplication.restClient().createCroppedProfileImage(createGlideRequest(this, state.takenAction, state.imageUrl), id, state.cachedSize, state.rect.getRectF(), croppedAvatar -> {
+            StoryflowApplication.account().updateProfile(croppedAvatar);
+            startBrowsing();
+        }, errorMessage -> startBrowsing());
+    }
 
+    private void startBrowsing() {
+        hideProgress();
+        Intent browsingActivityIntent = BrowseStoriesActivity.newInstance(false);
+        browsingActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(browsingActivityIntent);
     }
 
     @Override
@@ -191,6 +198,7 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
     }
 
     private static class SavedState implements Serializable {
+        private static final long serialVersionUID = 5011235137705290000L;
         int takenAction;
         SerializableRectF rect;
         Size cachedSize;

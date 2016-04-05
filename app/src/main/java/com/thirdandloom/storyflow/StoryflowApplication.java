@@ -70,7 +70,7 @@ public class StoryflowApplication extends Application {
                 .debuggable(true)
                 .build();
         Fabric.with(fabric);
-        this.restClient = new RestClient();
+        this.restClient = new RestClient(this);
         this.preferences = new CommonPreferences();
         this.accountManager = new AccountManager();
     }

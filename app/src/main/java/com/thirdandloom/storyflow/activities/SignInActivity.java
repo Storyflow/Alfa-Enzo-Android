@@ -14,9 +14,6 @@ import android.view.View;
 import android.widget.EditText;
 
 public class SignInActivity extends BaseActivity {
-    private static final String USER_KEY = "user_key";
-    private static final String PASSWORD_KEY = "password_key";
-
     private EditText loginEditText;
     private EditText passwordEditText;
     private View forgotPasswordView;
@@ -77,24 +74,12 @@ public class SignInActivity extends BaseActivity {
 
     private void loginSuccess(User user) {
         hideProgress();
-        setResult(RESULT_OK, getResultIntent(user));
-        finish();
-    }
+        StoryflowApplication.account().updateProfile(user);
+        StoryflowApplication.account().setPassword(passwordEditText.getText().toString());
 
-    private Intent getResultIntent(User user) {
-        Intent data = new Intent();
-        data.putExtra(USER_KEY, user);
-        data.putExtra(PASSWORD_KEY, passwordEditText.getText().toString());
-        return data;
-    }
-
-    public static User extractUser(Intent data) {
-        return (User) data.getExtras().getSerializable(USER_KEY);
-    }
-
-    @Nullable
-    public static String extractPassword(Intent data) {
-        return data.getExtras().getString(PASSWORD_KEY);
+        Intent browsingActivityIntent = BrowseStoriesActivity.newInstance(false);
+        browsingActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(browsingActivityIntent);
     }
 
     private void findViews() {
