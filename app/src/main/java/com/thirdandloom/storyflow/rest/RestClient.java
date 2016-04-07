@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.config.Config;
+import com.thirdandloom.storyflow.managers.StoriesManager;
+import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.rest.cookies.JavaNetCookieJar;
 import com.thirdandloom.storyflow.rest.cookies.PersistentCookieStore;
 import com.thirdandloom.storyflow.rest.gson.GsonConverterFactory;
@@ -34,6 +36,7 @@ import android.support.annotation.Nullable;
 
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class RestClient implements IRestClient {
@@ -147,6 +150,16 @@ public class RestClient implements IRestClient {
                         });
                     }
                 });
+    }
+
+    @Override
+    public void loadStories(StoriesManager.RequestData requestData, ResponseCallback.ISuccess<Story.WrapList> success, ResponseCallback.IFailure failure) {
+        String direction = requestData.getDirection();
+        String period = requestData.getPeriod();
+        Map filters = requestData.getFilters();
+        int limit = requestData.getLimit();
+
+        apiService.loadStories(period, limit, null, direction, filters).enqueue(new ResponseCallback<>(success, failure));
     }
 
     public static class ResponseCallback<T> implements Callback<T> {

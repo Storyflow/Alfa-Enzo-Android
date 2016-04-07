@@ -1,19 +1,28 @@
 package com.thirdandloom.storyflow.activities;
 
+import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.managers.StoriesManager;
+import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.Serializable;
 
 public class BrowseStoriesActivity extends BaseActivity {
     private SavedState state;
+    private StoriesManager storiesManager = new StoriesManager();
 
     public static Intent newInstance(boolean continueAnimation) {
         Intent intent = new Intent(StoryflowApplication.getInstance(), BrowseStoriesActivity.class);
@@ -38,10 +47,20 @@ public class BrowseStoriesActivity extends BaseActivity {
         }
 
         initGui();
+
+        StoryflowApplication.restClient().loadStories(storiesManager.getRequestData(), this::onLoadedStories, errorMessage -> {
+        });
     }
 
     private void initGui() {
+        initToolBar();
+    }
 
+    private void onLoadedStories(Story.WrapList stories) {
+        Timber.d("stories" + stories.toString());
+        Timber.d("stories 123");
+        Timber.d("stories 312");
+        Timber.d("stories 214");
     }
 
     @Override
@@ -52,6 +71,22 @@ public class BrowseStoriesActivity extends BaseActivity {
     @Override
     protected boolean hasToolBar() {
         return true;
+    }
+
+    private void initToolBar() {
+        View view = getLayoutInflater().inflate(R.layout.toolbar_activity_browsing_stories, getToolbar(), true);
+        TextView userName = (TextView) view.findViewById(R.id.toolbar_activity_browsing_stories_user_name);
+        TextView fullUserName = (TextView) view.findViewById(R.id.toolbar_activity_browsing_stories_full_name);
+        ImageView avatar = (ImageView) view.findViewById(R.id.toolbar_activity_browsing_stories_avatar);
+        User user = StoryflowApplication.account().getUser();
+        userName.setText(user.getUsername());
+        fullUserName.setText(user.getFullUserName());
+        Glide
+                .with(this)
+                .load(user.getProfileImage().getImageUrl())
+                .bitmapTransform(new CropCircleTransformation(this))
+                .dontAnimate()
+                .into(avatar);
     }
 
     private void initLaunchAnimation(Bundle savedInstanceState) {

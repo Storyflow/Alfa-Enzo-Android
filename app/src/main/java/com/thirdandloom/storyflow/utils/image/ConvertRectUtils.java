@@ -3,8 +3,10 @@ package com.thirdandloom.storyflow.utils.image;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.thirdandloom.storyflow.utils.BaseUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 
 /**
  * #define delimiter = 'x'
@@ -19,13 +21,20 @@ public class ConvertRectUtils extends BaseUtils {
         return getRectString(roundRect);
     }
 
+    @Nullable
     public static Rect getRect(@NonNull String rectString) {
-        String[] splitedString = rectString.split(DELIMITER);
-        int x = Integer.valueOf(splitedString[0]);
-        int y = Integer.valueOf(splitedString[1]);
-        int width = Integer.valueOf(splitedString[2]);
-        int height = Integer.valueOf(splitedString[3]);
-        return new Rect(x, y, x+width, y+height);
+        String[] splitString = rectString.split(DELIMITER);
+        try {
+            int x = Integer.valueOf(splitString[0]);
+            int y = Integer.valueOf(splitString[1]);
+            int width = Integer.valueOf(splitString[2]);
+            int height = Integer.valueOf(splitString[3]);
+            return new Rect(x, y, x+width, y+height);
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            Timber.e(e, e.getMessage());
+        }
+
+        return null;
     }
 
     private static String getRectString(Rect roundRect) {

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/transparent"
+              tools:background="@color/white">
+
+    <com.thirdandloom.storyflow.views.RoundSquareImageView
+        android:id="@+id/toolbar_activity_browsing_stories_avatar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/sizeSmall"
+        android:paddingRight="@dimen/sizeSmall"
+        android:paddingBottom="@dimen/sizeSmall"
+        />
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/toolbar_activity_browsing_stories_full_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:textColor="@color/greyDark"
+            android:textSize="@dimen/textSizeNormal"
+            tools:text="Full name"
+            />
+        <TextView
+            android:id="@+id/toolbar_activity_browsing_stories_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="top"
+            android:textColor="@color/greyLight"
+            android:textSize="@dimen/textSizeNormal"
+            tools:text="User name"
+            />
+    </LinearLayout>
+
+    <View android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="1"
+        />
+
+    <ImageView
+        android:id="@+id/toolbar_activity_browsing_stories_decrease_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/drilldown"
+        android:layout_gravity="center"
+        android:scaleType="center"
+        android:padding="@dimen/sizeSmall"
+        />
+
+    <ImageView
+        android:id="@+id/toolbar_activity_browsing_stories_increase_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/minus_icon"
+        android:layout_gravity="center"
+        android:scaleType="center"
+        android:padding="@dimen/sizeSmall"
+        />
+
+    <ImageView
+        android:id="@+id/toolbar_activity_browsing_stories_plus_stories_chooser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/chooser"
+        android:layout_gravity="center"
+        android:scaleType="center"
+        android:padding="@dimen/sizeSmall"
+        android:layout_marginRight="@dimen/sizeMedium"
+        />
+
+</LinearLayout>

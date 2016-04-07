@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.models;
 
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 import com.thirdandloom.storyflow.utils.image.ConvertRectUtils;
@@ -16,6 +17,7 @@ public class CroppedImage extends BaseModel {
         return imageUrl;
     }
 
+    @Nullable
     public Rect getRect() {
         return ConvertRectUtils.getRect(rect);
     }

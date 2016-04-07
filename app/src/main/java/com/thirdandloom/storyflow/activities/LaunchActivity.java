@@ -45,8 +45,6 @@ public class LaunchActivity extends BaseActivity {
     private void signInWithSavedAccount() {
         String password = StoryflowApplication.account().getPassword();
         String email = StoryflowApplication.account().getUser().getEmail();
-        //email = "ycycyv@xycy.hvvy";
-        //password = "chvhvhvhvhuvuv";
         if (!TextUtils.isEmpty(password)) {
             signIn(email, password);
         } else {
