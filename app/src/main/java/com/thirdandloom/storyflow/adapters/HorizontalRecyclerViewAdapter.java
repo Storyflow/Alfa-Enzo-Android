@@ -1,45 +1,35 @@
 package com.thirdandloom.storyflow.adapters;
 
+import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.utils.ColorUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import rx.functions.Action3;
 
-import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
-public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<HorizontalRecyclerViewAdapter.Holder> {
+public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<HorizontalRecyclerViewAdapter.StoryHolder> {
 
     public enum ItemWidth {
         Large, Small
     }
 
     private ItemWidth itemWidth = ItemWidth.Large;
-
-    private static final int COUNT = 100;
-    private List<Integer> items;
-    private Context context;
-
     private Action3<Integer, Integer, View> onVerticalScroll;
 
-    public HorizontalRecyclerViewAdapter(Context context) {
-        items = new ArrayList<>(COUNT);
-        for (int i = 0; i < COUNT; i++) {
-            items.add(i);
-        }
-        this.context = context;
-    }
+    public HorizontalRecyclerViewAdapter() {
 
-    public void setItemWidth(ItemWidth itemWidth) {
-        this.itemWidth = itemWidth;
     }
 
     public ItemWidth getItemWidth() {
@@ -78,43 +68,52 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     }
 
     @Override
-    public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_main_horizontal, parent, false);
-        Holder holder = new Holder(v);
-        holder.onVerticalScrollChanged(onVerticalScroll);
-        return holder;
+        StoryHolder storyHolder = new StoryHolder(v);
+        storyHolder.onVerticalScrollChanged(onVerticalScroll);
+        return storyHolder;
     }
 
     @Override
-    public void onBindViewHolder(Holder holder, int position) {
-
-        View itemView = holder.itemView;
+    public void onBindViewHolder(StoryHolder storyHolder, int position) {
+        View itemView = storyHolder.itemView;
         ViewGroup.LayoutParams params = itemView.getLayoutParams();
         params.width = getItemWidthPixel();
         itemView.setLayoutParams(params);
 
-        holder.textView.setText(String.format("%d", position));
+        storyHolder.textView.setText(String.format("%d", position));
 
-        RecyclerView.Adapter<HorizontalRecyclerViewAdapter.SmallHolder> adapter = new RecyclerView.Adapter<HorizontalRecyclerViewAdapter.SmallHolder>() {
+        RecyclerView.Adapter<StoryContentHolder> adapter = new RecyclerView.Adapter<StoryContentHolder>() {
             @Override
-            public HorizontalRecyclerViewAdapter.SmallHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            public StoryContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_horizontal_story, parent, false);
-                SmallHolder holder = new SmallHolder(v);
+                ViewGroup.LayoutParams params = v.getLayoutParams();
+                params.width = getItemWidthPixel();
+                v.setLayoutParams(params);
+                StoryContentHolder holder = new StoryContentHolder(v);
                 return holder;
             }
 
             @Override
-            public void onBindViewHolder(HorizontalRecyclerViewAdapter.SmallHolder holder, int position) {
-                Integer number = items.get(position);
-                holder.textView.setText(number.toString());
+            public void onBindViewHolder(StoryContentHolder holder, int position) {
+                View itemView = holder.itemView;
+                ViewGroup.LayoutParams params = itemView.getLayoutParams();
+                params.width = getItemWidthPixel();
+                itemView.setLayoutParams(params);
+
+                Random random = new Random();
+                String imageUrl = testImages.get(random.nextInt(testImages.size()));
+
+                Glide.with(StoryflowApplication.getInstance()).load(imageUrl).into(holder.imageView);
             }
 
             @Override
             public int getItemCount() {
-                return items.size();
+                return testImages.size();
             }
         };
-        holder.recyclerView.setAdapter(adapter);
+        storyHolder.recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
@@ -123,16 +122,16 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         return Integer.MAX_VALUE;
     }
 
-    public static class Holder extends RecyclerView.ViewHolder {
+    public static class StoryHolder extends RecyclerView.ViewHolder {
 
         private TextView textView;
         private RecyclerView recyclerView;
 
         private Action3<Integer, Integer, View> onVerticalScroll;
 
-        public Holder(View itemView) {
+        public StoryHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.text_view);
+            textView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
             recyclerView = (RecyclerView) itemView.findViewById(R.id.recycler_item_recyclerview);
             LinearLayoutManager manager = new LinearLayoutManager(itemView.getContext());
             manager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -147,7 +146,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
                     scrollPosition += dy;
-                    if (onVerticalScroll != null) onVerticalScroll.call(scrollPosition, dy, Holder.this.itemView);
+                    if (onVerticalScroll != null) onVerticalScroll.call(scrollPosition, dy, StoryHolder.this.itemView);
                 }
 
                 @Override
@@ -162,11 +161,26 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         }
     }
 
-    public static class SmallHolder extends RecyclerView.ViewHolder {
+    public static class StoryContentHolder extends RecyclerView.ViewHolder {
         TextView textView;
-        public SmallHolder(View itemView) {
+        ImageView imageView;
+        public StoryContentHolder(View itemView) {
             super(itemView);
-            textView = (TextView)itemView.findViewById(R.id.text_view);
+            textView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
+            imageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_image_view);
         }
     }
+
+    private static final List<String> testImages = Arrays.asList("http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/jcrop/demos/demo_files/image1.jpg",
+            "http://www.keenthemes.com/preview/conquer/assets/plugins/jcrop/demos/demo_files/image2.jpg",
+            "http://7-themes.com/data_images/out/14/6817018-image.jpg",
+            "http://www.spacew.com/gallery/image006169.jpg",
+            "http://macroclub.ru/gallery/data/552/IMGP0171_1.jpg",
+            "http://ichef.bbci.co.uk/wwfeatures/624_351/images/live/p0/3n/x3/p03nx374.jpg",
+            "http://wpinprogress.com/demo/voobis/wp-content/uploads/2012/11/image.jpg",
+            "http://www.maisonducolombier.com/images/portfolio/lieu/image-20.jpg",
+            "http://fotoshkola.net/system/my_photos/0002/1144/image-normal.jpg",
+            "https://assets.answersingenesis.org/img/cms/content/contentnode/image/what-the-image-of-god-isnt.jpg",
+            "http://news.ponycanyon.co.jp/wp/wp-content/uploads/2016/02/image-2-320x316.jpeg",
+            "http://s19.postimg.org/ypsrfx6cz/image.jpg");
 }

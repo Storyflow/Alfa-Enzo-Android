@@ -97,7 +97,7 @@ public class BrowseStoriesActivity extends BaseActivity {
         horizontalRecyclerView.setHasFixedSize(true);
         horizontalRecyclerView.setLayoutManager(layoutManager);
 
-        HorizontalRecyclerViewAdapter adapter = new HorizontalRecyclerViewAdapter(this);
+        HorizontalRecyclerViewAdapter adapter = new HorizontalRecyclerViewAdapter();
         horizontalRecyclerView.setAdapter(adapter);
         updateOffset(adapter.getItemCount() / 2);
     }

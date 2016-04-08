@@ -6,20 +6,22 @@
               android:layout_height="match_parent"
               android:layout_marginRight="@dimen/sizeTiny"
               android:layout_marginLeft="@dimen/sizeTiny"
-              android:background="@android:color/darker_gray">
+              tools:background="@color/greyDark"
+              android:background="@color/transparent">
 
     <TextView
-        android:id="@+id/text_view"
+        android:id="@+id/adapter_recycler_item_horizontal_story_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"/>
+        android:gravity="center"
+        android:padding="@dimen/sizeXLarge"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_item_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@android:color/holo_red_dark">
+        android:background="@color/transparent"
+        tools:background="@android:color/holo_red_dark">
 
     </android.support.v7.widget.RecyclerView>
 
