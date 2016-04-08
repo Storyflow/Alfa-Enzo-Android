@@ -48,7 +48,7 @@
         />
 
     <ImageView
-        android:id="@+id/toolbar_activity_browsing_stories_decrease_size"
+        android:id="@+id/toolbar_activity_browsing_stories_change_period"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/drilldown"

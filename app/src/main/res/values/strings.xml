@@ -50,5 +50,8 @@
     <string name="set_profile_picture">Set Profile Picture</string>
     <string name="move_and_scale_photo_to_fit">Move and Scale photo to fit</string>
     <string name="error_while_loading_image">Error while uploading image.</string>
+    <string name="daily">DAILY</string>
+    <string name="monthly">MONTHLY</string>
+    <string name="yearly">YEARLY</string>
 
 </resources>
