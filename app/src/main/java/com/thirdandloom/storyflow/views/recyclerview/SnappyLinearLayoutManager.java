@@ -1,6 +1,5 @@
 package com.thirdandloom.storyflow.views.recyclerview;
 
-
 import android.content.Context;
 import android.graphics.PointF;
 import android.hardware.SensorManager;
@@ -164,9 +163,9 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements IS
         @Override
         protected int calculateTimeForScrolling(int dx) {
             float proportion = (float) dx / distanceInPixels;
-            int scrolligTime = (int) (duration * proportion);
+            int scrollTime = (int) (duration * proportion);
 
-            return scrolligTime;
+            return scrollTime;
         }
 
         @Override
@@ -176,7 +175,7 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements IS
             }
 
             float speed = (100.f - velocityX/100.f)/displayMetrics.densityDpi;
-            return speed;
+            return (float) Math.max(speed, 0.01);
         }
 
         @Override
@@ -202,6 +201,7 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements IS
 
             int viewWidth = viewEnd - viewStart;
             dtToFit = (boxEnd - viewWidth)/2 + dtToFit ;
+
             return dtToFit;
         }
     }
