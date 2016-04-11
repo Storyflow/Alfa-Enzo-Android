@@ -9,6 +9,7 @@ import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
@@ -79,12 +80,15 @@ public class BrowseStoriesActivity extends BaseActivity {
     private void initPeriodChooser() {
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_yearly).setOnClickListener(v -> {
             onChangePeriodClicked();
+            onPeriodChanged(HorizontalRecyclerViewAdapter.ItemType.Yearly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_monthly).setOnClickListener(v -> {
             onChangePeriodClicked();
+            onPeriodChanged(HorizontalRecyclerViewAdapter.ItemType.Monthly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_daily).setOnClickListener(v -> {
             onChangePeriodClicked();
+            onPeriodChanged(HorizontalRecyclerViewAdapter.ItemType.Daily);
         });
         periodChooserView.getLayoutParams().height = 1;
         periodChooserView.requestLayout();
@@ -97,9 +101,12 @@ public class BrowseStoriesActivity extends BaseActivity {
         horizontalRecyclerView.setHasFixedSize(true);
         horizontalRecyclerView.setLayoutManager(layoutManager);
 
-        HorizontalRecyclerViewAdapter adapter = new HorizontalRecyclerViewAdapter();
+        HorizontalRecyclerViewAdapter adapter = new HorizontalRecyclerViewAdapter(this);
         horizontalRecyclerView.setAdapter(adapter);
-        updateOffset(adapter.getItemCount() / 2);
+        int centerPosition = adapter.getItemCount() / 2;
+        adapter.setCenterPosition(centerPosition);
+        adapter.setItemType(HorizontalRecyclerViewAdapter.ItemType.Daily);
+        updateOffset(centerPosition);
     }
 
     private void onLoadedStories(Story.WrapList stories) {
@@ -107,6 +114,13 @@ public class BrowseStoriesActivity extends BaseActivity {
         Timber.d("stories 123");
         Timber.d("stories 312");
         Timber.d("stories 214");
+    }
+
+    private void onPeriodChanged(HorizontalRecyclerViewAdapter.ItemType itemType) {
+        int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
+        getHorizontalAdapter().setCenterPosition(position);
+        getHorizontalAdapter().setItemType(itemType);
+        getHorizontalAdapter().notifyDataSetChanged();
     }
 
     private void onChangePeriodClicked() {
@@ -127,16 +141,11 @@ public class BrowseStoriesActivity extends BaseActivity {
     }
 
     private void onChangeSizeClicked(View view) {
-        HorizontalRecyclerViewAdapter adapter = (HorizontalRecyclerViewAdapter)horizontalRecyclerView.getAdapter();
+        HorizontalRecyclerViewAdapter adapter = getHorizontalAdapter();
         adapter.changeItemWidth();
         adapter.notifyDataSetChanged();
 
-        LinearLayoutManager layoutManager = (LinearLayoutManager) horizontalRecyclerView.getLayoutManager();
-        int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
-        int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
-        int position = lastVisiblePosition - firstVisiblePosition == 0
-                ? firstVisiblePosition
-                : firstVisiblePosition + 1;
+        int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
         updateOffset(position);
 
         ImageView imageView = (ImageView) view;
@@ -145,10 +154,14 @@ public class BrowseStoriesActivity extends BaseActivity {
 
     private void updateOffset(int position) {
         LinearLayoutManager layoutManager = (LinearLayoutManager) horizontalRecyclerView.getLayoutManager();
-        HorizontalRecyclerViewAdapter adapter = (HorizontalRecyclerViewAdapter)horizontalRecyclerView.getAdapter();
+        HorizontalRecyclerViewAdapter adapter = getHorizontalAdapter();
 
-        int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - HorizontalRecyclerViewAdapter.getItemMarging()*2;
+        int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - HorizontalRecyclerViewAdapter.getItemMargin()*2;
         layoutManager.scrollToPositionWithOffset(position, offset/2);
+    }
+
+    private HorizontalRecyclerViewAdapter getHorizontalAdapter() {
+        return (HorizontalRecyclerViewAdapter)horizontalRecyclerView.getAdapter();
     }
 
     @Override
@@ -179,7 +192,7 @@ public class BrowseStoriesActivity extends BaseActivity {
                 .into(avatar);
     }
 
-    static final Map<Integer, Integer> toolbarSizeImage;
+    private static final Map<Integer, Integer> toolbarSizeImage;
     static {
         Map<Integer, Integer> map = new HashMap<>();
         map.put(HorizontalRecyclerViewAdapter.ItemWidth.Small.ordinal(), R.drawable.plus_icon);

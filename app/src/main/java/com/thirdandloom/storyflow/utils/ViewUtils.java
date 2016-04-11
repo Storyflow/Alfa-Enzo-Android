@@ -27,6 +27,13 @@ public class ViewUtils extends BaseUtils{
         setHidden(view, false);
     }
 
+    public static void applyWidth(View itemView, int widthPixel) {
+        ViewGroup.LayoutParams params = itemView.getLayoutParams();
+        if (params.width != widthPixel) {
+            params.width = widthPixel;
+            itemView.setLayoutParams(params);
+        }
+    }
 
     public static WindowManager.LayoutParams getFullScreenLayoutParams() {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();

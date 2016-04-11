@@ -10,11 +10,28 @@
               android:background="@color/transparent">
 
     <TextView
+        android:id="@+id/adapter_recycler_item_horizontal_story_bold_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/sizeMedium"
+        android:textSize="@dimen/textSizeNormal"
+        android:textColor="@color/greyDark"
+        android:gravity="center"
+        tools:textColor="@color/white"
+        tools:text="Next Year"
+        />
+
+    <TextView
         android:id="@+id/adapter_recycler_item_horizontal_story_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:padding="@dimen/sizeXLarge"/>
+        android:paddingBottom="@dimen/sizeMedium"
+        android:textSize="@dimen/textSizeTiny"
+        android:textColor="@color/greyDark"
+        tools:textColor="@color/white"
+        tools:text="2017"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_item_recyclerview"

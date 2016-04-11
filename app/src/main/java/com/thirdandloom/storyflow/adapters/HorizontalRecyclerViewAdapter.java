@@ -3,10 +3,12 @@ package com.thirdandloom.storyflow.adapters;
 import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.utils.ColorUtils;
+import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.ViewUtils;
 import rx.functions.Action3;
 
+import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -25,15 +29,30 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         Large, Small
     }
 
+    public enum ItemType {
+        Daily, Monthly, Yearly
+    }
+
     private ItemWidth itemWidth = ItemWidth.Large;
+    private ItemType itemType = ItemType.Daily;
     private Action3<Integer, Integer, View> onVerticalScroll;
+    private Context context;
+    private int centerPosition;
 
-    public HorizontalRecyclerViewAdapter() {
-
+    public HorizontalRecyclerViewAdapter(Context context) {
+        this.context = context;
     }
 
     public ItemWidth getItemWidth() {
         return itemWidth;
+    }
+
+    public void setCenterPosition(int centerPosition) {
+        this.centerPosition = centerPosition;
+    }
+
+    public void setItemType(ItemType itemType) {
+        this.itemType = itemType;
     }
 
     public void changeItemWidth() {
@@ -47,7 +66,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         }
     }
 
-    public static int getItemMarging() {
+    public static int getItemMargin() {
         return StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.sizeTiny);
     }
 
@@ -60,7 +79,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
                 return DeviceUtils.getDisplayWidth()/2;
         }
 
-        return 0;
+        throw new UnsupportedOperationException("unsupported itemWidth is using");
     }
 
     public void onVerticalScrollChanged(Action3<Integer, Integer, View> onScroll) {
@@ -77,35 +96,24 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
     @Override
     public void onBindViewHolder(StoryHolder storyHolder, int position) {
-        View itemView = storyHolder.itemView;
-        ViewGroup.LayoutParams params = itemView.getLayoutParams();
-        params.width = getItemWidthPixel();
-        itemView.setLayoutParams(params);
-
-        storyHolder.textView.setText(String.format("%d", position));
+        ViewUtils.applyWidth(storyHolder.itemView, getItemWidthPixel());
+        updateDate(storyHolder, position);
 
         RecyclerView.Adapter<StoryContentHolder> adapter = new RecyclerView.Adapter<StoryContentHolder>() {
             @Override
             public StoryContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_horizontal_story, parent, false);
-                ViewGroup.LayoutParams params = v.getLayoutParams();
-                params.width = getItemWidthPixel();
-                v.setLayoutParams(params);
                 StoryContentHolder holder = new StoryContentHolder(v);
                 return holder;
             }
 
             @Override
             public void onBindViewHolder(StoryContentHolder holder, int position) {
-                View itemView = holder.itemView;
-                ViewGroup.LayoutParams params = itemView.getLayoutParams();
-                params.width = getItemWidthPixel();
-                itemView.setLayoutParams(params);
-
                 Random random = new Random();
                 String imageUrl = testImages.get(random.nextInt(testImages.size()));
 
-                Glide.with(StoryflowApplication.getInstance()).load(imageUrl).into(holder.imageView);
+                Glide.with(context).load(imageUrl).into(holder.imageView);
+                holder.textView.setText(imageUrl);
             }
 
             @Override
@@ -114,7 +122,29 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
             }
         };
         storyHolder.recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
+    }
+
+    private void updateDate(StoryHolder storyHolder, int position) {
+        Calendar calendar = DateUtils.todayCalendar();
+        int offset = position - centerPosition;
+        switch (itemType) {
+            case Daily:
+                calendar.add(Calendar.DAY_OF_YEAR, offset);
+                DateUtils.getDailyRepresentation(calendar, storyHolder::setDateRepresentation);
+                break;
+            case Monthly:
+                calendar.add(Calendar.MONTH, offset);
+                DateUtils.getMonthlyRepresentation(calendar, storyHolder::setDateRepresentation);
+                break;
+            case Yearly:
+                calendar.add(Calendar.YEAR, offset);
+                DateUtils.getYearlyRepresentation(calendar, storyHolder::setDateRepresentation);
+                break;
+            default:
+                throw new UnsupportedOperationException("unsupported itemType is using");
+        }
+
     }
 
     @Override
@@ -124,15 +154,17 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
     public static class StoryHolder extends RecyclerView.ViewHolder {
 
-        private TextView textView;
+        private TextView dateTextView;
+        private TextView boldDateTextView;
         private RecyclerView recyclerView;
 
         private Action3<Integer, Integer, View> onVerticalScroll;
 
         public StoryHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
+            dateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
             recyclerView = (RecyclerView) itemView.findViewById(R.id.recycler_item_recyclerview);
+            boldDateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_bold_text_view);
             LinearLayoutManager manager = new LinearLayoutManager(itemView.getContext());
             manager.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(manager);
@@ -159,6 +191,11 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         public void onVerticalScrollChanged(Action3<Integer, Integer, View> onScroll) {
             this.onVerticalScroll = onScroll;
         }
+
+        public void setDateRepresentation(String boldText, String formattedDate) {
+            dateTextView.setText(formattedDate);
+            boldDateTextView.setText(boldText);
+        }
     }
 
     public static class StoryContentHolder extends RecyclerView.ViewHolder {
@@ -171,9 +208,31 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         }
     }
 
-    private static final List<String> testImages = Arrays.asList("http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/jcrop/demos/demo_files/image1.jpg",
+    private static Date getDateForPosition(int position, int centerPosition, ItemType itemType) {
+        Calendar calendar = DateUtils.todayCalendar();
+        int offset = position - centerPosition;
+        switch (itemType) {
+            case Daily:
+                calendar.add(Calendar.DAY_OF_YEAR, offset);
+                break;
+            case Monthly:
+                calendar.add(Calendar.MONTH, offset);
+                break;
+            case Yearly:
+                calendar.add(Calendar.YEAR, offset);
+                break;
+            default:
+                throw new UnsupportedOperationException("unsupported itemType is using");
+        }
+
+        return calendar.getTime();
+    }
+
+
+    private static final List<String> testImages = Arrays.asList(
+            "http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/jcrop/demos/demo_files/image1.jpg",
             "http://www.keenthemes.com/preview/conquer/assets/plugins/jcrop/demos/demo_files/image2.jpg",
-            "http://7-themes.com/data_images/out/14/6817018-image.jpg",
+            "http://wowslider.com/sliders/demo-85/data1/images/southtyrol350698.jpg",
             "http://www.spacew.com/gallery/image006169.jpg",
             "http://macroclub.ru/gallery/data/552/IMGP0171_1.jpg",
             "http://ichef.bbci.co.uk/wwfeatures/624_351/images/live/p0/3n/x3/p03nx374.jpg",
