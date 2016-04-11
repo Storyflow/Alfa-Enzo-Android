@@ -9,6 +9,7 @@ import com.thirdandloom.storyflow.utils.ViewUtils;
 import rx.functions.Action3;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -163,8 +164,14 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         public StoryHolder(View itemView) {
             super(itemView);
             dateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
-            recyclerView = (RecyclerView) itemView.findViewById(R.id.recycler_item_recyclerview);
+            recyclerView = (RecyclerView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_recycler_view);
             boldDateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_bold_text_view);
+            SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)itemView.findViewById(R.id.adapter_recycler_item_horizontal_refresh_layout);
+            refreshLayout.setColorSchemeResources(R.color.yellow, R.color.grey);
+            refreshLayout.setOnRefreshListener(() -> {
+                refreshLayout.setRefreshing(false);
+            });
+
             LinearLayoutManager manager = new LinearLayoutManager(itemView.getContext());
             manager.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(manager);

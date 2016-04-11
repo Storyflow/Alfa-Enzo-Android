@@ -33,13 +33,20 @@
         tools:text="2017"
         />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_item_recyclerview"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/adapter_recycler_item_horizontal_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        tools:background="@android:color/holo_red_dark">
+        android:layout_height="wrap_content">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/adapter_recycler_item_horizontal_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            tools:background="@android:color/holo_red_dark">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

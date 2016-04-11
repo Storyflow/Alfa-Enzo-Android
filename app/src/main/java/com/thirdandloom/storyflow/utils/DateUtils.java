@@ -1,7 +1,11 @@
 package com.thirdandloom.storyflow.utils;
 
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.utils.models.Time;
+
 import rx.functions.Action2;
+import rx.functions.Func0;
+import rx.functions.Func2;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -9,8 +13,28 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class DateUtils extends BaseUtils {
+    public static final long MY_IN_MS = 1000;
+    public static final long MS_IN_SEC = 1000;
+    public static final long SEC_IN_MIN = 60;
+    public static final long MIN_IN_HOUR = 60;
+    public static final long HOUR_IN_DAY = 24;
+    public static final long DAY_IN_WEEK = 7;
+    public static final long MS_IN_MIN = SEC_IN_MIN * MS_IN_SEC;
+    public static final long MS_IN_HOUR = MIN_IN_HOUR * MS_IN_MIN;
+    public static final long SEC_IN_HOUR = MIN_IN_HOUR * SEC_IN_MIN;
+    public static final long MS_IN_DAY = HOUR_IN_DAY * MS_IN_HOUR;
+    public static final long SEC_IN_DAY = HOUR_IN_DAY * SEC_IN_HOUR;
+    public static final long MS_IN_WEEK = DAY_IN_WEEK * MS_IN_DAY;
+
+    public static final String DATE_FRIENDLY_FORMAT = "MMM d, yyyy";
+    public static final String SQLITE_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String HH_MM = "HH:mm";
+    public static final String HH_MM_AM_PM = "h:mm a";
+    public static final String HH_MM_SS = "HH\nmm:ss";
+
     private static final int NOW = 0;
     private static final int NOW_NEXT = NOW + 1;
     private static final int NOW_PREVIOUS = NOW - 1;
@@ -86,40 +110,75 @@ public class DateUtils extends BaseUtils {
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar;
     }
+    public static String getTimezoneId() {
+        return TimeZone.getDefault().getID();
+    }
+
+    public static double millisToSeconds(long milliseconds) {
+        return milliseconds / MS_IN_SEC;
+    }
 
     public static void getMonthlyRepresentation(Calendar checkCalendar, Action2<String, String> representation) {
-        representation(checkCalendar, Calendar.MONTH, monthRelativeMap, monthMap, "yyyy", representation);
+        Calendar todayCalendar = todayCalendar();
+
+        Time todayTime = new Time(todayCalendar);
+        Time compareTime = new Time(checkCalendar);
+
+        String boldText;
+        if (compareTime.getMonthStart().equals(todayTime.getMonthStart())) {
+            boldText = getResources().getString(monthRelativeMap.get(NOW));
+        } else if (compareTime.getNextMonthDayStart().equals(todayTime.getMonthStart())) {
+            boldText = getResources().getString(monthRelativeMap.get(NOW_PREVIOUS));
+        } else if (todayTime.getNextMonthDayStart().equals(compareTime.getMonthStart())) {
+            boldText = getResources().getString(monthRelativeMap.get(NOW_NEXT));
+        } else {
+            boldText = getResources().getString(monthMap.get(checkCalendar.get(Calendar.MONTH)));
+        }
+
+        String formattedDate = getDateString("yyyy", checkCalendar.getTime());
+        representation.call(boldText, formattedDate);
     }
 
     public static void getYearlyRepresentation(Calendar checkCalendar, Action2<String, String> representation) {
-        representation(checkCalendar, Calendar.YEAR, yearRelativeMap, null, "yyyy", representation);
+        Calendar todayCalendar = todayCalendar();
+
+        Time todayTime = new Time(todayCalendar);
+        Time compareTime = new Time(checkCalendar);
+
+        String boldText;
+        if (compareTime.getYearStart().equals(todayTime.getYearStart())) {
+            boldText = getResources().getString(yearRelativeMap.get(NOW));
+        } else if (compareTime.getNextYearStart().equals(todayTime.getYearStart())) {
+            boldText = getResources().getString(yearRelativeMap.get(NOW_PREVIOUS));
+        } else if (todayTime.getNextYearStart().equals(compareTime.getYearStart())) {
+            boldText = getResources().getString(yearRelativeMap.get(NOW_NEXT));
+        } else {
+            boldText = String.valueOf(checkCalendar.get(Calendar.YEAR));
+        }
+
+        String formattedDate = getDateString("yyyy", checkCalendar.getTime());
+        representation.call(boldText, formattedDate);
     }
 
     public static void getDailyRepresentation(Calendar checkCalendar, Action2<String, String> representation) {
-        representation(checkCalendar, Calendar.DAY_OF_WEEK, dayRelativeMap, weekDayMap, "MM.dd.yyyy", representation);
-    }
-
-    private static void representation(Calendar checkCalendar, int field, Map<Integer, Integer> relativeMap, Map<Integer, Integer> resourcesMap, String dateFormatPattern, Action2<String, String> representation) {
         Calendar todayCalendar = todayCalendar();
-        int now = todayCalendar.get(field);
-        int checked = checkCalendar.get(field);
-        int deltaMonth = checked - now;
+
+        Time todayTime = new Time(todayCalendar);
+        Time compareTime = new Time(checkCalendar);
 
         String boldText;
-        if (same(todayCalendar, checkCalendar) && relativeMap.containsKey(deltaMonth)) {
-            boldText = getResources().getString(relativeMap.get(deltaMonth));
-        } else if (resourcesMap != null) {
-            boldText = getResources().getString(resourcesMap.get(checkCalendar.get(field)));
+        if (compareTime.getDayStart().equals(todayTime.getDayStart())) {
+            boldText = getResources().getString(dayRelativeMap.get(NOW));
+        } else if (compareTime.getNextDayStart().equals(todayTime.getDayStart())) {
+            boldText = getResources().getString(dayRelativeMap.get(NOW_PREVIOUS));
+        } else if (todayTime.getNextDayStart().equals(compareTime.getDayStart())) {
+            boldText = getResources().getString(dayRelativeMap.get(NOW_NEXT));
         } else {
-            boldText = String.valueOf(checked);
+            boldText = getResources().getString(weekDayMap.get(checkCalendar.get(Calendar.DAY_OF_WEEK)));
         }
 
-        representation.call(boldText, getDateString(dateFormatPattern, checkCalendar.getTime()));
-    }
-
-    private static boolean same(Calendar todayCalendar, Calendar checkCalendar) {
-        return todayCalendar.get(Calendar.YEAR) == checkCalendar.get(Calendar.YEAR)
-                && todayCalendar.get(Calendar.DAY_OF_YEAR) == checkCalendar.get(Calendar.DAY_OF_YEAR);
+        String formattedDate = getDateString("MM.dd.yyyy", checkCalendar.getTime());
+        representation.call(boldText, formattedDate);
     }
 
     public static String getDateString(String pattern, Date date) {
