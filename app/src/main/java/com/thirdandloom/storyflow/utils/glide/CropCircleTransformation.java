@@ -77,8 +77,7 @@ public class CropCircleTransformation implements Transformation<Bitmap> {
 
     @Override
     public String getId() {
-        return "CropCircleTransformation()"
-                + ", UUID=" + String.valueOf(UUID.randomUUID().hashCode());
+        return CropCircleTransformation.class.getSimpleName();
     }
 
 }

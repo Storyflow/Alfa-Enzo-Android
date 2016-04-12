@@ -5,10 +5,24 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <LinearLayout  android:layout_width="match_parent"
-                   android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical">
+
         <include layout="@layout/layout_toolbar"
             />
+
+        <include
+            android:id="@+id/activity_browse_stories_period_chooser"
+            layout="@layout/layout_activity_browse_stories_period_chooser"
+            />
+
+        <com.thirdandloom.storyflow.views.recyclerview.SnappyRecyclerView
+            android:id="@+id/activity_browse_stories_horizontal_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </com.thirdandloom.storyflow.views.recyclerview.SnappyRecyclerView>
 
     </LinearLayout>
 

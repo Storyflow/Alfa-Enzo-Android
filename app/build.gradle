@@ -41,12 +41,14 @@ android {
         }
     }
     productFlavors {
-        qa {
-            applicationId 'com.thirdandloom.storyflow.qa'
-        }
-        dev {
-            applicationId 'com.thirdandloom.storyflow.dev'
-        }
+        qa {}
+        dev {}
+    }
+
+    enforceUniquePackageName false
+
+    lintOptions {
+        abortOnError false
     }
 }
 
@@ -71,6 +73,5 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support:support-v4:19.1.0'
     compile 'com.commit451:PhotoView:1.2.5'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     compile files ('libs/guava-19.0.jar')
 }

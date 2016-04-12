@@ -7,6 +7,7 @@
     <color name="greyDark">#181818</color>
     <color name="greyLight">#7E828F</color>
     <color name="greyLighter">#999999</color>
+    <color name="greyLightest">#DFDFDF</color>
     <color name="greyMostLightest">#E6E6E6</color>
 
     <color name="white">#FFFFFF</color>

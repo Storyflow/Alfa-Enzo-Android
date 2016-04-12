@@ -3,7 +3,6 @@ package com.thirdandloom.storyflow.activities;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.activities.registration.RegistrationActivity;
-import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.SpannableUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -18,13 +17,13 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
 
-public class SignUpActivity extends BaseActivity {
+public class WelcomeActivity extends BaseActivity {
     private View signUpView;
     private View haveAccountView;
     private TextView privacyTextView;
 
     public static Intent newInstance() {
-        return new Intent(StoryflowApplication.getInstance(), SignUpActivity.class);
+        return new Intent(StoryflowApplication.getInstance(), WelcomeActivity.class);
     }
 
     @Override

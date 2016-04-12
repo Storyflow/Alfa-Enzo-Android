@@ -1,14 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:titleTextColor="@color/grey"
-    app:theme="@style/Toolbar"
-    android:background="@color/white"
-    tools:title="Login">
 
-</android.support.v7.widget.Toolbar>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top"
+              android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleTextColor="@color/grey"
+        app:theme="@style/Toolbar"
+        android:background="@color/white"
+        tools:title="Login">
+
+    </android.support.v7.widget.Toolbar>
+
+    <View android:layout_width="match_parent"
+          android:layout_height="1px"
+          android:background="@color/greyLightest">
+    </View>
+
+</LinearLayout>

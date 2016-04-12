@@ -17,6 +17,7 @@ import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.ToolbarWidgetWrapper;
 import android.view.WindowManager;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private QuickAlertController quickAlert;
     private ProgressBarController progressBar;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,12 +90,16 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private void findToolBar() {
         if (hasToolBar()) {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
             if (toolbar == null) throw new UnsupportedOperationException("If activity has toolbar, u have to include layout_toolbar in content view");
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             toolbar.setNavigationOnClickListener(v -> onUpButtonClicked());
         }
+    }
+
+    protected Toolbar getToolbar() {
+        return toolbar;
     }
 
     protected abstract boolean hasToolBar();

@@ -51,4 +51,41 @@
     <string name="move_and_scale_photo_to_fit">Move and Scale photo to fit</string>
     <string name="error_while_loading_image">Error while uploading image.</string>
 
+    <string name="daily">DAILY</string>
+    <string name="monthly">MONTHLY</string>
+    <string name="yearly">YEARLY</string>
+
+    <string name="this_month">THIS MONTH</string>
+    <string name="next_month">NEXT MONTH</string>
+    <string name="previous_month">PREVIOUS MONTH</string>
+
+    <string name="this_year">THIS YEAR</string>
+    <string name="next_year">NEXT YEAR</string>
+    <string name="last_year">LAST YEAR</string>
+
+    <string name="today">TODAY</string>
+    <string name="tomorrow">TOMORROW</string>
+    <string name="yesterday">YESTERDAY</string>
+
+    <string name="january">JANUARY</string>
+    <string name="february">FEBRUARY</string>
+    <string name="march">MARCH</string>
+    <string name="april">APRIL</string>
+    <string name="may">MAY</string>
+    <string name="june">JUNE</string>
+    <string name="july">JULY</string>
+    <string name="august">AUGUST</string>
+    <string name="september">SEPTEMBER</string>
+    <string name="october">OCTOBER</string>
+    <string name="november">NOVEMBER</string>
+    <string name="december">DECEMBER</string>
+
+    <string name="monday">MONDAY</string>
+    <string name="tuesday">TUESDAY</string>
+    <string name="wednesday">WEDNESDAY</string>
+    <string name="thursday">THURSDAY</string>
+    <string name="friday">FRIDAY</string>
+    <string name="saturday">SATURDAY</string>
+    <string name="sunday">SUNDAY</string>
+
 </resources>

@@ -170,4 +170,8 @@ public class User extends BaseModel {
     public void setProfileImage(CroppedImage profileImage) {
         this.profileImage = profileImage;
     }
+
+    public String getFullUserName() {
+        return firstName + " " + lastName;
+    }
 }

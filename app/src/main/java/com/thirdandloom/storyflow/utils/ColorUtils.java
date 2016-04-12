@@ -2,7 +2,14 @@ package com.thirdandloom.storyflow.utils;
 
 import android.graphics.Color;
 
+import java.util.Random;
+
 public class ColorUtils extends BaseUtils {
+
+    public static int getRandomColor() {
+        Random random = new Random();
+        return Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+    }
 
     public static int getNegativeColor(int previousColor, int percent) {
         long addedValue = Math.round(2.55 * percent);
