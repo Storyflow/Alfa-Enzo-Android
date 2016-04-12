@@ -33,7 +33,7 @@
         tools:text="2017"
         />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout
         android:id="@+id/adapter_recycler_item_horizontal_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -47,6 +47,6 @@
 
         </android.support.v7.widget.RecyclerView>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout>
 
 </LinearLayout>

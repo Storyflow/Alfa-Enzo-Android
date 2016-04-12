@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -102,6 +103,9 @@ public class BrowseStoriesActivity extends BaseActivity {
         horizontalRecyclerView.setLayoutManager(layoutManager);
 
         HorizontalRecyclerViewAdapter adapter = new HorizontalRecyclerViewAdapter(this);
+        adapter.setPullTorefreshNotifier((action) -> {
+            layoutManager.setDisableScroll(action == MotionEvent.ACTION_MOVE);
+        });
         horizontalRecyclerView.setAdapter(adapter);
         int centerPosition = adapter.getItemCount() / 2;
         adapter.setCenterPosition(centerPosition);

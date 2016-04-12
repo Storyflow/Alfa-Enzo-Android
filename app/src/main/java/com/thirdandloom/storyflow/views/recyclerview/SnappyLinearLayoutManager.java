@@ -21,6 +21,7 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements IS
 
     private double deceleration;
     private Context context;
+    private boolean disableScroll;
 
     public SnappyLinearLayoutManager(Context context) {
         super(context);
@@ -56,6 +57,20 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements IS
             return calcPosForVelocity(velocityY, getChildAt(0).getTop(), getChildAt(0).getHeight(),
                     getPosition(getChildAt(0)));
         }
+    }
+
+    public void setDisableScroll(boolean disableScroll) {
+        this.disableScroll = disableScroll;
+    }
+
+    @Override
+    public boolean canScrollHorizontally() {
+        return !disableScroll && super.canScrollHorizontally();
+    }
+
+    @Override
+    public boolean canScrollVertically() {
+        return !disableScroll && super.canScrollVertically();
     }
 
     @Override
@@ -176,7 +191,7 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements IS
             }
 
             float speed = (100.f - velocityX/100.f)/displayMetrics.densityDpi;
-            speed = (float) Math.max(speed, 0.025);
+            speed = (float) Math.max(speed, 0.25);
             return speed;
         }
 

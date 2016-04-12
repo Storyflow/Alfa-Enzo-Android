@@ -6,10 +6,11 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout;
+import rx.functions.Action1;
 import rx.functions.Action3;
 
 import android.content.Context;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,9 +40,14 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     private Action3<Integer, Integer, View> onVerticalScroll;
     private Context context;
     private int centerPosition;
+    private Action1<Integer> pullTorefreshNotifier;
 
     public HorizontalRecyclerViewAdapter(Context context) {
         this.context = context;
+    }
+
+    public void setPullTorefreshNotifier(Action1<Integer> pullTorefreshNotifier) {
+        this.pullTorefreshNotifier = pullTorefreshNotifier;
     }
 
     public ItemWidth getItemWidth() {
@@ -90,7 +96,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     @Override
     public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_main_horizontal, parent, false);
-        StoryHolder storyHolder = new StoryHolder(v);
+        StoryHolder storyHolder = new StoryHolder(v, pullTorefreshNotifier);
         storyHolder.onVerticalScrollChanged(onVerticalScroll);
         return storyHolder;
     }
@@ -161,16 +167,17 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
         private Action3<Integer, Integer, View> onVerticalScroll;
 
-        public StoryHolder(View itemView) {
+        public StoryHolder(View itemView, Action1<Integer> pullTorefreshNotifier) {
             super(itemView);
             dateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
             recyclerView = (RecyclerView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_recycler_view);
             boldDateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_bold_text_view);
-            SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)itemView.findViewById(R.id.adapter_recycler_item_horizontal_refresh_layout);
+            OnSwipeStartNotifyRefreshLayout refreshLayout = (OnSwipeStartNotifyRefreshLayout)itemView.findViewById(R.id.adapter_recycler_item_horizontal_refresh_layout);
             refreshLayout.setColorSchemeResources(R.color.yellow, R.color.grey);
             refreshLayout.setOnRefreshListener(() -> {
                 refreshLayout.setRefreshing(false);
             });
+            refreshLayout.setNotifier(pullTorefreshNotifier);
 
             LinearLayoutManager manager = new LinearLayoutManager(itemView.getContext());
             manager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -214,27 +221,6 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
             imageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_image_view);
         }
     }
-
-    private static Date getDateForPosition(int position, int centerPosition, ItemType itemType) {
-        Calendar calendar = DateUtils.todayCalendar();
-        int offset = position - centerPosition;
-        switch (itemType) {
-            case Daily:
-                calendar.add(Calendar.DAY_OF_YEAR, offset);
-                break;
-            case Monthly:
-                calendar.add(Calendar.MONTH, offset);
-                break;
-            case Yearly:
-                calendar.add(Calendar.YEAR, offset);
-                break;
-            default:
-                throw new UnsupportedOperationException("unsupported itemType is using");
-        }
-
-        return calendar.getTime();
-    }
-
 
     private static final List<String> testImages = Arrays.asList(
             "http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/jcrop/demos/demo_files/image1.jpg",

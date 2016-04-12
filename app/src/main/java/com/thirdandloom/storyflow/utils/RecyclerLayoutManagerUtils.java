@@ -1,7 +1,6 @@
 package com.thirdandloom.storyflow.utils;
 
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 public class RecyclerLayoutManagerUtils extends BaseUtils {
 
