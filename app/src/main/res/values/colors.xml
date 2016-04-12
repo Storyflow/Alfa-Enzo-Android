@@ -11,6 +11,7 @@
     <color name="greyMostLightest">#E6E6E6</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="whiteTransparent">#CCFFFFFF</color>
     <color name="whiteWhitey">#F5F6F6</color>
 
     <color name="blue">#4778FE</color>

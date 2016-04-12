@@ -87,5 +87,10 @@
     <string name="friday">FRIDAY</string>
     <string name="saturday">SATURDAY</string>
     <string name="sunday">SUNDAY</string>
+    
+    <string name="updates">Updates</string>
+    <string name="messages">Messages</string>
+    <string name="post">Post</string>
+    <string name="profile">Profile</string>
 
 </resources>

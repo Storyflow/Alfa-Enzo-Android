@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:weightSum="5"
+              android:background="@drawable/shape_black_gradient"
+              android:paddingBottom="@dimen/sizeNormal">
+
+    <TextView
+        android:id="@+id/view_tab_bar_updates"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="center|bottom"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:text="@string/updates"
+        tools:text="Updates"
+        />
+
+    <TextView
+        android:id="@+id/view_tab_bar_messages"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="center|bottom"
+        android:textColor="@color/white"
+        android:layout_weight="1"
+        android:text="@string/messages"
+        tools:text="Messages"
+        />
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <com.thirdandloom.storyflow.views.RoundSquareImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_white_stroke_circle"
+            android:layout_gravity="center"
+            />
+
+        <com.thirdandloom.storyflow.views.RoundSquareImageView
+            android:id="@+id/view_tab_bar_flippable_circle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_white_stroke_circle"
+            android:layout_margin="@dimen/sizeSmall"
+            android:layout_gravity="center"
+            />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/view_tab_bar_post"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="center|bottom"
+        android:textColor="@color/white"
+        android:layout_weight="1"
+        android:text="@string/post"
+        tools:text="Post"
+        />
+
+    <TextView
+        android:id="@+id/view_tab_bar_profile"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="center|bottom"
+        android:textColor="@color/white"
+        android:layout_weight="1"
+        android:text="@string/profile"
+        tools:text="Profile"
+        />
+
+</merge>

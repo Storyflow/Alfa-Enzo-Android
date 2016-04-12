@@ -13,6 +13,7 @@ import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
+import com.thirdandloom.storyflow.views.TabBar;
 import com.thirdandloom.storyflow.views.recyclerview.SnappyLinearLayoutManager;
 import com.thirdandloom.storyflow.views.recyclerview.SnappyRecyclerView;
 
@@ -22,6 +23,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,6 +40,7 @@ public class BrowseStoriesActivity extends BaseActivity {
 
     private SnappyRecyclerView horizontalRecyclerView;
     private View periodChooserView;
+    private TabBar tabBar;
 
     public static Intent newInstance(boolean continueAnimation) {
         Intent intent = new Intent(StoryflowApplication.getInstance(), BrowseStoriesActivity.class);
@@ -70,6 +73,7 @@ public class BrowseStoriesActivity extends BaseActivity {
     private void findViews() {
         horizontalRecyclerView = (SnappyRecyclerView)findViewById(R.id.activity_browse_stories_horizontal_recycler_view);
         periodChooserView = findViewById(R.id.activity_browse_stories_period_chooser);
+        tabBar = (TabBar)findViewById(R.id.activity_browse_stories_tab_bar);
     }
 
     private void initGui() {
@@ -111,6 +115,9 @@ public class BrowseStoriesActivity extends BaseActivity {
         adapter.setCenterPosition(centerPosition);
         adapter.setItemType(HorizontalRecyclerViewAdapter.ItemType.Daily);
         updateOffset(centerPosition);
+
+        horizontalRecyclerView.addOnScrollListener(tabBar.new OnScrollListener());
+        tabBar.setItemWidth(adapter.getItemWidthPixel() + HorizontalRecyclerViewAdapter.getItemMargin() * 2);
     }
 
     private void onLoadedStories(Story.WrapList stories) {
@@ -154,6 +161,7 @@ public class BrowseStoriesActivity extends BaseActivity {
 
         ImageView imageView = (ImageView) view;
         imageView.setImageResource(toolbarSizeImage.get(adapter.getItemWidth().ordinal()));
+        tabBar.setItemWidth(adapter.getItemWidthPixel() + HorizontalRecyclerViewAdapter.getItemMargin() * 2);
     }
 
     private void updateOffset(int position) {

@@ -26,6 +26,13 @@
 
     </LinearLayout>
 
+    <com.thirdandloom.storyflow.views.TabBar
+        android:id="@+id/activity_browse_stories_tab_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+    </com.thirdandloom.storyflow.views.TabBar>
+
     <include
         android:id="@+id/launch_layout"
         layout="@layout/layout_launch"

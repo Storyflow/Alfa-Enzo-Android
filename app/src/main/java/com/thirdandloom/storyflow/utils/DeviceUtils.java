@@ -59,4 +59,10 @@ public class DeviceUtils extends BaseUtils {
         return KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
     }
 
+    public static int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }
+
 }

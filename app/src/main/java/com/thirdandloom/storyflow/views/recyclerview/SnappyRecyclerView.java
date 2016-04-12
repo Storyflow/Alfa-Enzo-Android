@@ -1,6 +1,5 @@
 package com.thirdandloom.storyflow.views.recyclerview;
 
-
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
