@@ -65,4 +65,16 @@ public class DeviceUtils extends BaseUtils {
         return px;
     }
 
+    public static int minScrollPx() {
+        return ViewConfiguration.get(getContext()).getScaledTouchSlop();
+    }
+
+    public static int minVelocityPxPerSecond() {
+        return ViewConfiguration.get(getContext()).getScaledMinimumFlingVelocity();
+    }
+
+    public static int maxVelocityPxPerSecond() {
+        return ViewConfiguration.get(getContext()).getScaledMaximumFlingVelocity();
+    }
+
 }

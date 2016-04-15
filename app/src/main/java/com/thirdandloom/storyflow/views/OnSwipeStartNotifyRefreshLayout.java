@@ -1,6 +1,5 @@
 package com.thirdandloom.storyflow.views;
 
-import rx.functions.Action0;
 import rx.functions.Action1;
 
 import android.content.Context;

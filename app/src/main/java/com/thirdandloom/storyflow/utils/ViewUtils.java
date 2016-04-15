@@ -63,9 +63,15 @@ public class ViewUtils extends BaseUtils{
             public boolean onPreDraw() {
                 view.getViewTreeObserver().removeOnPreDrawListener(this);
                 action.call(view);
-                return false;
+                return true;
             }
         });
+    }
+
+    public static void getLocationInWindow(View view, Action2<Integer, Integer> action) {
+        int[] location = new int[2];
+        view.getLocationInWindow(location);
+        action.call(location[0], location[1]);
     }
 
 }

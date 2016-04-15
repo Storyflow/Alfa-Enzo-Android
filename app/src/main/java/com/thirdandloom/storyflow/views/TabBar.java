@@ -2,7 +2,6 @@ package com.thirdandloom.storyflow.views;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

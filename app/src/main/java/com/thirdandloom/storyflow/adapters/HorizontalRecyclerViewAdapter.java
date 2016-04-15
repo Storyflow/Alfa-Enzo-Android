@@ -7,6 +7,9 @@ import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout;
+import com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView;
+import com.thirdandloom.storyflow.views.recyclerview.DisableScrollLinearLayoutManager;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Action3;
 
@@ -29,24 +32,43 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     public enum ItemWidth {
         Large, Small
     }
-
     public enum ItemType {
         Daily, Monthly, Yearly
     }
 
     private ItemWidth itemWidth = ItemWidth.Large;
     private ItemType itemType = ItemType.Daily;
-    private Action3<Integer, Integer, View> onVerticalScroll;
     private Context context;
     private int centerPosition;
-    private Action1<Integer> pullTorefreshNotifier;
+
+    private Action1<Integer> pullToRefreshNotifier;
+    private Action0 onChildDragStarted;
+    private Action1<Integer> onChildDragFinished;
+    private Action3<Float, Float, View> onChildDrag;
+    private Action1<View> onChildClick;
 
     public HorizontalRecyclerViewAdapter(Context context) {
         this.context = context;
     }
 
-    public void setPullTorefreshNotifier(Action1<Integer> pullTorefreshNotifier) {
-        this.pullTorefreshNotifier = pullTorefreshNotifier;
+    public void setPullToRefreshNotifier(Action1<Integer> pullToRefreshNotifier) {
+        this.pullToRefreshNotifier = pullToRefreshNotifier;
+    }
+
+    public void setOnChildDragFinished(Action1<Integer> onChildDragFinished) {
+        this.onChildDragFinished = onChildDragFinished;
+    }
+
+    public void setOnChildDragStarted(Action0 onChildDragStarted) {
+        this.onChildDragStarted = onChildDragStarted;
+    }
+
+    public void setOnChildDrag(Action3<Float, Float, View> onChildDrag) {
+        this.onChildDrag = onChildDrag;
+    }
+
+    public void setOnChildClick(Action1<View> onChildClick) {
+        this.onChildClick = onChildClick;
     }
 
     public ItemWidth getItemWidth() {
@@ -88,15 +110,10 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         throw new UnsupportedOperationException("unsupported itemWidth is using");
     }
 
-    public void onVerticalScrollChanged(Action3<Integer, Integer, View> onScroll) {
-        this.onVerticalScroll = onScroll;
-    }
-
     @Override
     public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_main_horizontal, parent, false);
-        StoryHolder storyHolder = new StoryHolder(v, pullTorefreshNotifier);
-        storyHolder.onVerticalScrollChanged(onVerticalScroll);
+        StoryHolder storyHolder = new StoryHolder(v, pullToRefreshNotifier, onChildDragStarted, onChildDragFinished, onChildDrag, onChildClick);
         return storyHolder;
     }
 
@@ -125,10 +142,10 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
             @Override
             public int getItemCount() {
                 return testImages.size();
+                //return 0;
             }
         };
         storyHolder.recyclerView.setAdapter(adapter);
-        //adapter.notifyDataSetChanged();
     }
 
     private void updateDate(StoryHolder storyHolder, int position) {
@@ -150,7 +167,6 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
             default:
                 throw new UnsupportedOperationException("unsupported itemType is using");
         }
-
     }
 
     @Override
@@ -162,47 +178,31 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
         private TextView dateTextView;
         private TextView boldDateTextView;
-        private RecyclerView recyclerView;
+        private VerticalDragNotifierRecyclerView recyclerView;
 
-        private Action3<Integer, Integer, View> onVerticalScroll;
-
-        public StoryHolder(View itemView, Action1<Integer> pullTorefreshNotifier) {
+        public StoryHolder(View itemView, Action1<Integer> pullToRefreshNotifier, Action0 startDrag, Action1<Integer> finishDrag, Action3<Float, Float, View> onDrag, Action1<View> onClick) {
             super(itemView);
             dateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
-            recyclerView = (RecyclerView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_recycler_view);
+            recyclerView = (VerticalDragNotifierRecyclerView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_recycler_view);
             boldDateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_bold_text_view);
             OnSwipeStartNotifyRefreshLayout refreshLayout = (OnSwipeStartNotifyRefreshLayout)itemView.findViewById(R.id.adapter_recycler_item_horizontal_refresh_layout);
             refreshLayout.setColorSchemeResources(R.color.yellow, R.color.grey);
             refreshLayout.setOnRefreshListener(() -> {
                 refreshLayout.setRefreshing(false);
             });
-            refreshLayout.setNotifier(pullTorefreshNotifier);
+            refreshLayout.setNotifier(pullToRefreshNotifier);
 
-            LinearLayoutManager manager = new LinearLayoutManager(itemView.getContext());
+            DisableScrollLinearLayoutManager manager = new DisableScrollLinearLayoutManager(itemView.getContext());
             manager.setOrientation(LinearLayoutManager.VERTICAL);
+            manager.setDisableScroll(true);
             recyclerView.setLayoutManager(manager);
-            initListeners();
-        }
 
-        private int scrollPosition;
-        private void initListeners() {
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    scrollPosition += dy;
-                    if (onVerticalScroll != null) onVerticalScroll.call(scrollPosition, dy, StoryHolder.this.itemView);
-                }
+            recyclerView.setDragStarted(startDrag);
+            recyclerView.setDragFinished(finishDrag);
+            recyclerView.setOnDrag(onDrag);
 
-                @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                }
-            });
-        }
-
-        public void onVerticalScrollChanged(Action3<Integer, Integer, View> onScroll) {
-            this.onVerticalScroll = onScroll;
+            itemView.setOnClickListener(v -> onClick.call(recyclerView));
+            recyclerView.setOnClick(() -> onClick.call(recyclerView));
         }
 
         public void setDateRepresentation(String boldText, String formattedDate) {

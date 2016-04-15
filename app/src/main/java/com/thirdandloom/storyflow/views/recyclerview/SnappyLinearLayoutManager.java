@@ -3,14 +3,13 @@ package com.thirdandloom.storyflow.views.recyclerview;
 import android.content.Context;
 import android.graphics.PointF;
 import android.hardware.SensorManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-public class SnappyLinearLayoutManager extends LinearLayoutManager implements ISnappyLayoutManager {
+public class SnappyLinearLayoutManager extends DisableScrollLinearLayoutManager implements ISnappyLayoutManager {
     // These variables are from android.widget.Scroller, which is used, via ScrollerCompat, by
     // Recycler View. The scrolling distance calculation logic originates from the same place. Want
     // to use their variables so as to approximate the look of normal Android scrolling.
@@ -21,7 +20,6 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements IS
 
     private double deceleration;
     private Context context;
-    private boolean disableScroll;
 
     public SnappyLinearLayoutManager(Context context) {
         super(context);
@@ -57,20 +55,6 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements IS
             return calcPosForVelocity(velocityY, getChildAt(0).getTop(), getChildAt(0).getHeight(),
                     getPosition(getChildAt(0)));
         }
-    }
-
-    public void setDisableScroll(boolean disableScroll) {
-        this.disableScroll = disableScroll;
-    }
-
-    @Override
-    public boolean canScrollHorizontally() {
-        return !disableScroll && super.canScrollHorizontally();
-    }
-
-    @Override
-    public boolean canScrollVertically() {
-        return !disableScroll && super.canScrollVertically();
     }
 
     @Override
