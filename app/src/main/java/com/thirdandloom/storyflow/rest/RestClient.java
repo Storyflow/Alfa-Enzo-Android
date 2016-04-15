@@ -145,7 +145,6 @@ public class RestClient implements IRestClient {
                             UpdateProfileImageRequestModel model = new UpdateProfileImageRequestModel();
                             model.setCroppedRect(croppedRect);
                             model.setImageData(bitmap);
-
                             apiService.updateProfileImage(id, model).enqueue(new ResponseCallback<>(success, failure));
                         });
                     }

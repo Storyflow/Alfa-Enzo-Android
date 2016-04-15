@@ -9,19 +9,10 @@ import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.SimpleExecutor;
 import io.fabric.sdk.android.Fabric;
-import org.acra.ACRA;
-import org.acra.ReportField;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
 import android.content.res.Resources;
 
-@ReportsCrashes(formKey = "",
-        mailTo = "a.tkachenko@mobidev.biz",
-        customReportContent = {ReportField.APP_VERSION_CODE, ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL, ReportField.CUSTOM_DATA, ReportField.STACK_TRACE, ReportField.LOGCAT},
-        mode = ReportingInteractionMode.TOAST,
-        resToastText = 1)
 public class StoryflowApplication extends Application {
     private static StoryflowApplication instance;
 
@@ -60,7 +51,6 @@ public class StoryflowApplication extends Application {
         instance = this;
 
         initTimber();
-        initAcra();
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics())
                 .debuggable(true)
@@ -76,13 +66,6 @@ public class StoryflowApplication extends Application {
             Timber.plant(new Timber.DebugTree());
         } else {
             Timber.plant(new CrashReportingTree());
-        }
-    }
-
-    private void initAcra() {
-        if (Config.USE_ACRA) {
-            ACRA.init(this);
-            ACRA.getConfig().setResToastText(R.string.crash_message);
         }
     }
 

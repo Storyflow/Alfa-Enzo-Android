@@ -1,23 +1,21 @@
 package com.thirdandloom.storyflow.activities;
 
-import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.adapters.HorizontalRecyclerViewAdapter;
+import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
 import com.thirdandloom.storyflow.fragments.StoryDetailsFragment;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Story;
-import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
-import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
 import com.thirdandloom.storyflow.views.TabBar;
 import com.thirdandloom.storyflow.views.recyclerview.DisableScrollLinearLayoutManager;
 import com.thirdandloom.storyflow.views.recyclerview.SnappyLinearLayoutManager;
 import com.thirdandloom.storyflow.views.recyclerview.SnappyRecyclerView;
+import com.thirdandloom.storyflow.views.toolbar.BrowseStoriesToolBar;
 import rx.functions.Action1;
 
 import android.animation.ValueAnimator;
@@ -30,14 +28,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsFragment.IStoryDetailFragmentDataSource {
     private SavedState state;
@@ -90,20 +83,20 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     }
 
     private void initPeriodChooser() {
+        periodChooserView.getLayoutParams().height = 0;
+        periodChooserView.requestLayout();
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_yearly).setOnClickListener(v -> {
             onChangePeriodClicked();
-            onPeriodChanged(HorizontalRecyclerViewAdapter.ItemType.Yearly);
+            onPeriodChanged(PeriodsAdapter.ItemType.Yearly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_monthly).setOnClickListener(v -> {
             onChangePeriodClicked();
-            onPeriodChanged(HorizontalRecyclerViewAdapter.ItemType.Monthly);
+            onPeriodChanged(PeriodsAdapter.ItemType.Monthly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_daily).setOnClickListener(v -> {
             onChangePeriodClicked();
-            onPeriodChanged(HorizontalRecyclerViewAdapter.ItemType.Daily);
+            onPeriodChanged(PeriodsAdapter.ItemType.Daily);
         });
-        periodChooserView.getLayoutParams().height = 1;
-        periodChooserView.requestLayout();
     }
 
     private void initHorizontalRecyclerView() {
@@ -113,7 +106,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         horizontalRecyclerView.setHasFixedSize(true);
         horizontalRecyclerView.setLayoutManager(layoutManager);
 
-        HorizontalRecyclerViewAdapter adapter = new HorizontalRecyclerViewAdapter(this);
+        PeriodsAdapter adapter = new PeriodsAdapter(this);
         adapter.setPullToRefreshNotifier(this::onPullToRefresh);
         adapter.setOnChildDragFinished(this::onVerticalScrollFinished);
         adapter.setOnChildDragStarted(this::onVerticalScrollStarted);
@@ -123,11 +116,11 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         horizontalRecyclerView.setAdapter(adapter);
         int centerPosition = adapter.getItemCount() / 2;
         adapter.setCenterPosition(centerPosition);
-        adapter.setItemType(HorizontalRecyclerViewAdapter.ItemType.Daily);
+        adapter.setItemType(PeriodsAdapter.ItemType.Daily);
         updateOffset(centerPosition);
 
         horizontalRecyclerView.addOnScrollListener(tabBar.new OnScrollListener());
-        tabBar.setItemWidth(adapter.getItemWidthPixel() + HorizontalRecyclerViewAdapter.getItemMargin() * 2);
+        tabBar.setItemWidth(adapter.getItemWidthPixel() + PeriodsAdapter.getItemMargin() * 2);
     }
 
     private void onLoadedStories(Story.WrapList stories) {
@@ -137,11 +130,11 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         Timber.d("stories 214");
     }
 
-    private void onPeriodChanged(HorizontalRecyclerViewAdapter.ItemType itemType) {
+    private void onPeriodChanged(PeriodsAdapter.ItemType itemType) {
         int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
-        getHorizontalAdapter().setCenterPosition(position);
-        getHorizontalAdapter().setItemType(itemType);
-        getHorizontalAdapter().notifyDataSetChanged();
+        getPeriodsAdapter().setCenterPosition(position);
+        getPeriodsAdapter().setItemType(itemType);
+        getPeriodsAdapter().notifyDataSetChanged();
     }
 
     private void onChangePeriodClicked() {
@@ -161,24 +154,21 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         });
     }
 
-    private void onChangeSizeClicked(View view) {
-        HorizontalRecyclerViewAdapter adapter = getHorizontalAdapter();
+    private void onChangeSizeClicked() {
+        PeriodsAdapter adapter = getPeriodsAdapter();
         adapter.changeItemWidth();
         adapter.notifyDataSetChanged();
-
         int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
         updateOffset(position);
-
-        ImageView imageView = (ImageView) view;
-        imageView.setImageResource(toolbarSizeImage.get(adapter.getItemWidth().ordinal()));
-        tabBar.setItemWidth(adapter.getItemWidthPixel() + HorizontalRecyclerViewAdapter.getItemMargin() * 2);
+        tabBar.setItemWidth(adapter.getItemWidthPixel() + PeriodsAdapter.getItemMargin() * 2);
+        ((BrowseStoriesToolBar)getToolbar()).onNewItemWidthSelected(adapter.getItemWidth());
     }
 
     private void updateOffset(int position) {
         LinearLayoutManager layoutManager = (LinearLayoutManager) horizontalRecyclerView.getLayoutManager();
-        HorizontalRecyclerViewAdapter adapter = getHorizontalAdapter();
+        PeriodsAdapter adapter = getPeriodsAdapter();
 
-        int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - HorizontalRecyclerViewAdapter.getItemMargin()*2;
+        int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - PeriodsAdapter.getItemMargin()*2;
         layoutManager.scrollToPositionWithOffset(position, offset / 2);
     }
 
@@ -229,8 +219,8 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         return (DisableScrollLinearLayoutManager) horizontalRecyclerView.getLayoutManager();
     }
 
-    private HorizontalRecyclerViewAdapter getHorizontalAdapter() {
-        return (HorizontalRecyclerViewAdapter)horizontalRecyclerView.getAdapter();
+    private PeriodsAdapter getPeriodsAdapter() {
+        return (PeriodsAdapter)horizontalRecyclerView.getAdapter();
     }
 
     @Override
@@ -244,29 +234,9 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     }
 
     private void initToolBar() {
-        View view = getLayoutInflater().inflate(R.layout.toolbar_activity_browsing_stories, getToolbar(), true);
-        TextView userName = (TextView) view.findViewById(R.id.toolbar_activity_browsing_stories_user_name);
-        TextView fullUserName = (TextView) view.findViewById(R.id.toolbar_activity_browsing_stories_full_name);
-        ImageView avatar = (ImageView) view.findViewById(R.id.toolbar_activity_browsing_stories_avatar);
-        User user = StoryflowApplication.account().getUser();
-        userName.setText(user.getUsername());
-        fullUserName.setText(user.getFullUserName());
-        view.findViewById(R.id.toolbar_activity_browsing_stories_change_period).setOnClickListener(v -> onChangePeriodClicked());
-        view.findViewById(R.id.toolbar_activity_browsing_stories_increase_size).setOnClickListener(this::onChangeSizeClicked);
-        Glide
-                .with(this)
-                .load(user.getProfileImage().getImageUrl())
-                .bitmapTransform(new CropCircleTransformation(this))
-                .dontAnimate()
-                .into(avatar);
-    }
-
-    private static final Map<Integer, Integer> toolbarSizeImage;
-    static {
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(HorizontalRecyclerViewAdapter.ItemWidth.Small.ordinal(), R.drawable.plus_icon);
-        map.put(HorizontalRecyclerViewAdapter.ItemWidth.Large.ordinal(), R.drawable.minus_icon);
-        toolbarSizeImage = Collections.unmodifiableMap(map);
+        BrowseStoriesToolBar toolBar = (BrowseStoriesToolBar)getToolbar();
+        toolBar.setOnChangePeriod(this::onChangePeriodClicked);
+        toolBar.setOnChangeSize(this::onChangeSizeClicked);
     }
 
     private void initLaunchAnimation(Bundle savedInstanceState) {
