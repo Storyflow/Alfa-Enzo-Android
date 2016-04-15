@@ -101,7 +101,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             case Small:
                 return DeviceUtils.getDisplayWidth()/2;
         }
-
         throw new UnsupportedOperationException("unsupported itemWidth is using");
     }
 

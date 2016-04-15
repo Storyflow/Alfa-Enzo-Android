@@ -41,8 +41,8 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
 
     @Override
     public int getItemCount() {
-        return testImages.size();
-        //return 0;
+        //return testImages.size();
+        return 0;
     }
 
     public static class StoryContentHolder extends RecyclerView.ViewHolder {

@@ -33,20 +33,35 @@
         tools:text="2017"
         />
 
-    <com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout
-        android:id="@+id/adapter_recycler_item_horizontal_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView
-            android:id="@+id/adapter_recycler_item_horizontal_recycler_view"
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="wrap_content">
+
+        <com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout
+            android:id="@+id/adapter_recycler_item_horizontal_refresh_layout"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView
+                android:id="@+id/adapter_recycler_item_horizontal_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                tools:background="@android:color/holo_red_dark">
+
+            </com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView>
+
+        </com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout>
+
+
+        <ProgressBar
+            android:id="@+id/adapter_recycler_item_horizontal_recycler_progress_bar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            tools:background="@android:color/holo_red_dark">
+            android:theme="@style/YellowProgressBar"
+            android:visibility="visible"
+            android:layout_gravity="center"/>
 
-        </com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView>
-
-    </com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout>
+    </FrameLayout>
 
 </LinearLayout>
