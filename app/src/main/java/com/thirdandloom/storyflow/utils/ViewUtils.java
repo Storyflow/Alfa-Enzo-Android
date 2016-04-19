@@ -15,6 +15,10 @@ public class ViewUtils extends BaseUtils{
         parent.removeView(view);
     }
 
+    public static void setShown(View view, boolean shown) {
+        view.setVisibility(shown ? View.VISIBLE : View.GONE);
+    }
+
     public static void setHidden(View view, boolean hidden) {
         view.setVisibility(hidden ? View.GONE : View.VISIBLE);
     }

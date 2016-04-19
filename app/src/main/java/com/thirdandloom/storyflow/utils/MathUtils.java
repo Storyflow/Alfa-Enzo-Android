@@ -76,4 +76,23 @@ public class MathUtils extends BaseUtils {
     public static float getPointX(Point start, Point end, float Y) {
         return (((Y-start.y)*(end.x-start.x))/(end.y-start.y))+start.x;
     }
+
+    /**
+     *
+     * @param firstVisiblePosition - first visible position in list
+     * @param lastVisiblePosition - last visible position in list
+     * @return first visible position in list + 1, if 3+ items are visible
+     *
+     *          for example in list: 0|1|2|3|4|5..
+     *          this method getIncrementedFirstPosition(0, 5) return 1
+     *          BUT
+     *          in list: ..4|5..
+     *          this method getIncrementedFirstPosition(0, 5) return 4
+     */
+    public static int getIncrementedFirstPosition(int firstVisiblePosition, int lastVisiblePosition) {
+        int position = lastVisiblePosition - firstVisiblePosition == 0
+                ? firstVisiblePosition
+                : firstVisiblePosition + 1;
+        return position;
+    }
 }

@@ -2,8 +2,10 @@ package com.thirdandloom.storyflow.adapters;
 
 import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.models.Story;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,16 +13,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
 public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAdapter.StoryContentHolder> {
 
-    private Context context;
+    enum DataType {
+        EmptyStories, PendingStories, PopulatedStories
+    }
 
-    public StoriesPreviewAdapter(Context context) {
+    private Context context;
+    private Story.WrapList wrapStoriesList;
+    private DataType dataType;
+
+    public StoriesPreviewAdapter(Context context, @Nullable Story.WrapList wrapStoriesList) {
         this.context = context;
+        this.wrapStoriesList = wrapStoriesList;
+        updateDataType();
     }
 
     @Override
@@ -32,40 +38,42 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
 
     @Override
     public void onBindViewHolder(StoryContentHolder holder, int position) {
-        Random random = new Random();
-        String imageUrl = testImages.get(random.nextInt(testImages.size()));
-
-        Glide.with(context).load(imageUrl).into(holder.imageView);
-        holder.textView.setText(imageUrl);
+        Story story = wrapStoriesList.getStory(position);
+        String coverUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
+        Glide.with(context).load(coverUrl).crossFade().into(holder.imageView);
+        holder.textView.setText(coverUrl);
     }
 
     @Override
     public int getItemCount() {
-        //return testImages.size();
-        return 0;
+        return dataType != DataType.PopulatedStories
+                ? 0
+                : wrapStoriesList.getStories().size();
     }
+
+    public DataType getDataType() {
+        return dataType;
+    }
+
+    private void updateDataType() {
+        if (this.wrapStoriesList == null) {
+            dataType = DataType.PendingStories;
+        } else if (this.wrapStoriesList.getStories().size() == 0) {
+            dataType = DataType.EmptyStories;
+        } else {
+            dataType = DataType.PopulatedStories;
+        }
+    }
+
 
     public static class StoryContentHolder extends RecyclerView.ViewHolder {
         TextView textView;
         ImageView imageView;
+
         public StoryContentHolder(View itemView) {
             super(itemView);
-            textView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
-            imageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_image_view);
+            textView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
+            imageView = (ImageView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_image_view);
         }
     }
-
-    private static final List<String> testImages = Arrays.asList(
-            "http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/jcrop/demos/demo_files/image1.jpg",
-            "http://www.keenthemes.com/preview/conquer/assets/plugins/jcrop/demos/demo_files/image2.jpg",
-            "http://wowslider.com/sliders/demo-85/data1/images/southtyrol350698.jpg",
-            "http://www.spacew.com/gallery/image006169.jpg",
-            "http://macroclub.ru/gallery/data/552/IMGP0171_1.jpg",
-            "http://ichef.bbci.co.uk/wwfeatures/624_351/images/live/p0/3n/x3/p03nx374.jpg",
-            "http://wpinprogress.com/demo/voobis/wp-content/uploads/2012/11/image.jpg",
-            "http://www.maisonducolombier.com/images/portfolio/lieu/image-20.jpg",
-            "http://fotoshkola.net/system/my_photos/0002/1144/image-normal.jpg",
-            "https://assets.answersingenesis.org/img/cms/content/contentnode/image/what-the-image-of-god-isnt.jpg",
-            "http://news.ponycanyon.co.jp/wp/wp-content/uploads/2016/02/image-2-320x316.jpeg",
-            "http://s19.postimg.org/ypsrfx6cz/image.jpg");
 }

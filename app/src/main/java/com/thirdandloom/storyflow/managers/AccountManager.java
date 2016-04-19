@@ -2,7 +2,7 @@ package com.thirdandloom.storyflow.managers;
 
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.Avatar;
-import com.thirdandloom.storyflow.models.CroppedImage;
+import com.thirdandloom.storyflow.models.image.CroppedImage;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.preferences.CommonPreferences;
 import com.thirdandloom.storyflow.utils.StringUtils;

@@ -1,6 +1,8 @@
 package com.thirdandloom.storyflow.models;
 
 import com.google.gson.annotations.SerializedName;
+import com.thirdandloom.storyflow.models.image.CroppedImage;
+import com.thirdandloom.storyflow.models.image.WrappedImage;
 
 import java.util.Date;
 import java.util.List;

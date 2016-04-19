@@ -1,10 +1,11 @@
-package com.thirdandloom.storyflow.models;
+package com.thirdandloom.storyflow.models.image;
 
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
+import com.thirdandloom.storyflow.models.BaseModel;
 import com.thirdandloom.storyflow.utils.image.ConvertRectUtils;
 
 public class CroppedImage extends BaseModel {

@@ -53,6 +53,7 @@ public class ErrorHandler {
 
         } catch (JsonSyntaxException e) {
             Timber.e(e, e.getMessage());
+            return unknownServerErrorMessage();
         }
         return unknownServerErrorMessage();
     }

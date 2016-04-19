@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_marginRight="@dimen/sizeTiny"
-              android:layout_marginLeft="@dimen/sizeTiny"
-              tools:background="@color/greyDark"
-              android:background="@color/transparent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/adapter_recycler_item_horizontal_story_bold_text_view"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/sizeMedium"
-        android:textSize="@dimen/textSizeNormal"
-        android:textColor="@color/greyDark"
-        android:gravity="center"
-        tools:textColor="@color/white"
-        tools:text="Next Year"
-        />
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/sizeTiny"
+        android:layout_marginLeft="@dimen/sizeTiny"
+        tools:background="@color/greyDark"
+        android:background="@color/transparent">
 
-    <TextView
-        android:id="@+id/adapter_recycler_item_horizontal_story_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingBottom="@dimen/sizeMedium"
-        android:textSize="@dimen/textSizeTiny"
-        android:textColor="@color/greyDark"
-        tools:textColor="@color/white"
-        tools:text="2017"
-        />
+        <TextView
+            android:id="@+id/adapter_recycler_item_horizontal_story_bold_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/sizeMedium"
+            android:textSize="@dimen/textSizeNormal"
+            android:textColor="@color/greyDark"
+            android:gravity="center"
+            tools:textColor="@color/white"
+            tools:text="Next Year"
+            />
 
+        <TextView
+            android:id="@+id/adapter_recycler_item_horizontal_story_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="@dimen/sizeMedium"
+            android:textSize="@dimen/textSizeTiny"
+            android:textColor="@color/greyDark"
+            tools:textColor="@color/white"
+            tools:text="2017"
+            />
 
-    <FrameLayout android:layout_width="match_parent"
-                 android:layout_height="wrap_content">
 
         <com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout
             android:id="@+id/adapter_recycler_item_horizontal_refresh_layout"
@@ -46,22 +47,35 @@
                 android:id="@+id/adapter_recycler_item_horizontal_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/transparent"
                 tools:background="@android:color/holo_red_dark">
-
             </com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView>
 
         </com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout>
 
+    </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/adapter_recycler_item_horizontal_recycler_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:theme="@style/YellowProgressBar"
-            android:visibility="visible"
-            android:layout_gravity="center"/>
+    <TextView
+        android:id="@+id/adapter_recycler_item_horizontal_no_stories_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/greyLightest"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeLarge"
+        android:text="@string/no_stories"
+        android:visibility="visible"
+        android:layout_gravity="center"
 
-    </FrameLayout>
+        tools:background="@color/red"
+        tools:visibility="visible"
+        />
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/adapter_recycler_item_horizontal_recycler_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/YellowProgressBar"
+        android:visibility="visible"
+        android:layout_gravity="center"
+        />
+
+</FrameLayout>

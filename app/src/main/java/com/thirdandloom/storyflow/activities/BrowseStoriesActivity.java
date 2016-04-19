@@ -9,7 +9,6 @@ import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.views.TabBar;
 import com.thirdandloom.storyflow.views.recyclerview.DisableScrollLinearLayoutManager;
@@ -26,21 +25,23 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.List;
 
 public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsFragment.IStoryDetailFragmentDataSource {
     private SavedState state;
-    private StoriesManager storiesManager = new StoriesManager();
 
     private SnappyRecyclerView horizontalRecyclerView;
     private View periodChooserView;
     private TabBar tabBar;
     private Action1<Float> takeScrollValue;
     private StoryDetailsFragment storyDetailsFragment;
+    private int recyclerViewScrollState =  RecyclerView.SCROLL_STATE_IDLE;
 
     public static Intent newInstance(boolean continueAnimation) {
         Intent intent = new Intent(StoryflowApplication.getInstance(), BrowseStoriesActivity.class);
@@ -65,9 +66,6 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         }
         findViews();
         initGui();
-
-        //StoryflowApplication.restClient().loadStories(storiesManager.getRequestData(), this::onLoadedStories, errorMessage -> {
-        //});
     }
 
     private void findViews() {
@@ -86,14 +84,17 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         periodChooserView.getLayoutParams().height = 0;
         periodChooserView.requestLayout();
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_yearly).setOnClickListener(v -> {
+            getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodYearly();
             onChangePeriodClicked();
             onPeriodChanged(PeriodsAdapter.ItemType.Yearly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_monthly).setOnClickListener(v -> {
+            getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodMonthly();
             onChangePeriodClicked();
             onPeriodChanged(PeriodsAdapter.ItemType.Monthly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_daily).setOnClickListener(v -> {
+            getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodDaily();
             onChangePeriodClicked();
             onPeriodChanged(PeriodsAdapter.ItemType.Daily);
         });
@@ -107,34 +108,28 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         horizontalRecyclerView.setLayoutManager(layoutManager);
 
         PeriodsAdapter adapter = new PeriodsAdapter(this);
-        adapter.setPullToRefreshNotifier(this::onPullToRefresh);
-        adapter.setOnChildDragFinished(this::onVerticalScrollFinished);
-        adapter.setOnChildDragStarted(this::onVerticalScrollStarted);
-        adapter.setOnChildDrag(this::onVerticalScroll);
-        adapter.setOnChildClick(this::onClickStory);
+        adapter.setStoryPreviewActions(storyPreviewActions);
 
         horizontalRecyclerView.setAdapter(adapter);
         int centerPosition = adapter.getItemCount() / 2;
+        updateOffset(centerPosition);
         adapter.setCenterPosition(centerPosition);
         adapter.setItemType(PeriodsAdapter.ItemType.Daily);
-        updateOffset(centerPosition);
+        loadStoriesBetweenPositions(centerPosition - 1, centerPosition + 1);
 
-        horizontalRecyclerView.addOnScrollListener(tabBar.new OnScrollListener());
+        horizontalRecyclerView.addOnScrollListener(tabBar.getRecyclerViewScrollListener());
+        horizontalRecyclerView.addOnScrollListener(new OnScrollListener());
         tabBar.setItemWidth(adapter.getItemWidthPixel() + PeriodsAdapter.getItemMargin() * 2);
     }
 
-    private void onLoadedStories(Story.WrapList stories) {
-        Timber.d("stories" + stories.toString());
-        Timber.d("stories 123");
-        Timber.d("stories 312");
-        Timber.d("stories 214");
-    }
-
     private void onPeriodChanged(PeriodsAdapter.ItemType itemType) {
-        int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
-        getPeriodsAdapter().setCenterPosition(position);
-        getPeriodsAdapter().setItemType(itemType);
-        getPeriodsAdapter().notifyDataSetChanged();
+        if (getPeriodsAdapter().getItemType() != itemType) {
+            int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
+            getPeriodsAdapter().setCenterPosition(position);
+            getPeriodsAdapter().setItemType(itemType);
+            getPeriodsAdapter().notifyDataSetChanged();
+            loadStoriesBetweenPositions(position - 1, position + 1);
+        }
     }
 
     private void onChangePeriodClicked() {
@@ -170,49 +165,6 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
 
         int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - PeriodsAdapter.getItemMargin()*2;
         layoutManager.scrollToPositionWithOffset(position, offset / 2);
-    }
-
-    private void onClickStory(View fromView) {
-        storyDetailsFragment = StoryDetailsFragment.newInstance(fromView, true);
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, StoryDetailsFragment.class.getSimpleName());
-        ft.commit();
-    }
-
-    private void onVerticalScrollFinished(int velocity) {
-        storyDetailsFragment.onDragFinished(velocity);
-        getHorizontalRecyclerViewLayoutManager().setDisableScroll(false);
-    }
-
-    private void onVerticalScrollStarted() {
-        getHorizontalRecyclerViewLayoutManager().setDisableScroll(true);
-    }
-
-    private void onPullToRefresh(Integer action) {
-        getHorizontalRecyclerViewLayoutManager().setDisableScroll(action == MotionEvent.ACTION_MOVE);
-    }
-
-    private void onVerticalScroll(Float delta, Float dy, View fromView) {
-        if (takeScrollValue != null) takeScrollValue.call(dy);
-        if (delta > 0) {
-            if (storyDetailsFragment == null || !storyDetailsFragment.isAdded()) {
-                storyDetailsFragment = StoryDetailsFragment.newInstance(fromView, false);
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, StoryDetailsFragment.class.getSimpleName());
-                ft.commit();
-            }
-        } else {
-            if (storyDetailsFragment != null) {
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.remove(storyDetailsFragment);
-                ft.commit();
-                storyDetailsFragment = null;
-                takeScrollValue = null;
-            }
-        }
     }
 
     private DisableScrollLinearLayoutManager getHorizontalRecyclerViewLayoutManager() {
@@ -271,6 +223,99 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
             super.onBackPressed();
         }
     }
+
+    private class OnScrollListener extends RecyclerView.OnScrollListener {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            recyclerViewScrollState = newState;
+            if (canUpdateData()) {
+                getPeriodsAdapter().updateDataFromLocalStore();
+                fetchData();
+            }
+        }
+    }
+
+    private void fetchData() {
+        int firstVisiblePosition = getHorizontalRecyclerViewLayoutManager().findFirstVisibleItemPosition();
+        int lastVisiblePosition = getHorizontalRecyclerViewLayoutManager().findLastVisibleItemPosition();
+        loadStoriesBetweenPositions(firstVisiblePosition, lastVisiblePosition);
+    }
+
+    private void loadStoriesBetweenPositions(int firstVisiblePosition, int lastVisiblePosition) {
+        int centerPosition =  getPeriodsAdapter().getCenterPosition();
+        PeriodsAdapter.ItemType itemType = getPeriodsAdapter().getItemType();
+        StoriesManager storiesManager = getPeriodsAdapter().getStoriesManager();
+        for (int position = firstVisiblePosition; position <= lastVisiblePosition; position++) {
+            sendFetchStoriesRequest(position, centerPosition, itemType, storiesManager);
+        }
+    }
+
+    private void sendFetchStoriesRequest(int position, int centerPosition,  PeriodsAdapter.ItemType itemType,  StoriesManager storiesManager) {
+        if (!storiesManager.isFetchedPosition(position)) {
+            Calendar calendar = PeriodsAdapter.getDateCalendar(position, centerPosition, itemType);
+            storiesManager.addFetchedStoryPosition(position);
+            StoryflowApplication.restClient().loadStories(storiesManager.getRequestData(calendar), (Story.WrapList list) -> {
+                getPeriodsAdapter().onNewStoriesFetched(list, calendar);
+            }, errorMessage -> {
+                storiesManager.removeFromFetchedPositions(position);
+            });
+        }
+    }
+
+    private boolean canUpdateData() {
+        return recyclerViewScrollState != RecyclerView.SCROLL_STATE_SETTLING;
+    }
+
+    private PeriodsAdapter.StoryHolder.Actions storyPreviewActions = new PeriodsAdapter.StoryHolder.Actions() {
+        @Override
+        public void onDragStarted() {
+            getHorizontalRecyclerViewLayoutManager().setDisableScroll(true);
+        }
+
+        @Override
+        public void onDragFinished(int velocity) {
+            storyDetailsFragment.onDragFinished(velocity);
+            getHorizontalRecyclerViewLayoutManager().setDisableScroll(false);
+        }
+
+        @Override
+        public void pullToRefreshMotionNotifier(int motionEventAction) {
+            getHorizontalRecyclerViewLayoutManager().setDisableScroll(motionEventAction == MotionEvent.ACTION_MOVE);
+        }
+
+        @Override
+        public void onDrag(float scrollAbsolute, float scrollDelta, View scrollingView) {
+            if (takeScrollValue != null) takeScrollValue.call(scrollDelta);
+            if (scrollAbsolute > 0) {
+                if (storyDetailsFragment == null || !storyDetailsFragment.isAdded()) {
+                    storyDetailsFragment = StoryDetailsFragment.newInstance(scrollingView, false);
+                    FragmentManager fm = getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, StoryDetailsFragment.class.getSimpleName());
+                    ft.commit();
+                }
+            } else {
+                if (storyDetailsFragment != null) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.remove(storyDetailsFragment);
+                    ft.commit();
+                    storyDetailsFragment = null;
+                    takeScrollValue = null;
+                }
+            }
+        }
+
+        @Override
+        public void onClick(View view) {
+            storyDetailsFragment = StoryDetailsFragment.newInstance(view, true);
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, StoryDetailsFragment.class.getSimpleName());
+            ft.commit();
+        }
+    };
 
     @Nullable
     @Override

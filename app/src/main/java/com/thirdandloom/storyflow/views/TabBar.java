@@ -15,6 +15,7 @@ public class TabBar extends LinearLayout {
     private int scrollPosition;
     private int itemWidth;
     private View flipCircleView;
+    private OnScrollListener recyclerViewScrollListener = new OnScrollListener();
 
     public TabBar(Context context) {
         this(context, null);
@@ -47,7 +48,11 @@ public class TabBar extends LinearLayout {
         this.scrollPosition = 0;
     }
 
-    public class OnScrollListener extends RecyclerView.OnScrollListener {
+    public OnScrollListener getRecyclerViewScrollListener() {
+        return recyclerViewScrollListener;
+    }
+
+    private class OnScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             scrollPosition += dx;

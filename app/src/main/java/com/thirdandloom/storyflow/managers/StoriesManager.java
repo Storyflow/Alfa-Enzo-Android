@@ -1,21 +1,68 @@
 package com.thirdandloom.storyflow.managers;
 
+import com.thirdandloom.storyflow.models.Story;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class StoriesManager {
 
     private RequestData requestData = new RequestData();
+    private LinkedHashMap<Calendar, Story.WrapList> store = new LinkedHashMap<>();
+    private List<Integer> fetchedPositions = new LinkedList<>();
+
+    public StoriesManager() {
+
+    }
 
     public RequestData getRequestData() {
         return requestData;
+    }
+
+    public RequestData getRequestData(Calendar calendar) {
+        requestData.setDate(calendar.getTime());
+        return requestData;
+    }
+
+    public void addFetchedStoryPosition(Integer position) {
+        fetchedPositions.add(position);
+    }
+
+    public boolean isFetchedPosition(Integer position) {
+        return fetchedPositions.contains(position);
+    }
+
+    public void removeFromFetchedPositions(Integer position) {
+        fetchedPositions.remove(position);
+    }
+
+    @Nullable
+    public Story.WrapList getStories(@NonNull Calendar calendar) {
+        return store.containsKey(calendar)
+                ? store.get(calendar)
+                : null;
+    }
+
+    public void storeData(Calendar calendar, Story.WrapList list) {
+        store.put(calendar, list);
+    }
+
+    public void clearStore() {
+        fetchedPositions.clear();
+        store.clear();
     }
 
     public static class RequestData {
@@ -24,6 +71,26 @@ public class StoriesManager {
         private int owners = Owners.Me|Owners.Followings|Owners.Friends;
         private int direction = Direction.None;
         private Date date = new Date();
+
+        public void selectPeriodYearly() {
+            period = Period.Year;
+        }
+
+        public void selectPeriodDaily() {
+            period = Period.Year|Period.Month|Period.Day;
+        }
+
+        public void selectPeriodMonthly() {
+            period = Period.Year|Period.Month;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
+        public void setDirection(int direction) {
+            this.direction = direction;
+        }
 
         public int getLimit() {
             return limit;

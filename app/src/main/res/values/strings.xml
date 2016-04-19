@@ -92,5 +92,6 @@
     <string name="messages">Messages</string>
     <string name="post">Post</string>
     <string name="profile">Profile</string>
+    <string name="no_stories">NO STORIES</string>
 
 </resources>
