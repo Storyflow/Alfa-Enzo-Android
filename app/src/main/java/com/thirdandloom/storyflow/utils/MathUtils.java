@@ -95,4 +95,20 @@ public class MathUtils extends BaseUtils {
                 : firstVisiblePosition + 1;
         return position;
     }
+
+    /**
+     *
+     * @param value1 first value
+     * @param value2 second value
+     * @param checkingValue value for check
+     * @return return is value for check inside value1..value2
+     */
+
+    public static boolean isValuesBetween(int value1, int value2, int checkingValue) {
+        if (value1 > value2) {
+            return checkingValue <= value1 && checkingValue >= value2;
+        } else {
+            return checkingValue >= value1 && checkingValue <= value2;
+        }
+    }
 }

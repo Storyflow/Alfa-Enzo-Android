@@ -9,6 +9,9 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewConfiguration;
 
+import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.MathUtils;
+
 public class SnappyLinearLayoutManager extends DisableScrollLinearLayoutManager implements ISnappyLayoutManager {
     // These variables are from android.widget.Scroller, which is used, via ScrollerCompat, by
     // Recycler View. The scrolling distance calculation logic originates from the same place. Want
@@ -70,11 +73,33 @@ public class SnappyLinearLayoutManager extends DisableScrollLinearLayoutManager 
             tempScroll = Math.abs(tempScroll);
         }
 
-        double position = Math.max(currPos + (tempScroll / childSize) + 1, 0);
-        position = velocity > 0 ? position + 0.2 : position - 0.2;
-        position = position < 0 ? 0 : position;
+        long deltaPosition = Math.round(tempScroll / childSize);
+        long position = Math.max(currPos + deltaPosition, 0);
+        int firstPosition = findFirstVisibleItemPosition();
+        int lastPosition = findLastVisibleItemPosition();
+        int visibleItemsCount = lastPosition - firstPosition;
+        boolean isThreeAndMoreItemVisible = visibleItemsCount > 1;
 
-        return (int) Math.round(position);
+        if (isThreeAndMoreItemVisible) {
+            position = velocity < 0 ? position + 1 : position;
+            if (MathUtils.isValuesBetween(lastPosition, firstPosition, (int)position)) {
+                position = Math.abs(velocity) > DeviceUtils.minVelocityPxPerSecond()*4
+                        ? velocity > 0
+                            ? firstPosition + 2
+                            : firstPosition
+                        : firstPosition + 1;
+            }
+        } else {
+            if (position == currPos) {
+                position = velocity > 0 ? position + 1 : position;
+            }
+            if (velocity < 0 && currPos - position == 1) {
+                position = position + 1;
+            }
+        }
+
+        position = Math.max(position, 0);
+        return (int)position;
     }
 
     @Override

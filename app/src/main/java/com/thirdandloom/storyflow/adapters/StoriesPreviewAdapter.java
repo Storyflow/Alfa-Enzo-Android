@@ -58,7 +58,8 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
     private void updateDataType() {
         if (this.wrapStoriesList == null) {
             dataType = DataType.PendingStories;
-        } else if (this.wrapStoriesList.getStories().size() == 0) {
+        } else if (this.wrapStoriesList.getStories() == null
+                    || this.wrapStoriesList.getStories().size() == 0) {
             dataType = DataType.EmptyStories;
         } else {
             dataType = DataType.PopulatedStories;

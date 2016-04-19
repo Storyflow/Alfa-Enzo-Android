@@ -58,9 +58,8 @@ public class TabBar extends LinearLayout {
             scrollPosition += dx;
 
             int integrate = (int)Math.floor(scrollPosition/itemWidth);
-            float fraction = Math.abs((float)scrollPosition/itemWidth) - integrate;
+            float fraction = (float)scrollPosition/itemWidth - integrate;
             float angle = fraction * 100 * 1.8f;
-
             flipCircleView.setRotationY(angle);
         }
     }
