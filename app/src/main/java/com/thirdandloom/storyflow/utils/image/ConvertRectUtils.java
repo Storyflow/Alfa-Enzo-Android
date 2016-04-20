@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.thirdandloom.storyflow.utils.BaseUtils;
 import com.thirdandloom.storyflow.utils.Timber;
@@ -22,7 +23,11 @@ public class ConvertRectUtils extends BaseUtils {
     }
 
     @Nullable
-    public static Rect getRect(@NonNull String rectString) {
+    public static Rect getRect(@Nullable String rectString) {
+        if (TextUtils.isEmpty(rectString)) {
+            return null;
+        }
+
         String[] splitString = rectString.split(DELIMITER);
         try {
             int x = Integer.valueOf(splitString[0]);

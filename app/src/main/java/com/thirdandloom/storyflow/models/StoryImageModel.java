@@ -10,4 +10,16 @@ public class StoryImageModel extends BaseModel {
     private SizedImage collapsedSizedImage;
     @SerializedName("expanded")
     private SizedImage expandedSizedImage;
+
+    public SizedImage getNormalSizedImage() {
+        return normalSizedImage;
+    }
+
+    public SizedImage getCollapsedSizedImage() {
+        return collapsedSizedImage;
+    }
+
+    public SizedImage getExpandedSizedImage() {
+        return expandedSizedImage;
+    }
 }

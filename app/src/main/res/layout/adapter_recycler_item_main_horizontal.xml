@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginRight="@dimen/sizeTiny"
+    android:layout_marginLeft="@dimen/sizeTiny">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/sizeTiny"
-        android:layout_marginLeft="@dimen/sizeTiny"
-        tools:background="@color/greyDark"
-        android:background="@color/transparent">
+        android:background="@color/transparent"
+        android:orientation="vertical"
+        tools:background="@color/greyDark">
 
         <TextView
             android:id="@+id/adapter_recycler_item_horizontal_story_bold_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/sizeMedium"
-            android:textSize="@dimen/textSizeNormal"
-            android:textColor="@color/greyDark"
             android:gravity="center"
-            tools:textColor="@color/white"
+            android:paddingTop="@dimen/sizeMedium"
+            android:textColor="@color/greyDark"
+            android:textSize="@dimen/textSizeNormal"
             tools:text="Next Year"
-            />
+            tools:textColor="@color/white" />
 
         <TextView
             android:id="@+id/adapter_recycler_item_horizontal_story_text_view"
@@ -31,11 +30,10 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingBottom="@dimen/sizeMedium"
-            android:textSize="@dimen/textSizeTiny"
             android:textColor="@color/greyDark"
-            tools:textColor="@color/white"
+            android:textSize="@dimen/textSizeTiny"
             tools:text="2017"
-            />
+            tools:textColor="@color/white" />
 
 
         <com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout
@@ -47,8 +45,7 @@
                 android:id="@+id/adapter_recycler_item_horizontal_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:background="@android:color/holo_red_dark">
-            </com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView>
+                tools:background="@android:color/holo_red_dark"></com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView>
 
         </com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout>
 
@@ -58,24 +55,22 @@
         android:id="@+id/adapter_recycler_item_horizontal_no_stories_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:background="@color/greyLightest"
+        android:text="@string/no_stories"
         android:textColor="@color/white"
         android:textSize="@dimen/textSizeLarge"
-        android:text="@string/no_stories"
         android:visibility="visible"
-        android:layout_gravity="center"
 
         tools:background="@color/red"
-        tools:visibility="visible"
-        />
+        tools:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/adapter_recycler_item_horizontal_recycler_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/YellowProgressBar"
-        android:visibility="visible"
         android:layout_gravity="center"
-        />
+        android:theme="@style/YellowProgressBar"
+        android:visibility="visible" />
 
 </FrameLayout>

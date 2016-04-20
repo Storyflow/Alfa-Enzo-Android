@@ -3,6 +3,8 @@ package com.thirdandloom.storyflow.adapters;
 import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.ViewUtils;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -39,9 +41,30 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
     @Override
     public void onBindViewHolder(StoryContentHolder holder, int position) {
         Story story = wrapStoriesList.getStory(position);
-        String coverUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
-        Glide.with(context).load(coverUrl).crossFade().into(holder.imageView);
-        holder.textView.setText(coverUrl);
+
+        String imageUrl = null;
+        String text = story.getDescription();
+        int height = 0;
+
+        switch (story.getType()) {
+            case Text:
+                imageUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
+                height = story.getAuthor().getCroppedImageCover().getRect() != null
+                        ? story.getAuthor().getCroppedImageCover().getRect().height()
+                        : DeviceUtils.dpToPx(200);
+                break;
+            case Image:
+                imageUrl = story.getImageData().getNormalSizedImage().url();
+                height = story.getImageData().getNormalSizedImage().size().height();
+                break;
+        }
+        ViewUtils.applyHeight(holder.itemView, height);
+        Glide
+                .with(context)
+                .load(imageUrl)
+                .crossFade()
+                .into(holder.imageView);
+        holder.textView.setText(text);
     }
 
     @Override

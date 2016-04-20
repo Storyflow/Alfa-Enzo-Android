@@ -70,7 +70,7 @@ public class Story extends BaseModel {
         return types.get(type);
     }
 
-    enum Type { Text, Image }
+    public enum Type { Text, Image }
 
     static final Map<String, Type> types;
     static {

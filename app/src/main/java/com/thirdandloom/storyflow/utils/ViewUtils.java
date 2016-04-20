@@ -33,10 +33,14 @@ public class ViewUtils extends BaseUtils{
 
     public static void applyWidth(View itemView, int widthPixel) {
         ViewGroup.LayoutParams params = itemView.getLayoutParams();
-        if (params.width != widthPixel) {
-            params.width = widthPixel;
-            itemView.setLayoutParams(params);
-        }
+        params.width = widthPixel;
+        itemView.setLayoutParams(params);
+    }
+
+    public static void applyHeight(View itemView, int heightPixel) {
+        ViewGroup.LayoutParams params = itemView.getLayoutParams();
+        params.height = heightPixel;
+        itemView.setLayoutParams(params);
     }
 
     public static WindowManager.LayoutParams getFullScreenLayoutParams() {
