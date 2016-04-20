@@ -103,7 +103,7 @@ public class ConfigureAvatarRectangleActivity extends BaseActivity {
     }
 
     @Override
-    protected int getStatusBarColor() {
+    protected int getStatusBarColorResourceId() {
         return R.color.greyLighter;
     }
 

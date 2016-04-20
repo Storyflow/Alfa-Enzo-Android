@@ -4,10 +4,13 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.annotation.ColorRes;
 import android.util.DisplayMetrics;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class DeviceUtils extends BaseUtils {
     public static DisplayMetrics getDisplayMetrics() {
@@ -57,6 +60,13 @@ public class DeviceUtils extends BaseUtils {
 
     public static boolean hasHardwareBackKey() {
         return KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+    }
+
+    public static void updateStatusBarColor(Window window, int color) {
+        if (DeviceUtils.isLollipopOrHigher()) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(color);
+        }
     }
 
     public static int dpToPx(int dp) {

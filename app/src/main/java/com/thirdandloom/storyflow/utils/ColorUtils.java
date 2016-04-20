@@ -1,22 +1,33 @@
 package com.thirdandloom.storyflow.utils;
 
 import android.graphics.Color;
+import android.support.annotation.ColorRes;
 
 import java.util.Random;
 
 public class ColorUtils extends BaseUtils {
+
+    public static int color(@ColorRes int colorRes) {
+        return getResources().getColor(colorRes);
+    }
 
     public static int getRandomColor() {
         Random random = new Random();
         return Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
     }
 
-    public static int getNegativeColor(int previousColor, int percent) {
-        long addedValue = Math.round(2.55 * percent);
+    public static int calculateStatusBarColor(int color) {
+        return getNegativeColor(color, 10);
+    }
 
-        long previousRed = (previousColor >> 16);
-        long previousGreen = (previousColor >> 8 & 0x00FF);
-        long previousBlue = (previousColor >> 32 & 0x0000FF);
+    public static int getNegativeColor(int previousColor, int percent) {
+        String hexColor = String.format("#%06X", (0xFFFFFF & previousColor));
+        previousColor = Color.parseColor(hexColor);
+
+        long addedValue = Math.round(2.55 * percent);
+        long previousRed = Color.red(previousColor);
+        long previousGreen = Color.green(previousColor);
+        long previousBlue =  Color.blue(previousColor);
 
         int newRed = previousRed - addedValue > 255
                 ? 255 :

@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:layout_marginBottom="@dimen/sizeTiny">
+             android:layout_marginBottom="@dimen/sizeSmall">
 
     <com.thirdandloom.storyflow.views.RoundSquareImageView
         android:id="@+id/adapter_recycler_item_horizontal_story_image_view"

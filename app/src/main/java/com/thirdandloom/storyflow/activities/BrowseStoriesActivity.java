@@ -176,7 +176,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     }
 
     @Override
-    protected int getStatusBarColor() {
+    protected int getStatusBarColorResourceId() {
         return R.color.greyLighter;
     }
 
@@ -258,7 +258,8 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
             StoryflowApplication.restClient().loadStories(storiesManager.getRequestData(calendar), (Story.WrapList list) -> {
                 getPeriodsAdapter().onNewStoriesFetched(list, calendar);
             }, errorMessage -> {
-                storiesManager.removeFromFetchedPositions(position);
+                showError(errorMessage);
+                getPeriodsAdapter().onNewStoriesFetchFailed(position);
             });
         }
     }

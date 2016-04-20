@@ -68,6 +68,12 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         updateDataFromLocalStore();
     }
 
+    public void onNewStoriesFetchFailed(int position) {
+        fetchedStories = true;
+        storiesManager.removeFromFetchedPositions(position);
+        updateDataFromLocalStore();
+    }
+
     public void setItemType(ItemType itemType) {
         this.itemType = itemType;
         this.storiesManager.clearStore();
@@ -99,8 +105,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     public int getItemWidthPixel() {
         switch (itemWidth) {
             case Large:
-                int itemPadding = StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.sizeNormal);
-                return DeviceUtils.getDisplayWidth()-itemPadding*2;
+                return DeviceUtils.getDisplayWidth()-getItemPadding()*2;
             case Small:
                 return DeviceUtils.getDisplayWidth()/2;
         }
@@ -235,5 +240,9 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
                 throw new UnsupportedOperationException("unsupported itemType is using");
         }
         return calendar;
+    }
+
+    public static int getItemPadding() {
+        return StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.sizeNormal);
     }
 }

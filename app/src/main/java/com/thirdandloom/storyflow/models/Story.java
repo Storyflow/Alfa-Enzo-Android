@@ -2,8 +2,11 @@ package com.thirdandloom.storyflow.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Story extends BaseModel {
     @SerializedName("id")
@@ -39,10 +42,6 @@ public class Story extends BaseModel {
         return privacyId;
     }
 
-    public String getType() {
-        return type;
-    }
-
     public boolean isUserLikes() {
         return userLikes;
     }
@@ -65,6 +64,20 @@ public class Story extends BaseModel {
 
     public String getId() {
         return id;
+    }
+
+    public Type getType() {
+        return types.get(type);
+    }
+
+    enum Type { Text, Image }
+
+    static final Map<String, Type> types;
+    static {
+        Map<String, Type> map = new HashMap<>();
+        map.put("image", Type.Image);
+        map.put("text", Type.Text);
+        types = Collections.unmodifiableMap(map);
     }
 
     public static class WrapList {

@@ -3,9 +3,13 @@ package com.thirdandloom.storyflow.views.alert;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.CancelableRunnable;
+import com.thirdandloom.storyflow.utils.ColorUtils;
+import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.support.annotation.ColorRes;
 import android.support.annotation.UiThread;
 import android.view.Gravity;
 import android.view.Window;
@@ -16,23 +20,30 @@ public class QuickAlertController {
 
     private Window window;
     private QuickAlertView quickAlertView;
-    private CancelableRunnable hideAlerRunnable;
+    private CancelableRunnable hideAlertRunnable;
+    private int statusBarColorResourceId;
 
     public QuickAlertController(Window window) {
         this.window = window;
+    }
+
+    public QuickAlertController(Window window, @ColorRes int statusBarColorResourceId) {
+        this(window);
+        this.statusBarColorResourceId = statusBarColorResourceId;
     }
 
     @UiThread
     public void show(String message, QuickAlertView.Type type) {
         hidePreviousAlert();
         showQuickAlert(message, type);
-        hideAlerRunnable = createHideAlertRunnable();
-        quickAlertView.postDelayed(hideAlerRunnable, ALERT_DISPLAYING_TIME);
+        hideAlertRunnable = createHideAlertRunnable();
+        quickAlertView.postDelayed(hideAlertRunnable, ALERT_DISPLAYING_TIME);
         quickAlertView.setOnClickListener(v -> hideAlertAnimate());
     }
 
     public void hide() {
         if (quickAlertView != null && quickAlertView.isOnScreen()) {
+            DeviceUtils.updateStatusBarColor(window, ColorUtils.color(statusBarColorResourceId));
             ViewUtils.removeFromParent(quickAlertView);
         }
     }
@@ -44,6 +55,10 @@ public class QuickAlertController {
         quickAlertView.measure(0, 0);
         AnimationUtils.showHeader(quickAlertView, 200);
         quickAlertView.setOnClickListener(v -> hidePreviousAlert());
+
+        int alertColorRes = QuickAlertView.getColorResourceId(type);
+        int alertColor = ColorUtils.color(alertColorRes);
+        DeviceUtils.updateStatusBarColor(window, ColorUtils.calculateStatusBarColor(alertColor));
     }
 
     private void hidePreviousAlert() {
@@ -54,7 +69,7 @@ public class QuickAlertController {
     }
 
     private void cancelPreviousRunnable() {
-        hideAlerRunnable.cancel();
+        hideAlertRunnable.cancel();
     }
 
     private void hideAlertAnimate() {

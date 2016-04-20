@@ -1,6 +1,8 @@
 package com.thirdandloom.storyflow.views.alert;
 
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.utils.ColorUtils;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -64,7 +66,7 @@ public class QuickAlertView extends FrameLayout {
     }
 
     public void setText(String resourceId, Type messageType) {
-        setBackgroundColor(getColor(messageType));
+        setBackgroundColor(ColorUtils.color(getColorResourceId(messageType)));
         mMessageTextView.setText(resourceId);
     }
 
@@ -73,7 +75,7 @@ public class QuickAlertView extends FrameLayout {
         return false;
     }
 
-    private int getColor(Type type) {
-        return getResources().getColor(backgroundColors.get(type));
+    public static int getColorResourceId(Type type) {
+        return backgroundColors.get(type);
     }
 }

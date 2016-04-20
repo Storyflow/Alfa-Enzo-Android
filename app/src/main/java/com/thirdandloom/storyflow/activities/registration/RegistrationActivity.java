@@ -60,7 +60,7 @@ public class RegistrationActivity extends BaseActivity {
     }
 
     @Override
-    protected int getStatusBarColor() {
+    protected int getStatusBarColorResourceId() {
         return R.color.greyLighter;
     }
 

@@ -68,7 +68,7 @@ public class LaunchActivity extends BaseActivity {
     }
 
     @Override
-    protected int getStatusBarColor() {
+    protected int getStatusBarColorResourceId() {
         return R.color.yellow;
     }
 

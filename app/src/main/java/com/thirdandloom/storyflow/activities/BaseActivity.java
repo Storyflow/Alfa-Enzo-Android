@@ -9,16 +9,12 @@ import rx.functions.Action1;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.ToolbarWidgetWrapper;
-import android.view.WindowManager;
 
 import java.io.Serializable;
 
@@ -32,10 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (DeviceUtils.isLollipopOrHigher()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(getResources().getColor(getStatusBarColor()));
-        }
+        DeviceUtils.updateStatusBarColor(getWindow(), getResources().getColor(getStatusBarColorResourceId()));
         initQuickAlertController();
         initProgressBar();
     }
@@ -76,7 +69,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @ColorRes
-    protected abstract int getStatusBarColor();
+    protected abstract int getStatusBarColorResourceId();
 
     @Override
     protected void onStop() {
@@ -85,7 +78,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void initQuickAlertController() {
-        quickAlert = new QuickAlertController(getWindow());
+        quickAlert = new QuickAlertController(getWindow(), getStatusBarColorResourceId());
     }
 
     private void findToolBar() {
