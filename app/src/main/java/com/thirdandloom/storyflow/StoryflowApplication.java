@@ -9,6 +9,7 @@ import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.SimpleExecutor;
 import io.fabric.sdk.android.Fabric;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 import android.app.Application;
 import android.content.res.Resources;
@@ -56,6 +57,11 @@ public class StoryflowApplication extends Application {
                 .debuggable(true)
                 .build();
         Fabric.with(fabric);
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                        .setDefaultFontPath("AvenirLTStd-Roman.ttf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
         this.restClient = new RestClient(this);
         this.preferences = new CommonPreferences();
         this.accountManager = new AccountManager();

@@ -1,8 +1,8 @@
 <resources>
 
     <dimen name="textSizeTiny">14sp</dimen>
-    <dimen name="textSizeSmall">17sp</dimen>
-    <dimen name="textSizeNormal">19sp</dimen>
+    <dimen name="textSizeSmall">16sp</dimen>
+    <dimen name="textSizeNormal">20sp</dimen>
     <dimen name="textSizeLarge">22sp</dimen>
     <dimen name="textSizeXLarge">24sp</dimen>
     <dimen name="textSizeXXLarge">36sp</dimen>
@@ -15,11 +15,12 @@
     <dimen name="sizeMedium">12dp</dimen>
     <dimen name="sizeLarge">16dp</dimen>
     <dimen name="sizeXLarge">24dp</dimen>
+    <dimen name="sizeXXLarge">32dp</dimen>
+    <dimen name="sizeXXLarger">36dp</dimen>
 
 
     <dimen name="roundCorner">8dp</dimen>
     <dimen name="buttonMargin">24dp</dimen>
     <dimen name="buttonSizeNormal">48dp</dimen>
-
 
 </resources>

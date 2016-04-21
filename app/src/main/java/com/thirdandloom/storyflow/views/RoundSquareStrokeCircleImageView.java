@@ -10,11 +10,6 @@ import android.util.AttributeSet;
 
 public class RoundSquareStrokeCircleImageView extends RoundSquareImageView {
 
-    private Paint pathPaint;
-    private Paint circlePaint;
-    private Path path = new Path();
-    private int radius;
-
     public RoundSquareStrokeCircleImageView(Context context) {
         this(context, null);
     }
@@ -28,6 +23,11 @@ public class RoundSquareStrokeCircleImageView extends RoundSquareImageView {
         init();
     }
 
+    private Paint pathPaint;
+    private Paint circlePaint;
+    private Path path = new Path();
+    private int radius;
+
     private void init() {
         pathPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         pathPaint.setStyle(Paint.Style.FILL);
@@ -35,7 +35,7 @@ public class RoundSquareStrokeCircleImageView extends RoundSquareImageView {
 
         circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         circlePaint.setStyle(Paint.Style.STROKE);
-        circlePaint.setColor(getResources().getColor(R.color.greyMostLightest));
+        circlePaint.setColor(getResources().getColor(R.color.greyWhite));
         circlePaint.setStrokeWidth(getStrokeWidth());
     }
 
@@ -61,6 +61,6 @@ public class RoundSquareStrokeCircleImageView extends RoundSquareImageView {
     }
 
     private int getStrokeWidth() {
-        return getResources().getDimensionPixelSize(R.dimen.sizeNormal);
+        return getResources().getDimensionPixelSize(R.dimen.sizeMedium);
     }
 }

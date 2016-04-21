@@ -39,11 +39,11 @@ public class SignInActivity extends BaseActivity {
 
     @Override
     protected int getStatusBarColorResourceId() {
-        return R.color.greyLighter;
+        return R.color.greyXLighter;
     }
 
     private void initGui() {
-        setToolBarTitle(R.string.sign_in);
+        setTitle(R.string.sign_in);
         continueButton.setOnClickListener(v -> {
             String userNameOrEmail = loginEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString();

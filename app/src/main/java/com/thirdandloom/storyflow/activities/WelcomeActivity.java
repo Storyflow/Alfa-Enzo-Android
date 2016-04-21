@@ -42,7 +42,7 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected int getStatusBarColorResourceId() {
-        return R.color.greyLighter;
+        return R.color.greyXLighter;
     }
 
     private void findViews() {

@@ -3,12 +3,15 @@
     <color name="yellow">#FDC716</color>
     <color name="yellowDark">#CA9400</color>
 
-    <color name="grey">#14181C</color>
-    <color name="greyDark">#181818</color>
-    <color name="greyLight">#7E828F</color>
-    <color name="greyLighter">#999999</color>
-    <color name="greyLightest">#DFDFDF</color>
-    <color name="greyMostLightest">#E6E6E6</color>
+    <color name="grey">#1A2025</color>
+    <color name="greyDark">#111418</color>
+    <color name="greyLightDark">#4D5053</color>
+    <color name="greyLight">#999999</color>
+    <color name="greyLighter">#8B9197</color> // unselected
+    <color name="greyXLighter">#FFBDBDBD</color> //status bar color
+    <color name="greyLightest">#C5C8CB</color> //selected placeholder
+    <color name="greyMostLightest">#EBEBEB</color> // separator
+    <color name="greyWhite">#F7F8F8</color> //shape background
 
     <color name="white">#FFFFFF</color>
     <color name="whiteTransparent">#CCFFFFFF</color>
@@ -16,7 +19,7 @@
 
     <color name="blue">#4778FE</color>
 
-    <color name="red">#FF5555</color>
+    <color name="red">#F44336</color>
 
     <color name="black">#000000</color>
 

@@ -19,18 +19,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BrowseStoriesToolBar extends Toolbar {
+public class BrowseStoriesToolBar extends BaseToolBar {
     public BrowseStoriesToolBar(Context context) {
-        this(context, null);
+        super(context);
     }
 
     public BrowseStoriesToolBar(Context context, AttributeSet attrs) {
-        this(context, attrs, android.support.v7.appcompat.R.attr.toolbarStyle);
+        super(context, attrs);
     }
 
     public BrowseStoriesToolBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+    }
+
+    @Override
+    protected int getInnetViewLayoutId() {
+        return R.layout.view_toolbar_activity_browsing_stories;
     }
 
     private TextView userNameTextView;
@@ -41,9 +45,8 @@ public class BrowseStoriesToolBar extends Toolbar {
     private Action0 onChangePeriod;
     private Action0 onChangeSize;
 
-    private void init() {
-        inflate(getContext(), R.layout.view_toolbar_activity_browsing_stories, this);
-
+    @Override
+    protected void init() {
         userNameTextView = (TextView) findViewById(R.id.toolbar_activity_browsing_stories_user_name);
         fullUserNameTextView = (TextView) findViewById(R.id.toolbar_activity_browsing_stories_full_name);
         avatarImageView = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_avatar);

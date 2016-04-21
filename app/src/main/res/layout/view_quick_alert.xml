@@ -12,7 +12,7 @@
         android:gravity="center"
         android:ellipsize="end"
         android:textColor="@color/white"
-        android:textSize="@dimen/textSizeNormal"
+        android:textAppearance="@style/TextAppearance.FontLightSmallTextSize"
         tools:text="Quick alert text message"
         />
 

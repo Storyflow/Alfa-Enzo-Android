@@ -178,7 +178,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
 
     @Override
     protected int getStatusBarColorResourceId() {
-        return R.color.greyLighter;
+        return R.color.greyXLighter;
     }
 
     @Override

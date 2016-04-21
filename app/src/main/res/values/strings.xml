@@ -10,7 +10,7 @@
     <string name="privacy_policy_clickable_terms_of_service">Term of Service</string>
     <string name="hint_email_or_user_name">Email or username</string>
     <string name="hint_password">Password</string>
-    <string name="forgot_password">Forgot your password?</string>
+    <string name="forgot_password">Forgot your password</string>
     <string name="continue_button">Continue</string>
     <string name="done_button">Done</string>
     <string name="email_or_username_cannot_be_empty">Email or username cannot be empty</string>

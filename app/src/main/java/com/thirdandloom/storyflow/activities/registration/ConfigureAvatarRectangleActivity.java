@@ -3,9 +3,9 @@ package com.thirdandloom.storyflow.activities.registration;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.activities.BaseActivity;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.glide.LogCrashRequestListener;
 import com.thirdandloom.storyflow.utils.image.Size;
+import com.thirdandloom.storyflow.views.toolbar.ConfigureAvatarToolBar;
 import rx.functions.Action4;
 import uk.co.senab.photoview.IPhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -37,7 +37,6 @@ public class ConfigureAvatarRectangleActivity extends BaseActivity {
         state.takenAction = takenAction;
         state.imageData = imageData;
         putExtra(intent, state);
-        Timber.d("newInstance with url = " + state.imageData);
 
         return intent;
     }
@@ -49,18 +48,13 @@ public class ConfigureAvatarRectangleActivity extends BaseActivity {
         state = (SavedState) getState();
         restoreState(savedInstanceState, (restoredState) -> state = (SavedState) restoredState);
 
-        findViews();
+        profileImageView = (ImageView) findViewById(R.id.activity_set_profile_picture_avatar);
         initGui();
         startLoadingImage();
     }
 
-    private void findViews() {
-        findViewById(R.id.activity_set_profile_picture_ok).setOnClickListener(v -> okClicked());
-        findViewById(R.id.activity_set_profile_picture_cancel).setOnClickListener(v -> cancelClicked());
-        profileImageView = (ImageView) findViewById(R.id.activity_set_profile_picture_avatar);
-    }
-
-    private void cancelClicked() {
+    @Override
+    public void onBackPressed() {
         setResult(RESULT_CANCELED);
         finish();
     }
@@ -75,6 +69,8 @@ public class ConfigureAvatarRectangleActivity extends BaseActivity {
         photoViewAttacher = new PhotoViewAttacher(profileImageView);
         photoViewAttacher.setMinimumScale(MIN_SCALE);
         photoViewAttacher.setScale(INITIAL_SCALE, false);
+
+        ((ConfigureAvatarToolBar)getToolbar()).setOnOkClicked(this::okClicked);
     }
 
     private Intent getSuccessIntent() {
@@ -104,7 +100,7 @@ public class ConfigureAvatarRectangleActivity extends BaseActivity {
 
     @Override
     protected int getStatusBarColorResourceId() {
-        return R.color.greyLighter;
+        return R.color.greyXLighter;
     }
 
     @Override

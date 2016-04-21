@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <include layout="@layout/layout_toolbar"
+    <include layout="@layout/layout_toolbar_storyflow"
         />
 
     <ScrollView android:layout_width="match_parent"
@@ -38,27 +38,43 @@
                 style="@style/LightGreyOvalEditText"
                 />
 
-            <TextView
-                android:id="@+id/activity_login_forgot_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/sizeXLarge"
-                android:layout_marginRight="@dimen/sizeXLarge"
-                android:layout_marginTop="@dimen/sizeNormal"
-                android:padding="4dp"
-                android:text="@string/forgot_password"
-                android:textColor="@drawable/selector_lightgrey_default_text"
-                />
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="18dp"
+                          android:layout_marginLeft="@dimen/sizeXLarge"
+                          android:layout_marginRight="@dimen/sizeXLarge"
+                          android:orientation="horizontal">
 
-            <View android:layout_width="0dp"
-                  android:layout_height="0dp"
-                  android:layout_weight="1"
-                />
+                <View android:layout_width="0dp"
+                      android:layout_height="0dp"
+                      android:layout_weight="1"
+                    />
+
+                <TextView
+                    android:id="@+id/activity_login_forgot_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:gravity="right"
+                    android:text="@string/forgot_password"
+                    android:textAppearance="@style/TextAppearance.FontMediumTinyTextSize"
+                    android:textColor="@drawable/selector_lightgrey_default_text"
+                    />
+
+                <ImageView android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="center"
+                           android:scaleType="centerInside"
+                           android:src="@drawable/arrow_forgot_pass"
+                    />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/activity_login_continue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
                 style="@style/DarkGreyButton"
                 android:text="@string/continue_button"
                 android:layout_marginBottom="@dimen/sizeXLarge"

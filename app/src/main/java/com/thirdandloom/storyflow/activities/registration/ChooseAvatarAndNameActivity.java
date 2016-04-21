@@ -183,7 +183,7 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
 
     @Override
     protected int getStatusBarColorResourceId() {
-        return R.color.greyLighter;
+        return R.color.greyXLighter;
     }
 
     @Override

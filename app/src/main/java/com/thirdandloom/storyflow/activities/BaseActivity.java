@@ -5,9 +5,13 @@ import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.views.alert.QuickAlertController;
 import com.thirdandloom.storyflow.views.alert.QuickAlertView;
 import com.thirdandloom.storyflow.views.progress.ProgressBarController;
+import com.thirdandloom.storyflow.views.toolbar.BaseToolBar;
 import rx.functions.Action1;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
@@ -84,9 +88,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void findToolBar() {
         if (hasToolBar()) {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
-            if (toolbar == null) throw new UnsupportedOperationException("If activity has toolbar, u have to include layout_toolbar in content view");
+            if (toolbar == null) throw new UnsupportedOperationException("If activity has toolbar, u have to include layout_toolbar_storyflow in content view");
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            toolbar.setNavigationIcon(R.drawable.ic_up);
             toolbar.setNavigationOnClickListener(v -> onUpButtonClicked());
         }
     }
@@ -95,11 +99,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         return toolbar;
     }
 
-    protected abstract boolean hasToolBar();
-
-    protected void setToolBarTitle(@StringRes int resId) {
-        getSupportActionBar().setTitle(resId);
+    @Override
+    public void setTitle(int titleId) {
+        if (hasToolBar() && toolbar instanceof BaseToolBar) {
+            ((BaseToolBar)toolbar).setTitleText(titleId);
+        } else {
+            super.setTitle(titleId);
+        }
     }
+
+    protected abstract boolean hasToolBar();
 
     protected void onUpButtonClicked() {
         finish();
@@ -145,4 +154,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         showError(getResources().getString(resId));
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 }
