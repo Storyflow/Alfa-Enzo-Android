@@ -31,6 +31,10 @@ public class MathUtils extends BaseUtils {
         return Math.max(scaleHeight, scaleWidth);
     }
 
+    public static float calculateMaxScaleRatio(int realWidth, int realHeight, int boxWidth) {
+        return calculateMaxScaleRatio(realWidth, realHeight, boxWidth, 0);
+    }
+
     /** Calculate intersection point Y
      *
      * @param start Point(X0, Y0) *X0 - start X; *Y0 - start Y: start straight line point

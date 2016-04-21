@@ -30,10 +30,10 @@ public class ConvertRectUtils extends BaseUtils {
 
         String[] splitString = rectString.split(DELIMITER);
         try {
-            int x = Integer.valueOf(splitString[0]);
-            int y = Integer.valueOf(splitString[1]);
-            int width = Integer.valueOf(splitString[2]);
-            int height = Integer.valueOf(splitString[3]);
+            int x = Math.abs(Integer.valueOf(splitString[0]));
+            int y = Math.abs(Integer.valueOf(splitString[1]));
+            int width = Math.abs(Integer.valueOf(splitString[2]));
+            int height = Math.abs(Integer.valueOf(splitString[3]));
             return new Rect(x, y, x+width, y+height);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             Timber.e(e, e.getMessage());

@@ -14,6 +14,7 @@ import com.thirdandloom.storyflow.views.recyclerview.DisableScrollLinearLayoutMa
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -123,8 +124,18 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     public void onBindViewHolder(StoryHolder storyHolder, int position) {
         ViewUtils.applyWidth(storyHolder.itemView, getItemWidthPixel());
         Calendar storyDate = updateDate(storyHolder, position, centerPosition, itemType);
-        StoriesPreviewAdapter adapter = new StoriesPreviewAdapter(context, storiesManager.getStories(storyDate));
-        storyHolder.recyclerView.setAdapter(adapter);
+
+        StoriesPreviewAdapter adapter;
+        if (!storyDate.equals(storyHolder.getDateCalendar())) {
+            storyHolder.setDateCalendar(storyDate);
+            adapter = new StoriesPreviewAdapter(context, storiesManager.getStories(storyDate), getItemWidthPixel());
+            storyHolder.recyclerView.setAdapter(adapter);
+        } else {
+            adapter = (StoriesPreviewAdapter)storyHolder.recyclerView.getAdapter();
+            adapter.setData(storiesManager.getStories(storyDate), getItemWidthPixel());
+            adapter.notifyDataSetChanged();
+        }
+
         ViewUtils.setHidden(storyHolder.progressBar, adapter.getDataType() != StoriesPreviewAdapter.DataType.PendingStories);
         storyHolder.updateEmptyView(adapter.getDataType());
     }
@@ -149,6 +160,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             void pullToRefreshMotionNotifier(int motionEventAction);
             void onDrag(float scrollAbsolute, float scrollDelta, View scrollingView);
             void onClick(View view);
+            void onPullToRefreshStarted(SwipeRefreshLayout refreshLayout, Calendar calendar);
         }
 
         private TextView dateTextView;
@@ -157,6 +169,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         private View progressBar;
         private View noStoriesView;
         private OnSwipeStartNotifyRefreshLayout refreshLayout;
+        private Calendar dateCalendar;
 
         public StoryHolder(View itemView, Actions actions) {
             super(itemView);
@@ -167,7 +180,11 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             refreshLayout = (OnSwipeStartNotifyRefreshLayout) itemView.findViewById(R.id.adapter_recycler_item_horizontal_refresh_layout);
             noStoriesView = itemView.findViewById(R.id.adapter_recycler_item_horizontal_no_stories_view);
 
-            initRefreshLayout(refreshLayout, actions);
+            refreshLayout.setColorSchemeResources(R.color.yellow, R.color.grey);
+            refreshLayout.setOnRefreshListener(() -> {
+                actions.onPullToRefreshStarted(refreshLayout, dateCalendar);
+            });
+            refreshLayout.setNotifier(actions::pullToRefreshMotionNotifier);
 
             DisableScrollLinearLayoutManager manager = new DisableScrollLinearLayoutManager(itemView.getContext());
             manager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -182,6 +199,14 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             itemView.setOnClickListener(v -> actions.onClick(recyclerView));
         }
 
+        public void setDateCalendar(Calendar dateCalendar) {
+            this.dateCalendar = dateCalendar;
+        }
+
+        public Calendar getDateCalendar() {
+            return dateCalendar;
+        }
+
         public void updateEmptyView(StoriesPreviewAdapter.DataType dataType) {
             ViewUtils.setShown(noStoriesView, dataType == StoriesPreviewAdapter.DataType.EmptyStories);
             int backgroundColorId = dataType == StoriesPreviewAdapter.DataType.EmptyStories
@@ -194,14 +219,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             dateTextView.setText(formattedDate);
             boldDateTextView.setText(boldText);
         }
-    }
-
-    private static void initRefreshLayout(OnSwipeStartNotifyRefreshLayout refreshLayout, StoryHolder.Actions actions) {
-        refreshLayout.setColorSchemeResources(R.color.yellow, R.color.grey);
-        refreshLayout.setOnRefreshListener(() -> {
-            refreshLayout.setRefreshing(false);
-        });
-        refreshLayout.setNotifier(actions::pullToRefreshMotionNotifier);
     }
 
     @NonNull

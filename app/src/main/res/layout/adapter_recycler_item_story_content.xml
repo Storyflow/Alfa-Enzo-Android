@@ -2,23 +2,25 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
+             xmlns:tools="http://schemas.android.com/tools"
              android:layout_marginBottom="@dimen/sizeSmall">
 
     <ImageView
         android:id="@+id/adapter_recycler_item_horizontal_story_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         />
 
     <TextView
         android:id="@+id/adapter_recycler_item_horizontal_story_text_view"
-        android:text="Test text recycler view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/greyDark"
         android:layout_gravity="bottom"
         android:padding="@dimen/sizeNormal"
+        tools:text="Test text recycler view"
         />
 
 </FrameLayout>

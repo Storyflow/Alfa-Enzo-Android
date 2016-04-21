@@ -17,8 +17,8 @@ public class Story extends BaseModel {
     private Date date;
     @SerializedName("description")
     private String description;
-    @SerializedName("likes")
-    private int likes;
+    @SerializedName("likesCount")
+    private int likesCount;
     @SerializedName("userLikes")
     private boolean userLikes;
     @SerializedName("type")
@@ -29,6 +29,12 @@ public class Story extends BaseModel {
     private Date createdAt;
     @SerializedName("image")
     private StoryImageModel imageData;
+    @SerializedName("commentsCount")
+    private int commentsCount;
+
+    public int getCommentsCount() {
+        return commentsCount;
+    }
 
     public StoryImageModel getImageData() {
         return imageData;
@@ -46,8 +52,8 @@ public class Story extends BaseModel {
         return userLikes;
     }
 
-    public int getLikes() {
-        return likes;
+    public int getLikesCount() {
+        return likesCount;
     }
 
     public String getDescription() {

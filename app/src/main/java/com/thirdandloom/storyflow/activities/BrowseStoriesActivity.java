@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -276,7 +277,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
 
         @Override
         public void onDragFinished(int velocity) {
-            storyDetailsFragment.onDragFinished(velocity);
+            if (storyDetailsFragment != null) storyDetailsFragment.onDragFinished(velocity);
             getHorizontalRecyclerViewLayoutManager().setDisableScroll(false);
         }
 
@@ -315,6 +316,17 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, StoryDetailsFragment.class.getSimpleName());
             ft.commit();
+        }
+
+        @Override
+        public void onPullToRefreshStarted(SwipeRefreshLayout refreshLayout, Calendar calendar) {
+            StoryflowApplication.restClient().loadStories(getPeriodsAdapter().getStoriesManager().getRequestData(calendar), (Story.WrapList list) -> {
+                getPeriodsAdapter().onNewStoriesFetched(list, calendar);
+                refreshLayout.setRefreshing(false);
+            }, errorMessage -> {
+                showError(errorMessage);
+                refreshLayout.setRefreshing(false);
+            });
         }
     };
 

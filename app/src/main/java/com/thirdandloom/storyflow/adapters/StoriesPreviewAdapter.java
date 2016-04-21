@@ -4,7 +4,9 @@ import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import rx.functions.Action4;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -23,11 +25,17 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
 
     private Context context;
     private Story.WrapList wrapStoriesList;
+    private int itemWidthPixels;
     private DataType dataType;
 
-    public StoriesPreviewAdapter(Context context, @Nullable Story.WrapList wrapStoriesList) {
+    public StoriesPreviewAdapter(Context context, @Nullable Story.WrapList wrapStoriesList, int itemWidthPixels) {
         this.context = context;
+        setData(wrapStoriesList, itemWidthPixels);
+    }
+
+    public void setData(@Nullable Story.WrapList wrapStoriesList, int itemWidthPixels) {
         this.wrapStoriesList = wrapStoriesList;
+        this.itemWidthPixels = itemWidthPixels;
         updateDataType();
     }
 
@@ -41,30 +49,20 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
     @Override
     public void onBindViewHolder(StoryContentHolder holder, int position) {
         Story story = wrapStoriesList.getStory(position);
+        getStoryData(story, (height, description, url, scaleType) -> {
+            //TODO
+            //scaleType be removed after story.getAuthor().getCroppedImageCover().getRect()
+            //fixed: -180x106x735x391
+            holder.imageView.setScaleType(scaleType);
 
-        String imageUrl = null;
-        String text = story.getDescription();
-        int height = 0;
-
-        switch (story.getType()) {
-            case Text:
-                imageUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
-                height = story.getAuthor().getCroppedImageCover().getRect() != null
-                        ? story.getAuthor().getCroppedImageCover().getRect().height()
-                        : DeviceUtils.dpToPx(200);
-                break;
-            case Image:
-                imageUrl = story.getImageData().getNormalSizedImage().url();
-                height = story.getImageData().getNormalSizedImage().size().height();
-                break;
-        }
-        ViewUtils.applyHeight(holder.itemView, height);
-        Glide
-                .with(context)
-                .load(imageUrl)
-                .crossFade()
-                .into(holder.imageView);
-        holder.textView.setText(text);
+            ViewUtils.applyHeight(holder.itemView, height);
+            Glide
+                    .with(context)
+                    .load(url)
+                    .crossFade()
+                    .into(holder.imageView);
+            holder.textView.setText(description);
+        });
     }
 
     @Override
@@ -78,6 +76,52 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
         return dataType;
     }
 
+    private void getStoryData(Story story, Action4<Integer, String, String, ImageView.ScaleType> dataCallback) {
+        String description = story.getDescription();
+        String imageUrl;
+        int height;
+        int imageHeight;
+        int imageWidth;
+        ImageView.ScaleType scaleType;
+        switch (story.getType()) {
+            case Text:
+                imageUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
+                if (story.getAuthor().getCroppedImageCover().getRect() != null
+                        && story.getAuthor().getCroppedImageCover().getRect().height() != 0
+                        && story.getAuthor().getCroppedImageCover().getRect().width() != 0) {
+                    imageHeight = story.getAuthor().getCroppedImageCover().getRect().height();
+                    imageWidth = story.getAuthor().getCroppedImageCover().getRect().width();
+                } else {
+                    imageHeight = DeviceUtils.dpToPx(100);
+                    imageWidth = DeviceUtils.dpToPx(100);
+                }
+                scaleType = ImageView.ScaleType.CENTER_CROP;
+                break;
+            case Image:
+                imageUrl = story.getImageData().getNormalSizedImage().url();
+                imageHeight = story.getImageData().getNormalSizedImage().size().height();
+                imageWidth = story.getImageData().getNormalSizedImage().size().width();
+                scaleType = ImageView.ScaleType.FIT_CENTER;
+
+                //TODO
+                //this code should be removed after story.getImageData().getNormalSizedImage().size()
+                //fixed: story.getImageData().getNormalSizedImage().size() = (0, 0)
+                if (imageHeight == 0 || imageWidth == 0) {
+                    imageHeight = DeviceUtils.dpToPx(100);
+                    imageWidth = DeviceUtils.dpToPx(100);
+                    scaleType = ImageView.ScaleType.CENTER_CROP;
+                }
+
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported story type.");
+        }
+
+        float coef = MathUtils.calculateMaxScaleRatio(imageWidth, imageHeight, itemWidthPixels);
+        height = Math.round(coef*imageHeight);
+        dataCallback.call(height, description, imageUrl, scaleType);
+    }
+
     private void updateDataType() {
         if (this.wrapStoriesList == null) {
             dataType = DataType.PendingStories;
@@ -88,7 +132,6 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
             dataType = DataType.PopulatedStories;
         }
     }
-
 
     public static class StoryContentHolder extends RecyclerView.ViewHolder {
         TextView textView;
