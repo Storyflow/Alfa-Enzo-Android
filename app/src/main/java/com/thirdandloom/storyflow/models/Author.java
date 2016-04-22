@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import com.thirdandloom.storyflow.models.image.CroppedImage;
 
 public class Author extends BaseModel {
+    private static final long serialVersionUID = -4974172389611244699L;
     @SerializedName("id")
     private int id;
     @SerializedName("username")

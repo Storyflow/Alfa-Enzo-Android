@@ -9,7 +9,6 @@ import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
 import rx.functions.Action0;
 
 import android.content.Context;
-import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -82,15 +81,15 @@ public class BrowseStoriesToolBar extends BaseToolBar {
         this.onChangeSize = onChangeSize;
     }
 
-    public void onNewItemWidthSelected(PeriodsAdapter.ItemWidth itemWidth) {
-        changeSizeImageView.setImageResource(toolbarSizeImage.get(itemWidth.ordinal()));
+    public void onNewItemWidthSelected(PeriodsAdapter.ItemType itemType) {
+        changeSizeImageView.setImageResource(toolbarSizeImage.get(itemType.ordinal()));
     }
 
     private static final Map<Integer, Integer> toolbarSizeImage;
     static {
         Map<Integer, Integer> map = new HashMap<>();
-        map.put(PeriodsAdapter.ItemWidth.Small.ordinal(), R.drawable.plus_icon);
-        map.put(PeriodsAdapter.ItemWidth.Large.ordinal(), R.drawable.minus_icon);
+        map.put(PeriodsAdapter.ItemType.Small.ordinal(), R.drawable.plus_icon);
+        map.put(PeriodsAdapter.ItemType.Large.ordinal(), R.drawable.minus_icon);
         toolbarSizeImage = Collections.unmodifiableMap(map);
     }
 }

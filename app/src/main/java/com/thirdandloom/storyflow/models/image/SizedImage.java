@@ -5,6 +5,7 @@ import com.thirdandloom.storyflow.models.BaseModel;
 import com.thirdandloom.storyflow.models.SizeModel;
 
 public class SizedImage extends BaseModel {
+    private static final long serialVersionUID = 8935208818566333931L;
     @SerializedName("url")
     private String url;
     @SerializedName("size")

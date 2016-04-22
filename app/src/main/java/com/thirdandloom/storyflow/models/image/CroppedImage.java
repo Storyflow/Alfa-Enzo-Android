@@ -9,6 +9,7 @@ import com.thirdandloom.storyflow.models.BaseModel;
 import com.thirdandloom.storyflow.utils.image.ConvertRectUtils;
 
 public class CroppedImage extends BaseModel {
+    private static final long serialVersionUID = -3431107892123815707L;
     @SerializedName("url")
     private String imageUrl;
     @SerializedName("rect")

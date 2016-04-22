@@ -14,6 +14,7 @@ import com.thirdandloom.storyflow.views.recyclerview.DisableScrollLinearLayoutMa
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,28 +24,32 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHolder> {
 
-    public enum ItemWidth {
+    public enum ItemType {
         Large, Small
     }
-    public enum ItemType {
+    public enum PeriodType {
         Daily, Monthly, Yearly
     }
 
     private final Handler postponeHandler = new Handler();
-    private final StoriesManager storiesManager = new StoriesManager();
+    private final StoriesManager storiesManager;
 
-    private ItemWidth itemWidth = ItemWidth.Large;
-    private ItemType itemType = ItemType.Daily;
+    private ItemType itemType = ItemType.Large;
+    private PeriodType periodType = PeriodType.Daily;
     private Context context;
     private int centerPosition;
     private StoryHolder.Actions storyPreviewActions;
     private boolean fetchedStories;
 
-    public PeriodsAdapter(Context context) {
+    public PeriodsAdapter(Context context, @Nullable LinkedHashMap<Calendar, Story.WrapList> store,
+            @Nullable List<Integer> fetchedPositions, @Nullable StoriesManager.RequestData requestData) {
         this.context = context;
+        this.storiesManager = new StoriesManager(store, fetchedPositions, requestData);
     }
 
     public void setStoryPreviewActions(StoryHolder.Actions storyPreviewActions) {
@@ -55,8 +60,12 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         return storiesManager;
     }
 
-    public ItemWidth getItemWidth() {
-        return itemWidth;
+    public void setItemType(ItemType itemType) {
+        this.itemType = itemType;
+    }
+
+    public ItemType getItemType() {
+        return itemType;
     }
 
     public void setCenterPosition(int centerPosition) {
@@ -75,22 +84,42 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         updateDataFromLocalStore();
     }
 
-    public void setItemType(ItemType itemType) {
-        this.itemType = itemType;
+    public void updatePeriodType() {
+        switch (storiesManager.getRequestData().getPeriodInt()) {
+            case StoriesManager.RequestData.Period.Year:
+                periodType = PeriodType.Yearly;
+                break;
+            case StoriesManager.RequestData.Period.Year
+                    |StoriesManager.RequestData.Period.Month:
+                periodType = PeriodType.Monthly;
+                break;
+            case StoriesManager.RequestData.Period.Year
+                    |StoriesManager.RequestData.Period.Month
+                    |StoriesManager.RequestData.Period.Day:
+                periodType = PeriodType.Daily;
+                break;
+        }
+    }
+
+    public void setPeriodType(PeriodType periodType) {
+        this.periodType = periodType;
+    }
+
+    public void clearData() {
         this.storiesManager.clearStore();
     }
 
-    public ItemType getItemType() {
-        return itemType;
+    public PeriodType getPeriodType() {
+        return periodType;
     }
 
     public void changeItemWidth() {
-        switch (itemWidth) {
+        switch (itemType) {
             case Large:
-                itemWidth = ItemWidth.Small;
+                itemType = ItemType.Small;
                 break;
             case Small:
-                itemWidth = ItemWidth.Large;
+                itemType = ItemType.Large;
                 break;
         }
     }
@@ -104,7 +133,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     public int getItemWidthPixel() {
-        switch (itemWidth) {
+        switch (itemType) {
             case Large:
                 return DeviceUtils.getDisplayWidth()-getItemPadding()*2;
             case Small:
@@ -123,7 +152,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     @Override
     public void onBindViewHolder(StoryHolder storyHolder, int position) {
         ViewUtils.applyWidth(storyHolder.itemView, getItemWidthPixel());
-        Calendar storyDate = updateDate(storyHolder, position, centerPosition, itemType);
+        Calendar storyDate = updateDate(storyHolder, position, centerPosition, periodType);
 
         StoriesPreviewAdapter adapter;
         if (!storyDate.equals(storyHolder.getDateCalendar())) {
@@ -222,9 +251,9 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     @NonNull
-    private static Calendar updateDate(StoryHolder storyHolder, int position, int centerPosition, ItemType itemType) {
-        Calendar calendar = getDateCalendar(position, centerPosition, itemType);
-        switch (itemType) {
+    private static Calendar updateDate(StoryHolder storyHolder, int position, int centerPosition, PeriodType periodType) {
+        Calendar calendar = getDateCalendar(position, centerPosition, periodType);
+        switch (periodType) {
             case Daily:
                 DateUtils.getDailyRepresentation(calendar, storyHolder::setDateRepresentation);
                 break;
@@ -240,10 +269,10 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         return calendar;
     }
 
-    public static Calendar getDateCalendar(int position, int centerPosition, ItemType itemType) {
+    public static Calendar getDateCalendar(int position, int centerPosition, PeriodType periodType) {
         Calendar calendar = DateUtils.todayCalendar();
         int offset = position - centerPosition;
-        switch (itemType) {
+        switch (periodType) {
             case Daily:
                 calendar.add(Calendar.DAY_OF_YEAR, offset);
                 break;

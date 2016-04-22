@@ -6,6 +6,7 @@ import com.thirdandloom.storyflow.models.image.WrappedImage;
 import java.util.Date;
 
 public class Avatar extends BaseModel {
+    private static final long serialVersionUID = 3337157126157485268L;
     @SerializedName("id")
     private int id;
     @SerializedName("activated")

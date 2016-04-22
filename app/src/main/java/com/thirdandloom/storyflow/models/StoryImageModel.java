@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import com.thirdandloom.storyflow.models.image.SizedImage;
 
 public class StoryImageModel extends BaseModel {
+    private static final long serialVersionUID = -1925998522422167654L;
     @SerializedName("normal")
     private SizedImage normalSizedImage;
     @SerializedName("collapsed")

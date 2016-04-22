@@ -1,10 +1,12 @@
 package com.thirdandloom.storyflow.managers;
 
 import com.thirdandloom.storyflow.models.Story;
+import rx.functions.Action3;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -24,8 +26,16 @@ public class StoriesManager {
     private LinkedHashMap<Calendar, Story.WrapList> store = new LinkedHashMap<>();
     private List<Integer> fetchedPositions = new LinkedList<>();
 
-    public StoriesManager() {
+    public StoriesManager(@Nullable LinkedHashMap<Calendar, Story.WrapList> store, @Nullable List<Integer> fetchedPositions, @Nullable RequestData requestData) {
+        if (store != null && fetchedPositions != null && requestData != null) {
+            this.store = store;
+            this.fetchedPositions = fetchedPositions;
+            this.requestData = requestData;
+        }
+    }
 
+    public void getSavedData(Action3<LinkedHashMap<Calendar, Story.WrapList>, List<Integer>, RequestData> callback) {
+        callback.call(store, fetchedPositions, requestData);
     }
 
     public RequestData getRequestData() {
@@ -65,7 +75,9 @@ public class StoriesManager {
         store.clear();
     }
 
-    public static class RequestData {
+    public static class RequestData implements Serializable {
+        private static final long serialVersionUID = 292337049982264779L;
+
         private int limit = 20;
         private int period = Period.Year|Period.Month|Period.Day;
         private int owners = Owners.Me|Owners.Followings|Owners.Friends;
@@ -100,6 +112,10 @@ public class StoriesManager {
             return Direction.directionMap.get(direction);
         }
 
+        public int getPeriodInt() {
+            return period;
+        }
+
         public String getPeriod() {
             String stringFormat = Period.dateFormats.get(period);
             DateFormat dateFormat = new SimpleDateFormat(stringFormat);
@@ -118,10 +134,10 @@ public class StoriesManager {
             return filters;
         }
 
-        static class Period {
-            static final int Year = 0x0001;
-            static final int Month = Year << 1;
-            static final int Day = Month << 1;
+        public static class Period {
+            public static final int Year = 0x0001;
+            public static final int Month = Year << 1;
+            public static final int Day = Month << 1;
             static final Map<Integer, String> dateFormats;
             static {
                 Map<Integer, String> map = new HashMap<>();
@@ -132,10 +148,10 @@ public class StoriesManager {
             }
         }
 
-        static class Owners {
-            static final int Me =  0x0001;
-            static final int Friends = Me << 1;
-            static final int Followings = Friends << 1;
+        public static class Owners {
+            public static final int Me =  0x0001;
+            public static final int Friends = Me << 1;
+            public static final int Followings = Friends << 1;
             static final Map<Integer, String> ownersMap;
             static {
                 Map<Integer, String> map = new HashMap<>();
@@ -147,10 +163,10 @@ public class StoriesManager {
             static final List<Integer> list = Arrays.asList(Me, Friends, Followings);
         }
 
-        static class Direction {
-            static final int None =  0x0001;
-            static final int Forward =  None << 1;
-            static final int Backward = Forward << 1;
+        public static class Direction {
+            public static final int None =  0x0001;
+            public static final int Forward =  None << 1;
+            public static final int Backward = Forward << 1;
             static final Map<Integer, String> directionMap;
             static {
                 Map<Integer, String> map = new HashMap<>();

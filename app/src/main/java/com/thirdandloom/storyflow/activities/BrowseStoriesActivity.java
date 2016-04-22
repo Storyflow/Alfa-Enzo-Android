@@ -7,6 +7,7 @@ import com.thirdandloom.storyflow.fragments.StoryDetailsFragment;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
+import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -32,6 +33,7 @@ import android.view.View;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsFragment.IStoryDetailFragmentDataSource {
@@ -42,7 +44,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     private TabBar tabBar;
     private Action1<Float> takeScrollValue;
     private StoryDetailsFragment storyDetailsFragment;
-    private int recyclerViewScrollState =  RecyclerView.SCROLL_STATE_IDLE;
+    private int recyclerViewScrollState = RecyclerView.SCROLL_STATE_IDLE;
 
     public static Intent newInstance(boolean continueAnimation) {
         Intent intent = new Intent(StoryflowApplication.getInstance(), BrowseStoriesActivity.class);
@@ -70,9 +72,9 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     }
 
     private void findViews() {
-        horizontalRecyclerView = (SnappyRecyclerView)findViewById(R.id.activity_browse_stories_horizontal_recycler_view);
+        horizontalRecyclerView = (SnappyRecyclerView) findViewById(R.id.activity_browse_stories_horizontal_recycler_view);
         periodChooserView = findViewById(R.id.activity_browse_stories_period_chooser);
-        tabBar = (TabBar)findViewById(R.id.activity_browse_stories_tab_bar);
+        tabBar = (TabBar) findViewById(R.id.activity_browse_stories_tab_bar);
     }
 
     private void initGui() {
@@ -87,17 +89,17 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_yearly).setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodYearly();
             onChangePeriodClicked();
-            onPeriodChanged(PeriodsAdapter.ItemType.Yearly);
+            onPeriodChanged(PeriodsAdapter.PeriodType.Yearly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_monthly).setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodMonthly();
             onChangePeriodClicked();
-            onPeriodChanged(PeriodsAdapter.ItemType.Monthly);
+            onPeriodChanged(PeriodsAdapter.PeriodType.Monthly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_daily).setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodDaily();
             onChangePeriodClicked();
-            onPeriodChanged(PeriodsAdapter.ItemType.Daily);
+            onPeriodChanged(PeriodsAdapter.PeriodType.Daily);
         });
     }
 
@@ -108,14 +110,18 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         horizontalRecyclerView.setHasFixedSize(true);
         horizontalRecyclerView.setLayoutManager(layoutManager);
 
-        PeriodsAdapter adapter = new PeriodsAdapter(this);
+        PeriodsAdapter adapter = new PeriodsAdapter(this, state.savedStore, state.savedFetchedPositions, state.savedRequestData);
         adapter.setStoryPreviewActions(storyPreviewActions);
-
+        adapter.setItemType(state.savedItemType);
         horizontalRecyclerView.setAdapter(adapter);
-        int centerPosition = adapter.getItemCount() / 2;
+        ((BrowseStoriesToolBar) getToolbar()).onNewItemWidthSelected(adapter.getItemType());
+
+        int centerPosition = state.currentPosition != ArrayUtils.INDEX_NOT_FOUND
+                ? state.currentPosition
+                : adapter.getItemCount() / 2;
         updateOffset(centerPosition);
         adapter.setCenterPosition(centerPosition);
-        adapter.setItemType(PeriodsAdapter.ItemType.Daily);
+        adapter.updatePeriodType();
         loadStoriesBetweenPositions(centerPosition - 1, centerPosition + 1);
 
         horizontalRecyclerView.addOnScrollListener(tabBar.getRecyclerViewScrollListener());
@@ -124,11 +130,12 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         tabBar.setActions(tabBarActions);
     }
 
-    private void onPeriodChanged(PeriodsAdapter.ItemType itemType) {
-        if (getPeriodsAdapter().getItemType() != itemType) {
+    private void onPeriodChanged(PeriodsAdapter.PeriodType periodType) {
+        if (getPeriodsAdapter().getPeriodType() != periodType) {
             int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
             getPeriodsAdapter().setCenterPosition(position);
-            getPeriodsAdapter().setItemType(itemType);
+            getPeriodsAdapter().setPeriodType(periodType);
+            getPeriodsAdapter().clearData();
             getPeriodsAdapter().notifyDataSetChanged();
             loadStoriesBetweenPositions(position - 1, position + 1);
         }
@@ -158,14 +165,14 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
         updateOffset(position);
         tabBar.setItemWidth(adapter.getItemWidthPixel());
-        ((BrowseStoriesToolBar)getToolbar()).onNewItemWidthSelected(adapter.getItemWidth());
+        ((BrowseStoriesToolBar) getToolbar()).onNewItemWidthSelected(adapter.getItemType());
     }
 
     private void updateOffset(int position) {
         LinearLayoutManager layoutManager = (LinearLayoutManager) horizontalRecyclerView.getLayoutManager();
         PeriodsAdapter adapter = getPeriodsAdapter();
 
-        int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - PeriodsAdapter.getItemMargin()*2;
+        int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - PeriodsAdapter.getItemMargin() * 2;
         layoutManager.scrollToPositionWithOffset(position, offset / 2);
     }
 
@@ -174,7 +181,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     }
 
     private PeriodsAdapter getPeriodsAdapter() {
-        return (PeriodsAdapter)horizontalRecyclerView.getAdapter();
+        return (PeriodsAdapter) horizontalRecyclerView.getAdapter();
     }
 
     @Override
@@ -188,7 +195,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     }
 
     private void initToolBar() {
-        BrowseStoriesToolBar toolBar = (BrowseStoriesToolBar)getToolbar();
+        BrowseStoriesToolBar toolBar = (BrowseStoriesToolBar) getToolbar();
         toolBar.setOnChangePeriod(this::onChangePeriodClicked);
         toolBar.setOnChangeSize(this::onChangeSizeClicked);
     }
@@ -245,17 +252,17 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     }
 
     private void loadStoriesBetweenPositions(int firstVisiblePosition, int lastVisiblePosition) {
-        int centerPosition =  getPeriodsAdapter().getCenterPosition();
-        PeriodsAdapter.ItemType itemType = getPeriodsAdapter().getItemType();
+        int centerPosition = getPeriodsAdapter().getCenterPosition();
+        PeriodsAdapter.PeriodType periodType = getPeriodsAdapter().getPeriodType();
         StoriesManager storiesManager = getPeriodsAdapter().getStoriesManager();
         for (int position = firstVisiblePosition; position <= lastVisiblePosition; position++) {
-            sendFetchStoriesRequest(position, centerPosition, itemType, storiesManager);
+            sendFetchStoriesRequest(position, centerPosition, periodType, storiesManager);
         }
     }
 
-    private void sendFetchStoriesRequest(int position, int centerPosition,  PeriodsAdapter.ItemType itemType,  StoriesManager storiesManager) {
+    private void sendFetchStoriesRequest(int position, int centerPosition, PeriodsAdapter.PeriodType periodType, StoriesManager storiesManager) {
         if (!storiesManager.isFetchedPosition(position)) {
-            Calendar calendar = PeriodsAdapter.getDateCalendar(position, centerPosition, itemType);
+            Calendar calendar = PeriodsAdapter.getDateCalendar(position, centerPosition, periodType);
             storiesManager.addFetchedStoryPosition(position);
             StoryflowApplication.restClient().loadStories(storiesManager.getRequestData(calendar), (Story.WrapList list) -> {
                 getPeriodsAdapter().onNewStoriesFetched(list, calendar);
@@ -278,7 +285,8 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
 
         @Override
         public void onDragFinished(int velocity) {
-            if (storyDetailsFragment != null) storyDetailsFragment.onDragFinished(velocity);
+            if (storyDetailsFragment != null)
+                storyDetailsFragment.onDragFinished(velocity);
             getHorizontalRecyclerViewLayoutManager().setDisableScroll(false);
         }
 
@@ -289,7 +297,8 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
 
         @Override
         public void onDrag(float scrollAbsolute, float scrollDelta, View scrollingView) {
-            if (takeScrollValue != null) takeScrollValue.call(scrollDelta);
+            if (takeScrollValue != null)
+                takeScrollValue.call(scrollDelta);
             if (scrollAbsolute > 0) {
                 if (storyDetailsFragment == null || !storyDetailsFragment.isAdded()) {
                     storyDetailsFragment = StoryDetailsFragment.newInstance(scrollingView, false);
@@ -358,6 +367,13 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     @Nullable
     @Override
     protected Serializable getSavedState() {
+        getPeriodsAdapter().getStoriesManager().getSavedData((store, positions, requestData) -> {
+            state.savedFetchedPositions = positions;
+            state.savedStore = store;
+            state.savedRequestData = requestData;
+        });
+        state.savedItemType = getPeriodsAdapter().getItemType();
+        state.currentPosition = getHorizontalRecyclerViewLayoutManager().findFirstCompletelyVisibleItemPosition();
         return state;
     }
 
@@ -366,5 +382,11 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
 
         boolean continueAnimation;
         boolean choosePeriodIsVisible;
+
+        LinkedHashMap<Calendar, Story.WrapList> savedStore;
+        List<Integer> savedFetchedPositions;
+        int currentPosition = ArrayUtils.EMPTY_POSITION;
+        StoriesManager.RequestData savedRequestData;
+        PeriodsAdapter.ItemType savedItemType = PeriodsAdapter.ItemType.Large;
     }
 }

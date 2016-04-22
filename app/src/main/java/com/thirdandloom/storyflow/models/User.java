@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 public class User extends BaseModel {
+    private static final long serialVersionUID = 3593371339442441392L;
     @SerializedName("id")
     private int id;
     @SerializedName("email")
