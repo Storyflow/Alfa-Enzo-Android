@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:titleTextColor="@color/grey"
-        app:theme="@style/Toolbar"
+        android:theme="@style/Toolbar"
         android:background="@color/white"
         tools:title="Set Profile Picture">
     </com.thirdandloom.storyflow.views.toolbar.SimpleToolBar>

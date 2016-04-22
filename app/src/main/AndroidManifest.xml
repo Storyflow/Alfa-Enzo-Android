@@ -61,6 +61,12 @@
                   android:theme="@style/NoTitleWhite">
         </activity>
 
+        <activity android:name=".activities.PostStoryActivity"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateAlwaysVisible"
+                  android:theme="@style/NoTitleWhite">
+        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="007706a287637bde5afb1b4391bf89a8b946cf5f"/>
@@ -69,8 +75,12 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.INTERNET"
+        />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        />
 
 </manifest>

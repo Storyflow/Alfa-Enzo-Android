@@ -88,7 +88,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void findToolBar() {
         if (hasToolBar()) {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
-            if (toolbar == null) throw new UnsupportedOperationException("If activity has toolbar, u have to include layout_toolbar_storyflow in content view");
+            if (toolbar == null) throw new UnsupportedOperationException("If activity has toolbar, u have to include layout_toolbar_simple in content view");
             setSupportActionBar(toolbar);
             toolbar.setNavigationIcon(R.drawable.ic_up);
             toolbar.setNavigationOnClickListener(v -> onUpButtonClicked());

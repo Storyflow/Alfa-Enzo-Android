@@ -344,7 +344,8 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
 
         @Override
         public void postClicked() {
-
+            Intent intent = PostStoryActivity.newInstance();
+            startActivity(intent);
         }
 
         @Override
