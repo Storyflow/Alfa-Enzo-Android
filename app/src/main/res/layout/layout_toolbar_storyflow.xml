@@ -8,7 +8,7 @@
               android:layout_gravity="top"
               android:orientation="vertical">
 
-    <com.thirdandloom.storyflow.views.toolbar.StoryflowToolBar
+    <com.thirdandloom.storyflow.views.toolbar.SimpleToolBar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
         app:theme="@style/Toolbar"
         android:background="@color/white"
         tools:title="Set Profile Picture">
-    </com.thirdandloom.storyflow.views.toolbar.StoryflowToolBar>
+    </com.thirdandloom.storyflow.views.toolbar.SimpleToolBar>
 
     <View android:layout_width="match_parent"
           android:layout_height="1px"
