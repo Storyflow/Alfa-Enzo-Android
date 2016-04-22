@@ -14,11 +14,11 @@ import java.util.ArrayList;
 
 public class AccountManager {
     private User currentUser;
-    private String mPassword;
+    private String password;
 
     public AccountManager() {
         CommonPreferences preferences = StoryflowApplication.preferences();
-        mPassword = preferences.password.get();
+        password = preferences.password.get();
     }
 
     public void updateProfile(@NonNull User user) {
@@ -61,18 +61,18 @@ public class AccountManager {
     }
 
     public String getPassword() {
-        return mPassword;
+        return password;
     }
 
     public void setPassword(String password) {
-        mPassword = password;
+        this.password = password;
         CommonPreferences preferences = StoryflowApplication.preferences();
-        preferences.password.set(mPassword);
+        preferences.password.set(this.password);
     }
 
     public void resetAccount() {
         currentUser = null;
-        mPassword = StringUtils.EMPTY;
+        password = StringUtils.EMPTY;
     }
 
     public boolean isCurrentUser(String userUid){

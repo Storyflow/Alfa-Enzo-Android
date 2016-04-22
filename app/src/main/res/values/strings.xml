@@ -12,6 +12,7 @@
     <string name="hint_password">Password</string>
     <string name="forgot_password">Forgot your password</string>
     <string name="continue_button">Continue</string>
+    <string name="logout_button">Logout</string>
     <string name="done_button">Done</string>
     <string name="email_or_username_cannot_be_empty">Email or username cannot be empty</string>
     <string name="password_cannot_be_empty">Password cannot be empty</string>
@@ -50,6 +51,7 @@
     <string name="set_profile_picture">Set Profile Picture</string>
     <string name="move_and_scale_photo_to_fit">Move and Scale photo to fit</string>
     <string name="error_while_loading_image">Error while uploading image.</string>
+    <string name="user_profile">User profile</string>
 
     <string name="daily">DAILY</string>
     <string name="monthly">MONTHLY</string>

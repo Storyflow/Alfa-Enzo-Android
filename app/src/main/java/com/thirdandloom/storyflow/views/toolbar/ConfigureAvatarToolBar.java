@@ -22,7 +22,7 @@ public class ConfigureAvatarToolBar extends BaseToolBar {
     private Action0 onOkClicked;
 
     @Override
-    protected int getInnetViewLayoutId() {
+    protected int getInnerViewLayoutId() {
         return R.layout.view_toolbar_activity_choose_avatar;
     }
 

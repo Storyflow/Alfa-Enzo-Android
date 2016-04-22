@@ -33,7 +33,7 @@ public class BrowseStoriesToolBar extends BaseToolBar {
     }
 
     @Override
-    protected int getInnetViewLayoutId() {
+    protected int getInnerViewLayoutId() {
         return R.layout.view_toolbar_activity_browsing_stories;
     }
 

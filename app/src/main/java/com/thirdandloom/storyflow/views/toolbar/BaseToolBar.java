@@ -21,7 +21,7 @@ public abstract class BaseToolBar extends Toolbar {
 
     public BaseToolBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        inflate(context, getInnetViewLayoutId(), this);
+        inflate(context, getInnerViewLayoutId(), this);
         titleTextView = (TextView)findViewById(R.id.view_toolbar_title_text_view);
         init();
     }
@@ -36,7 +36,7 @@ public abstract class BaseToolBar extends Toolbar {
     }
 
     @LayoutRes
-    protected abstract int getInnetViewLayoutId();
+    protected abstract int getInnerViewLayoutId();
 
     protected abstract void init();
 }

@@ -121,6 +121,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         horizontalRecyclerView.addOnScrollListener(tabBar.getRecyclerViewScrollListener());
         horizontalRecyclerView.addOnScrollListener(new OnScrollListener());
         tabBar.setItemWidth(adapter.getItemWidthPixel());
+        tabBar.setActions(tabBarActions);
     }
 
     private void onPeriodChanged(PeriodsAdapter.ItemType itemType) {
@@ -269,7 +270,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         return recyclerViewScrollState != RecyclerView.SCROLL_STATE_SETTLING;
     }
 
-    private PeriodsAdapter.StoryHolder.Actions storyPreviewActions = new PeriodsAdapter.StoryHolder.Actions() {
+    private final PeriodsAdapter.StoryHolder.Actions storyPreviewActions = new PeriodsAdapter.StoryHolder.Actions() {
         @Override
         public void onDragStarted() {
             getHorizontalRecyclerViewLayoutManager().setDisableScroll(true);
@@ -327,6 +328,29 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
                 showError(errorMessage);
                 refreshLayout.setRefreshing(false);
             });
+        }
+    };
+
+    private final TabBar.Actions tabBarActions = new TabBar.Actions() {
+        @Override
+        public void updatesClicked() {
+
+        }
+
+        @Override
+        public void messagesClicked() {
+
+        }
+
+        @Override
+        public void postClicked() {
+
+        }
+
+        @Override
+        public void profileClicked() {
+            Intent intent = ProfileActivity.newInstance();
+            startActivity(intent);
         }
     };
 

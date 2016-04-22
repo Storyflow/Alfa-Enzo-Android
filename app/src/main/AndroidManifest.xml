@@ -54,6 +54,13 @@
                   android:theme="@style/NoTitleWhite">
         </activity>
 
+
+        <activity android:name=".activities.ProfileActivity"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateAlwaysHidden"
+                  android:theme="@style/NoTitleWhite">
+        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="007706a287637bde5afb1b4391bf89a8b946cf5f"/>

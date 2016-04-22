@@ -12,10 +12,18 @@ import android.widget.LinearLayout;
 public class TabBar extends LinearLayout {
     private static final int MIN_HEIGHT_DP = 68;
 
+    public interface Actions {
+        void updatesClicked();
+        void messagesClicked();
+        void postClicked();
+        void profileClicked();
+    }
+
     private int scrollPosition;
     private int itemWidth;
     private View flipCircleView;
     private OnScrollListener recyclerViewScrollListener = new OnScrollListener();
+    private Actions actions;
 
     public TabBar(Context context) {
         this(context, null);
@@ -36,6 +44,18 @@ public class TabBar extends LinearLayout {
         setBackground(getResources().getDrawable(R.drawable.shape_black_gradient));
         setPadding(0, 0, 0, getResources().getDimensionPixelOffset(R.dimen.sizeNormal));
 
+        findViewById(R.id.view_tab_bar_updates).setOnClickListener(v -> {
+            actions.updatesClicked();
+        });
+        findViewById(R.id.view_tab_bar_messages).setOnClickListener(v -> {
+            actions.messagesClicked();
+        });
+        findViewById(R.id.view_tab_bar_post).setOnClickListener(v -> {
+            actions.postClicked();
+        });
+        findViewById(R.id.view_tab_bar_profile).setOnClickListener(v -> {
+            actions.profileClicked();
+        });
         flipCircleView = findViewById(R.id.view_tab_bar_flippable_circle);
 
         int distance = 8000;
@@ -46,6 +66,10 @@ public class TabBar extends LinearLayout {
     public void setItemWidth(int itemWidth) {
         this.itemWidth = itemWidth;
         this.scrollPosition = 0;
+    }
+
+    public void setActions(Actions actions) {
+        this.actions = actions;
     }
 
     public OnScrollListener getRecyclerViewScrollListener() {
