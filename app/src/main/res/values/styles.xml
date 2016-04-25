@@ -19,10 +19,11 @@
     </style>
 
     <style name="GreyLineStrokedEditText">
-        <item name="colorControlActivated">@color/grey</item>
+        <item name="colorControlActivated">@color/greyLight</item>
         <item name="android:textColor">@color/grey</item>
         <item name="android:textCursorDrawable">@null</item>
         <item name="android:background">@drawable/divider_grey_light</item>
+
     </style>
 
     <style name="GreyProgressBar">

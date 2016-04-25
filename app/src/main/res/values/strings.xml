@@ -53,6 +53,10 @@
     <string name="error_while_loading_image">Error while uploading image.</string>
     <string name="user_profile">User profile</string>
     <string name="post_story">Post story</string>
+    <string name="post_story_is_about">Post story is about...</string>
+    <string name="location">Location</string>
+    <string name="post_story_button">Post story</string>
+
 
     <string name="daily">DAILY</string>
     <string name="monthly">MONTHLY</string>

@@ -32,6 +32,7 @@
 
         <activity android:name=".activities.BrowseStoriesActivity"
                   android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateAlwaysHidden"
                   android:theme="@style/NoTitleWhite">
         </activity>
 
@@ -63,7 +64,7 @@
 
         <activity android:name=".activities.PostStoryActivity"
                   android:screenOrientation="portrait"
-                  android:windowSoftInputMode="stateAlwaysVisible"
+                  android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
                   android:theme="@style/NoTitleWhite">
         </activity>
 

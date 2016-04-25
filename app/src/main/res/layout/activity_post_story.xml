@@ -7,4 +7,21 @@
     <include layout="@layout/layout_toolbar_simple"
         />
 
+    <EditText android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:hint="@string/post_story_is_about"
+              android:background="@null"
+              android:padding="@dimen/sizeXXLarge"
+              android:gravity="top"
+              android:layout_weight="1"
+              style="@style/GreyLineStrokedEditText"
+        />
+
+    <com.thirdandloom.storyflow.views.PostStoryBar
+        android:id="@+id/activity_post_story_post_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </com.thirdandloom.storyflow.views.PostStoryBar>
+
 </LinearLayout>

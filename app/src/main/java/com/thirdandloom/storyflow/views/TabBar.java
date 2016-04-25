@@ -40,6 +40,7 @@ public class TabBar extends LinearLayout {
 
     private void init() {
         inflate(getContext(), R.layout.view_tab_bar, this);
+        setOrientation(HORIZONTAL);
         setMinimumHeight(DeviceUtils.dpToPx(MIN_HEIGHT_DP));
         setBackground(getResources().getDrawable(R.drawable.shape_black_gradient));
         setPadding(0, 0, 0, getResources().getDimensionPixelOffset(R.dimen.sizeNormal));
