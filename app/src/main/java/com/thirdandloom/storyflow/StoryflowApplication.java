@@ -13,9 +13,12 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 import android.app.Application;
 import android.content.res.Resources;
+import android.os.Handler;
 
 public class StoryflowApplication extends Application {
     private static StoryflowApplication instance;
+
+    public static volatile Handler applicationHandler;
 
     private IRestClient restClient;
     private CommonPreferences preferences;
@@ -46,6 +49,22 @@ public class StoryflowApplication extends Application {
         instance.backgroundThreadExecutor.execute(runnable);
     }
 
+    public static void runOnUIThread(Runnable runnable) {
+        runOnUIThread(runnable, 0);
+    }
+
+    public static void runOnUIThread(Runnable runnable, long delay) {
+        if (delay == 0) {
+            instance.applicationHandler.post(runnable);
+        } else {
+            instance.applicationHandler.postDelayed(runnable, delay);
+        }
+    }
+
+    public static void cancelRunOnUIThread(Runnable runnable) {
+        instance.applicationHandler.removeCallbacks(runnable);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -65,6 +84,8 @@ public class StoryflowApplication extends Application {
         this.restClient = new RestClient(this);
         this.preferences = new CommonPreferences();
         this.accountManager = new AccountManager();
+
+        applicationHandler = new Handler(getApplicationContext().getMainLooper());
     }
 
     private void initTimber() {

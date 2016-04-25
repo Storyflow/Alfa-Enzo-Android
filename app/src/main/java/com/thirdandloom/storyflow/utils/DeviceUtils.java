@@ -3,14 +3,18 @@ package com.thirdandloom.storyflow.utils;
 import com.thirdandloom.storyflow.StoryflowApplication;
 
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.ColorRes;
 import android.util.DisplayMetrics;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
+
+import java.lang.reflect.Field;
 
 public class DeviceUtils extends BaseUtils {
     public static DisplayMetrics getDisplayMetrics() {
@@ -62,6 +66,27 @@ public class DeviceUtils extends BaseUtils {
         return KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
     }
 
+    public static int getViewInset(View view) {
+//        if (view == null || Build.VERSION.SDK_INT < 21 || view.getHeight() == AndroidUtilities.displaySize.y || view.getHeight() == AndroidUtilities.displaySize.y - DeviceUtils.getStatusBarHeight()) {
+        if (view == null || Build.VERSION.SDK_INT < 21 || true) {
+            return 0;
+        }
+        try {
+            Field mAttachInfoField = View.class.getDeclaredField("mAttachInfo");
+            mAttachInfoField.setAccessible(true);
+            Object mAttachInfo = mAttachInfoField.get(view);
+            if (mAttachInfo != null) {
+                Field mStableInsetsField = mAttachInfo.getClass().getDeclaredField("mStableInsets");
+                mStableInsetsField.setAccessible(true);
+                Rect insets = (Rect)mStableInsetsField.get(mAttachInfo);
+                return insets.bottom;
+            }
+        } catch (Exception e) {
+//            FileLog.e("tmessages", e);
+        }
+        return 0;
+    }
+
     public static void updateStatusBarColor(Window window, int color) {
         if (DeviceUtils.isLollipopOrHigher()) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -69,9 +94,9 @@ public class DeviceUtils extends BaseUtils {
         }
     }
 
-    public static int dpToPx(int dp) {
+    public static int dp(int value) {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        int px = Math.round(value * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
     }
 

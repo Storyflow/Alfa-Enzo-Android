@@ -92,8 +92,8 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
                     imageHeight = story.getAuthor().getCroppedImageCover().getRect().height();
                     imageWidth = story.getAuthor().getCroppedImageCover().getRect().width();
                 } else {
-                    imageHeight = DeviceUtils.dpToPx(100);
-                    imageWidth = DeviceUtils.dpToPx(100);
+                    imageHeight = DeviceUtils.dp(100);
+                    imageWidth = DeviceUtils.dp(100);
                 }
                 scaleType = ImageView.ScaleType.CENTER_CROP;
                 break;
@@ -107,8 +107,8 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
                 //this code should be removed after story.getImageData().getNormalSizedImage().size()
                 //fixed: story.getImageData().getNormalSizedImage().size() = (0, 0)
                 if (imageHeight == 0 || imageWidth == 0) {
-                    imageHeight = DeviceUtils.dpToPx(100);
-                    imageWidth = DeviceUtils.dpToPx(100);
+                    imageHeight = DeviceUtils.dp(100);
+                    imageWidth = DeviceUtils.dp(100);
                     scaleType = ImageView.ScaleType.CENTER_CROP;
                 }
 

@@ -64,7 +64,7 @@
 
         <activity android:name=".activities.PostStoryActivity"
                   android:screenOrientation="portrait"
-                  android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
+                  android:windowSoftInputMode="adjustResize"
                   android:theme="@style/NoTitleWhite">
         </activity>
 

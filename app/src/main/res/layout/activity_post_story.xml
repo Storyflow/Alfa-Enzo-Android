@@ -1,27 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<com.thirdandloom.storyflow.views.SizeNotifierFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_post_story_size_notifier"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
-    <include layout="@layout/layout_toolbar_simple"
-        />
-
-    <EditText android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:hint="@string/post_story_is_about"
-              android:background="@null"
-              android:padding="@dimen/sizeXXLarge"
-              android:gravity="top"
-              android:layout_weight="1"
-              style="@style/GreyLineStrokedEditText"
-        />
-
-    <com.thirdandloom.storyflow.views.PostStoryBar
-        android:id="@+id/activity_post_story_post_bar"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-    </com.thirdandloom.storyflow.views.PostStoryBar>
+        <include layout="@layout/layout_toolbar_simple"
+            />
 
-</LinearLayout>
+        <com.thirdandloom.storyflow.views.OnTouchEditText
+            android:id="@+id/activity_post_story_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/post_story_is_about"
+            android:background="@null"
+            android:padding="@dimen/sizeXXLarge"
+            android:gravity="top"
+            android:layout_weight="1"
+            style="@style/GreyLineStrokedEditText"
+            />
+
+        <com.thirdandloom.storyflow.views.PostStoryBar
+            android:id="@+id/activity_post_story_post_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.thirdandloom.storyflow.views.PostStoryBar>
+
+        <View
+            android:id="@+id/activity_post_story_keyboard_replacer"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            />
+
+    </LinearLayout>
+
+</com.thirdandloom.storyflow.views.SizeNotifierFrameLayout>
