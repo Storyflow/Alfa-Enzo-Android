@@ -124,10 +124,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         }
     }
 
-    public static int getItemMargin() {
-        return StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.sizeTiny);
-    }
-
     public int getCenterPosition() {
         return centerPosition;
     }
@@ -290,5 +286,9 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
 
     public static int getItemPadding() {
         return StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.sizeNormal);
+    }
+
+    public static int getItemMargin() {
+        return StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.sizeTiny);
     }
 }

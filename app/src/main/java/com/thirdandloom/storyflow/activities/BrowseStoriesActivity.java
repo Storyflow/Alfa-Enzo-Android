@@ -126,7 +126,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
 
         horizontalRecyclerView.addOnScrollListener(tabBar.getRecyclerViewScrollListener());
         horizontalRecyclerView.addOnScrollListener(new OnScrollListener());
-        tabBar.setItemWidth(adapter.getItemWidthPixel());
+        tabBar.setItemWidth(adapter.getItemWidthPixel()+PeriodsAdapter.getItemMargin()*2);
         tabBar.setActions(tabBarActions);
     }
 
