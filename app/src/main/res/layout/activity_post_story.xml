@@ -37,6 +37,7 @@
             android:id="@+id/activity_post_story_keyboard_replacer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@color/black"
             />
 
     </LinearLayout>

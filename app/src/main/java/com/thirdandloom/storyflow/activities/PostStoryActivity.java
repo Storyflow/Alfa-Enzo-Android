@@ -2,12 +2,11 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.Timber;
-import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.views.OpenEventDetectorEditText;
 import com.thirdandloom.storyflow.views.PostStoryBar;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
+import com.thirdandloom.storyflow.views.emoji.KeyboardController;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,11 +19,7 @@ public class PostStoryActivity extends BaseActivity {
     private SizeNotifierFrameLayout sizeNotifierLayout;
     private View keyboardReplacerView;
     private OpenEventDetectorEditText postStoryEditText;
-    private int keyboardHeight;
-    private boolean keyboardIsVisible;
-    private boolean emojiPopupIsVisible;
-    private boolean keyboardReplaceViewIsVisible;
-    private boolean waitingForKeyboardOpen;
+    private KeyboardController keyboardController;
 
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.getInstance(), PostStoryActivity.class);
@@ -38,7 +33,7 @@ public class PostStoryActivity extends BaseActivity {
         findViews();
         initGui();
 
-        openKeyboardInternal();
+        keyboardController.openKeyboardInternal();
     }
 
     private void findViews() {
@@ -49,46 +44,10 @@ public class PostStoryActivity extends BaseActivity {
     }
 
     private void initGui() {
-        postStoryEditText.setOpenEvent(this::openKeyboardInternal);
+        keyboardController = new KeyboardController(postStoryEditText, keyboardReplacerView);
+        keyboardController.setEmojiPopupVisibilityUpdater(this::updatePostStoryBarIcons);
         postStoryBar.setActions(postStoryActions);
-        sizeNotifierLayout.setActions(appearedHeight -> {
-            if (appearedHeight > AndroidUtils.dp(50) && !keyboardIsVisible) {
-                keyboardDidAppear(appearedHeight);
-            } else if (appearedHeight < AndroidUtils.dp(50) && keyboardIsVisible) {
-                keyboardDidDisappear();
-            }
-
-            if (keyboardIsVisible && waitingForKeyboardOpen) {
-                waitingForKeyboardOpen = false;
-                StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
-            }
-        });
-    }
-
-    private void keyboardDidDisappear() {
-        keyboardIsVisible = false;
-
-        if (emojiPopupIsVisible) {
-            postStoryBar.emojiDidSelect();
-        } else {
-            ViewUtils.applyHeight(keyboardReplacerView, 0);
-            keyboardReplaceViewIsVisible = false;
-            postStoryBar.keyboardDidSelect();
-        }
-    }
-
-    private void keyboardDidAppear(int appearedHeight) {
-        keyboardIsVisible = true;
-        keyboardHeight = appearedHeight;
-        if (!keyboardReplaceViewIsVisible) {
-            keyboardReplaceViewIsVisible = true;
-            ViewUtils.applyHeight(keyboardReplacerView, keyboardHeight);
-        }
-
-        if (emojiPopupIsVisible) {
-            emojiPopupIsVisible = false;
-        }
-        postStoryBar.keyboardDidSelect();
+        sizeNotifierLayout.setActions(keyboardController);
     }
 
     @Override
@@ -103,35 +62,14 @@ public class PostStoryActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        keyboardController.handleBackPressed(super::onBackPressed);
+    }
+
+    private void updatePostStoryBarIcons(boolean emojiPopupIsVisible) {
         if (emojiPopupIsVisible) {
-            emojiPopupIsVisible = false;
-
-            if (keyboardReplaceViewIsVisible) {
-                keyboardReplaceViewIsVisible = false;
-                ViewUtils.applyHeight(keyboardReplacerView, 0);
-            }
-
-            if (emojiPopupIsVisible) {
-                postStoryBar.emojiDidSelect();
-            } else {
-                postStoryBar.keyboardDidSelect();
-            }
+            postStoryBar.emojiDidSelect();
         } else {
-            super.onBackPressed();
-        }
-    }
-
-    private void closeKeyboardInternal() {
-        AndroidUtils.hideKeyboard(postStoryEditText);
-    }
-
-    private void openKeyboardInternal() {
-        postStoryEditText.requestFocus();
-        AndroidUtils.showKeyboard(postStoryEditText);
-        if (!keyboardIsVisible) {
-            waitingForKeyboardOpen = true;
-            StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
-            StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
+            postStoryBar.keyboardDidSelect();
         }
     }
 
@@ -153,39 +91,7 @@ public class PostStoryActivity extends BaseActivity {
 
         @Override
         public void onEmojiClicked() {
-            Timber.d("PostStoryBar Actions onEmojiClicked");
-            if (!emojiPopupIsVisible) {
-                emojiPopupIsVisible = true;
-                if (keyboardIsVisible) {
-                    closeKeyboardInternal();
-                } else {
-                    if (!keyboardReplaceViewIsVisible) {
-                        keyboardReplaceViewIsVisible = true;
-                        ViewUtils.applyHeight(keyboardReplacerView, keyboardHeight);
-                    }
-                }
-            } else {
-                emojiPopupIsVisible = false;
-                openKeyboardInternal();
-            }
-
-            if (emojiPopupIsVisible) {
-                postStoryBar.emojiDidSelect();
-            } else {
-                postStoryBar.keyboardDidSelect();
-            }
-        }
-    };
-
-    private final Runnable openKeyboardRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (postStoryEditText != null && waitingForKeyboardOpen && !keyboardIsVisible) {
-                postStoryEditText.requestFocus();
-                AndroidUtils.showKeyboard(postStoryEditText);
-                StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
-                StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
-            }
+            keyboardController.onEmojiClicked();
         }
     };
 }
