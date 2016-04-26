@@ -2,7 +2,6 @@ package com.thirdandloom.storyflow.views.emoji;
 
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.views.OpenEventDetectorEditText;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
@@ -29,12 +28,15 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
         openEventDetectorEditText.setOpenEvent(this::openKeyboardInternal);
     }
 
+    public int getKeyboardHeight() {
+        return keyboardHeight;
+    }
+
     public void setEmojiPopupVisibilityUpdater(Action1<Boolean> emojiPopupVisibilityUpdater) {
         this.emojiPopupVisibilityUpdater = emojiPopupVisibilityUpdater;
     }
 
     public void onEmojiClicked() {
-        Timber.d("PostStoryBar Actions onEmojiClicked");
         if (!emojiPopupIsVisible) {
             if (keyboardIsVisible) {
                 closeKeyboardInternal();

@@ -13,12 +13,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-public class PostStoryActivity extends BaseActivity {
+public class PostStoryActivity extends EmojiKeyboardActivity {
 
     private PostStoryBar postStoryBar;
     private SizeNotifierFrameLayout sizeNotifierLayout;
     private View keyboardReplacerView;
-    private OpenEventDetectorEditText postStoryEditText;
     private KeyboardController keyboardController;
 
     public static Intent newInstance() {
@@ -32,7 +31,6 @@ public class PostStoryActivity extends BaseActivity {
         setTitle(R.string.post_story);
         findViews();
         initGui();
-
         keyboardController.openKeyboardInternal();
     }
 
@@ -40,11 +38,13 @@ public class PostStoryActivity extends BaseActivity {
         postStoryBar = (PostStoryBar)findViewById(R.id.activity_post_story_post_bar);
         sizeNotifierLayout = (SizeNotifierFrameLayout)findViewById(R.id.activity_post_story_size_notifier);
         keyboardReplacerView = findViewById(R.id.activity_post_story_keyboard_replacer);
-        postStoryEditText = (OpenEventDetectorEditText)findViewById(R.id.activity_post_story_edit_text);
+        editText = (OpenEventDetectorEditText)findViewById(R.id.activity_post_story_edit_text);
+        emojiContainerView = findViewById(R.id.activity_post_story_emoji_container);
     }
 
     private void initGui() {
-        keyboardController = new KeyboardController(postStoryEditText, keyboardReplacerView);
+        initializeEmoji();
+        keyboardController = new KeyboardController(editText, keyboardReplacerView);
         keyboardController.setEmojiPopupVisibilityUpdater(this::updatePostStoryBarIcons);
         postStoryBar.setActions(postStoryActions);
         sizeNotifierLayout.setActions(keyboardController);
@@ -61,14 +61,21 @@ public class PostStoryActivity extends BaseActivity {
     }
 
     @Override
+    protected int getEmojiContainerId() {
+        return R.id.activity_post_story_emoji_container;
+    }
+
+    @Override
     public void onBackPressed() {
         keyboardController.handleBackPressed(super::onBackPressed);
     }
 
     private void updatePostStoryBarIcons(boolean emojiPopupIsVisible) {
         if (emojiPopupIsVisible) {
+            showEmoji();
             postStoryBar.emojiDidSelect();
         } else {
+            hideEmoji(keyboardController.getKeyboardHeight());
             postStoryBar.keyboardDidSelect();
         }
     }

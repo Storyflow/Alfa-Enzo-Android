@@ -3,11 +3,11 @@ package com.thirdandloom.storyflow.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.EditText;
 
+import com.rockerhieu.emojicon.EmojiconEditText;
 import rx.functions.Action0;
 
-public class OpenEventDetectorEditText extends EditText {
+public class OpenEventDetectorEditText extends EmojiconEditText {
 
     public OpenEventDetectorEditText(Context context) {
         super(context);

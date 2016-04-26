@@ -33,12 +33,21 @@
 
         </com.thirdandloom.storyflow.views.PostStoryBar>
 
-        <View
+        <FrameLayout
             android:id="@+id/activity_post_story_keyboard_replacer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/black"
-            />
+            android:background="@color/black">
+
+            <FrameLayout
+                android:id="@+id/activity_post_story_emoji_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent">
+
+            </FrameLayout>
+
+        </FrameLayout>
 
     </LinearLayout>
 
