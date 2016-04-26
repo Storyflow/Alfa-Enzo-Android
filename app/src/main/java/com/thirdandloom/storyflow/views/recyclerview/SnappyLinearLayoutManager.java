@@ -9,7 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 
 public class SnappyLinearLayoutManager extends DisableScrollLinearLayoutManager implements ISnappyLayoutManager {
@@ -83,7 +83,7 @@ public class SnappyLinearLayoutManager extends DisableScrollLinearLayoutManager 
         if (isThreeAndMoreItemVisible) {
             position = velocity < 0 ? position + 1 : position;
             if (MathUtils.isValuesBetween(lastPosition, firstPosition, (int)position)) {
-                position = Math.abs(velocity) > DeviceUtils.minVelocityPxPerSecond()*4
+                position = Math.abs(velocity) > AndroidUtils.minVelocityPxPerSecond()*4
                         ? velocity > 0
                             ? firstPosition + 2
                             : firstPosition

@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.fragments;
 
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -96,7 +97,7 @@ public class StoryDetailsFragment extends BaseFragment {
     }
 
     public void onDragFinished(int velocity) {
-        if (velocity > DeviceUtils.minVelocityPxPerSecond() || absoluteScroll >= getFinishScrollValue()/2) {
+        if (velocity > AndroidUtils.minVelocityPxPerSecond() || absoluteScroll >= getFinishScrollValue()/2) {
             startFinishPresentAnimation(calculateAnimationDuration());
         } else {
             startFinishDismissAnimation(MAX_PRESENT_ANIMATION_DURATION_MS - calculateAnimationDuration());

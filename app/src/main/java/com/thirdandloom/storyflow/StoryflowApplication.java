@@ -17,7 +17,6 @@ import android.os.Handler;
 
 public class StoryflowApplication extends Application {
     private static StoryflowApplication instance;
-
     public static volatile Handler applicationHandler;
 
     private IRestClient restClient;
@@ -55,20 +54,22 @@ public class StoryflowApplication extends Application {
 
     public static void runOnUIThread(Runnable runnable, long delay) {
         if (delay == 0) {
-            instance.applicationHandler.post(runnable);
+            applicationHandler.post(runnable);
         } else {
-            instance.applicationHandler.postDelayed(runnable, delay);
+            applicationHandler.postDelayed(runnable, delay);
         }
     }
 
     public static void cancelRunOnUIThread(Runnable runnable) {
-        instance.applicationHandler.removeCallbacks(runnable);
+        applicationHandler.removeCallbacks(runnable);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
+        applicationHandler = new Handler(getApplicationContext().getMainLooper());
+
 
         initTimber();
         final Fabric fabric = new Fabric.Builder(this)
@@ -84,8 +85,6 @@ public class StoryflowApplication extends Application {
         this.restClient = new RestClient(this);
         this.preferences = new CommonPreferences();
         this.accountManager = new AccountManager();
-
-        applicationHandler = new Handler(getApplicationContext().getMainLooper());
     }
 
     private void initTimber() {

@@ -2,32 +2,29 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
-import com.thirdandloom.storyflow.views.OnTouchEditText;
+import com.thirdandloom.storyflow.views.OpenEventDetectorEditText;
 import com.thirdandloom.storyflow.views.PostStoryBar;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-
-import retrofit2.http.POST;
 
 public class PostStoryActivity extends BaseActivity {
 
     private PostStoryBar postStoryBar;
     private SizeNotifierFrameLayout sizeNotifierLayout;
     private View keyboardReplacerView;
-    private OnTouchEditText postStoryEditText;
+    private OpenEventDetectorEditText postStoryEditText;
+    private int keyboardHeight;
+    private boolean keyboardIsVisible;
+    private boolean emojiPopupIsVisible;
+    private boolean keyboardReplaceViewIsVisible;
+    private boolean waitingForKeyboardOpen;
 
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.getInstance(), PostStoryActivity.class);
@@ -40,88 +37,58 @@ public class PostStoryActivity extends BaseActivity {
         setTitle(R.string.post_story);
         findViews();
         initGui();
-    }
 
-
-    private boolean waitingForKeyboardOpen;
-    private Runnable openKeyboardRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (postStoryEditText != null && waitingForKeyboardOpen && !isVisible) {
-                postStoryEditText.requestFocus();
-
-                InputMethodManager inputManager = (InputMethodManager)postStoryEditText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.showSoftInput(postStoryEditText, InputMethodManager.SHOW_IMPLICIT);
-
-                StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
-                StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
-            }
-        }
-    };
-    private void openKeyboardInternal() {
-        postStoryEditText.requestFocus();
-        InputMethodManager inputManager = (InputMethodManager)postStoryEditText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.showSoftInput(postStoryEditText, InputMethodManager.SHOW_IMPLICIT);
-        if (!isVisible) {
-            waitingForKeyboardOpen = true;
-            StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
-            StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
-
-            ViewGroup.LayoutParams params = keyboardReplacerView.getLayoutParams();
-            params.height = PostStoryActivity.keyboardHeight;
-            if (params.height == PostStoryActivity.keyboardHeight) {
-                params.height = 10;
-            }
-
-            keyboardReplacerView.setLayoutParams(params);
-        }
+        openKeyboardInternal();
     }
 
     private void findViews() {
         postStoryBar = (PostStoryBar)findViewById(R.id.activity_post_story_post_bar);
         sizeNotifierLayout = (SizeNotifierFrameLayout)findViewById(R.id.activity_post_story_size_notifier);
         keyboardReplacerView = findViewById(R.id.activity_post_story_keyboard_replacer);
-        postStoryEditText = (OnTouchEditText)findViewById(R.id.activity_post_story_edit_text);
+        postStoryEditText = (OpenEventDetectorEditText)findViewById(R.id.activity_post_story_edit_text);
     }
 
-    private static int keyboardHeight;
-    private static boolean isVisible;
-
     private void initGui() {
-        postStoryEditText.setOpenIvent(() -> openKeyboardInternal()
-        );
+        postStoryEditText.setOpenEvent(this::openKeyboardInternal);
         postStoryBar.setActions(postStoryActions);
-        sizeNotifierLayout.setDelegate(new SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate() {
-            @Override
-            public void onSizeChanged(int keyboardHeight, boolean isWidthGreater) {
-                Timber.d("onSizeChanged keyboard height: %d", keyboardHeight);
-                if (keyboardHeight > DeviceUtils.dp(100) && !isVisible) {
-                    Timber.d("keyboard visible");
-                    isVisible = true;
-                    PostStoryActivity.keyboardHeight = keyboardHeight - 96;
+        sizeNotifierLayout.setActions(appearedHeight -> {
+            if (appearedHeight > AndroidUtils.dp(50) && !keyboardIsVisible) {
+                keyboardDidAppear(appearedHeight);
+            } else if (appearedHeight < AndroidUtils.dp(50) && keyboardIsVisible) {
+                keyboardDidDisappear();
+            }
 
-                    ViewGroup.LayoutParams params = keyboardReplacerView.getLayoutParams();
-                    params.height = PostStoryActivity.keyboardHeight;
-                    if (params.height == PostStoryActivity.keyboardHeight) {
-                        params.height = 10;
-                    }
-
-                    keyboardReplacerView.setLayoutParams(params);
-
-                } else if (keyboardHeight < DeviceUtils.dp(100) && isVisible) {
-                    isVisible = false;
-                    Timber.d("keyboard hidden previous keyboard height: %d", PostStoryActivity.keyboardHeight);
-                    ViewGroup.LayoutParams params = keyboardReplacerView.getLayoutParams();
-                    params.height = PostStoryActivity.keyboardHeight;
-                    keyboardReplacerView.setLayoutParams(params);
-                }
-
-                if (isVisible && waitingForKeyboardOpen) {
-                    waitingForKeyboardOpen = false;
-                    StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
-                }
+            if (keyboardIsVisible && waitingForKeyboardOpen) {
+                waitingForKeyboardOpen = false;
+                StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
             }
         });
+    }
+
+    private void keyboardDidDisappear() {
+        keyboardIsVisible = false;
+
+        if (emojiPopupIsVisible) {
+            postStoryBar.emojiDidSelect();
+        } else {
+            ViewUtils.applyHeight(keyboardReplacerView, 0);
+            keyboardReplaceViewIsVisible = false;
+            postStoryBar.keyboardDidSelect();
+        }
+    }
+
+    private void keyboardDidAppear(int appearedHeight) {
+        keyboardIsVisible = true;
+        keyboardHeight = appearedHeight;
+        if (!keyboardReplaceViewIsVisible) {
+            keyboardReplaceViewIsVisible = true;
+            ViewUtils.applyHeight(keyboardReplacerView, keyboardHeight);
+        }
+
+        if (emojiPopupIsVisible) {
+            emojiPopupIsVisible = false;
+        }
+        postStoryBar.keyboardDidSelect();
     }
 
     @Override
@@ -132,6 +99,40 @@ public class PostStoryActivity extends BaseActivity {
     @Override
     protected boolean hasToolBar() {
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (emojiPopupIsVisible) {
+            emojiPopupIsVisible = false;
+
+            if (keyboardReplaceViewIsVisible) {
+                keyboardReplaceViewIsVisible = false;
+                ViewUtils.applyHeight(keyboardReplacerView, 0);
+            }
+
+            if (emojiPopupIsVisible) {
+                postStoryBar.emojiDidSelect();
+            } else {
+                postStoryBar.keyboardDidSelect();
+            }
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void closeKeyboardInternal() {
+        AndroidUtils.hideKeyboard(postStoryEditText);
+    }
+
+    private void openKeyboardInternal() {
+        postStoryEditText.requestFocus();
+        AndroidUtils.showKeyboard(postStoryEditText);
+        if (!keyboardIsVisible) {
+            waitingForKeyboardOpen = true;
+            StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
+            StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
+        }
     }
 
     private final PostStoryBar.Actions postStoryActions = new PostStoryBar.Actions() {
@@ -148,6 +149,43 @@ public class PostStoryActivity extends BaseActivity {
         @Override
         public void onGalleryClicked() {
             Timber.d("PostStoryBar Actions onGalleryClicked");
+        }
+
+        @Override
+        public void onEmojiClicked() {
+            Timber.d("PostStoryBar Actions onEmojiClicked");
+            if (!emojiPopupIsVisible) {
+                emojiPopupIsVisible = true;
+                if (keyboardIsVisible) {
+                    closeKeyboardInternal();
+                } else {
+                    if (!keyboardReplaceViewIsVisible) {
+                        keyboardReplaceViewIsVisible = true;
+                        ViewUtils.applyHeight(keyboardReplacerView, keyboardHeight);
+                    }
+                }
+            } else {
+                emojiPopupIsVisible = false;
+                openKeyboardInternal();
+            }
+
+            if (emojiPopupIsVisible) {
+                postStoryBar.emojiDidSelect();
+            } else {
+                postStoryBar.keyboardDidSelect();
+            }
+        }
+    };
+
+    private final Runnable openKeyboardRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (postStoryEditText != null && waitingForKeyboardOpen && !keyboardIsVisible) {
+                postStoryEditText.requestFocus();
+                AndroidUtils.showKeyboard(postStoryEditText);
+                StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
+                StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
+            }
         }
     };
 }

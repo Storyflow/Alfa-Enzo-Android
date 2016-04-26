@@ -18,4 +18,8 @@ public abstract class BaseUtils  {
     protected static void exception(Throwable throwable) {
         Timber.e(throwable, throwable.getMessage());
     }
+
+    protected static Context getApplicationContext() {
+        return StoryflowApplication.getInstance().getApplicationContext();
+    }
 }

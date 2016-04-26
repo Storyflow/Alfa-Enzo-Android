@@ -11,7 +11,8 @@
               android:layout_weight="1"
               android:paddingTop="@dimen/sizeSmall"
               android:paddingBottom="@dimen/sizeSmall"
-              android:paddingRight="@dimen/sizeSmall"        />
+              android:paddingRight="@dimen/sizeSmall"
+        />
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
@@ -40,6 +41,18 @@
             android:paddingRight="@dimen/sizeNormal"
             android:paddingLeft="@dimen/sizeNormal"
             android:layout_gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/view_post_story_bar_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Emoji"
+            android:layout_gravity="center"
+            android:paddingTop="@dimen/sizeSmall"
+            android:paddingBottom="@dimen/sizeSmall"
+            android:paddingRight="@dimen/sizeNormal"
+            android:paddingLeft="@dimen/sizeNormal"
             />
 
         <View android:layout_width="0dp"

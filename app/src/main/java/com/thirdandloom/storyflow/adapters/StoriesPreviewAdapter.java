@@ -3,6 +3,7 @@ package com.thirdandloom.storyflow.adapters;
 import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -92,8 +93,8 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
                     imageHeight = story.getAuthor().getCroppedImageCover().getRect().height();
                     imageWidth = story.getAuthor().getCroppedImageCover().getRect().width();
                 } else {
-                    imageHeight = DeviceUtils.dp(100);
-                    imageWidth = DeviceUtils.dp(100);
+                    imageHeight = AndroidUtils.dp(100);
+                    imageWidth = AndroidUtils.dp(100);
                 }
                 scaleType = ImageView.ScaleType.CENTER_CROP;
                 break;
@@ -107,8 +108,8 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
                 //this code should be removed after story.getImageData().getNormalSizedImage().size()
                 //fixed: story.getImageData().getNormalSizedImage().size() = (0, 0)
                 if (imageHeight == 0 || imageWidth == 0) {
-                    imageHeight = DeviceUtils.dp(100);
-                    imageWidth = DeviceUtils.dp(100);
+                    imageHeight = AndroidUtils.dp(100);
+                    imageWidth = AndroidUtils.dp(100);
                     scaleType = ImageView.ScaleType.CENTER_CROP;
                 }
 

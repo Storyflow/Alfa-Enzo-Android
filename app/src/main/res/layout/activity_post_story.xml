@@ -14,7 +14,7 @@
         <include layout="@layout/layout_toolbar_simple"
             />
 
-        <com.thirdandloom.storyflow.views.OnTouchEditText
+        <com.thirdandloom.storyflow.views.OpenEventDetectorEditText
             android:id="@+id/activity_post_story_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         <View
             android:id="@+id/activity_post_story_keyboard_replacer"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="0dp"
             />
 
     </LinearLayout>

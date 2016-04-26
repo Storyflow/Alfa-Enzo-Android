@@ -67,8 +67,7 @@ public class DeviceUtils extends BaseUtils {
     }
 
     public static int getViewInset(View view) {
-//        if (view == null || Build.VERSION.SDK_INT < 21 || view.getHeight() == AndroidUtilities.displaySize.y || view.getHeight() == AndroidUtilities.displaySize.y - DeviceUtils.getStatusBarHeight()) {
-        if (view == null || Build.VERSION.SDK_INT < 21 || true) {
+        if (view == null || Build.VERSION.SDK_INT < 21 || view.getHeight() == AndroidUtils.displaySize.y || view.getHeight() == AndroidUtils.displaySize.y - DeviceUtils.getStatusBarHeight()) {
             return 0;
         }
         try {
@@ -82,7 +81,7 @@ public class DeviceUtils extends BaseUtils {
                 return insets.bottom;
             }
         } catch (Exception e) {
-//            FileLog.e("tmessages", e);
+            exception(e);
         }
         return 0;
     }
@@ -93,23 +92,4 @@ public class DeviceUtils extends BaseUtils {
             window.setStatusBarColor(color);
         }
     }
-
-    public static int dp(int value) {
-        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        int px = Math.round(value * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
-
-    public static int minScrollPx() {
-        return ViewConfiguration.get(getContext()).getScaledTouchSlop();
-    }
-
-    public static int minVelocityPxPerSecond() {
-        return ViewConfiguration.get(getContext()).getScaledMinimumFlingVelocity();
-    }
-
-    public static int maxVelocityPxPerSecond() {
-        return ViewConfiguration.get(getContext()).getScaledMaximumFlingVelocity();
-    }
-
 }

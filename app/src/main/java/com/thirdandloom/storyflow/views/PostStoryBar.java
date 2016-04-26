@@ -1,10 +1,12 @@
 package com.thirdandloom.storyflow.views;
 
 import com.thirdandloom.storyflow.R;
+import org.w3c.dom.Text;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class PostStoryBar extends LinearLayout {
 
@@ -12,6 +14,7 @@ public class PostStoryBar extends LinearLayout {
         void onPostStoryClicked();
         void onCameraClicked();
         void onGalleryClicked();
+        void onEmojiClicked();
     }
 
     public PostStoryBar(Context context) {
@@ -28,6 +31,7 @@ public class PostStoryBar extends LinearLayout {
     }
 
     private Actions actions;
+    private TextView emojiTextView;
 
     private void init() {
         inflate(getContext(), R.layout.view_post_story_bar, this);
@@ -45,9 +49,21 @@ public class PostStoryBar extends LinearLayout {
         findViewById(R.id.view_post_story_bar_gallery).setOnClickListener(v -> {
             actions.onGalleryClicked();
         });
+        emojiTextView = (TextView)findViewById(R.id.view_post_story_bar_emoji);
+        emojiTextView.setOnClickListener(v -> {
+            actions.onEmojiClicked();
+        });
     }
 
     public void setActions(Actions actions) {
         this.actions = actions;
+    }
+
+    public void emojiDidSelect() {
+        emojiTextView.setText("Keyboard");
+    }
+
+    public void keyboardDidSelect() {
+        emojiTextView.setText("Emoji");
     }
 }

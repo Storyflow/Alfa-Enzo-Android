@@ -1,5 +1,6 @@
 package com.thirdandloom.storyflow.views.recyclerview;
 
+import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -64,13 +65,13 @@ public class VerticalDragNotifierRecyclerView extends EmptyRecyclerView {
         switch (e.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 float delta = startScrollPosition - e.getY();
-                if (Math.abs(delta) > DeviceUtils.minScrollPx()) {
+                if (Math.abs(delta) > AndroidUtils.minScrollPx()) {
                     if (!dragInProcess) {
                         dragInProcess = true;
                         if (dragStarted != null) dragStarted.call();
                         if (velocityTracker != null) velocityTracker.addMovement(e);
                     }
-                    float currentScrollPosition = delta - DeviceUtils.minScrollPx();
+                    float currentScrollPosition = delta - AndroidUtils.minScrollPx();
                     if (onDrag != null) onDrag.call(currentScrollPosition, currentScrollPosition - previousScrollPosition, this);
                     previousScrollPosition = currentScrollPosition;
                 }
