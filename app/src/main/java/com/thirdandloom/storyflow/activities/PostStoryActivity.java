@@ -45,7 +45,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private void initGui() {
         initializeEmoji();
         keyboardController = new KeyboardController(editText, keyboardReplacerView);
-        keyboardController.setEmojiPopupVisibilityUpdater(this::updatePostStoryBarIcons);
+        keyboardController.setKeyboardStateUpdater(this::updatePostStoryBarIcons);
         postStoryBar.setActions(postStoryActions);
         sizeNotifierLayout.setActions(keyboardController);
     }
@@ -70,13 +70,29 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         keyboardController.handleBackPressed(super::onBackPressed);
     }
 
-    private void updatePostStoryBarIcons(boolean emojiPopupIsVisible) {
-        if (emojiPopupIsVisible) {
-            showEmoji();
-            postStoryBar.emojiDidSelect();
-        } else {
-            hideEmoji(keyboardController.getKeyboardHeight());
-            postStoryBar.keyboardDidSelect();
+    private void updatePostStoryBarIcons(KeyboardController.Keyboard keyboardType) {
+        switch (keyboardType) {
+            case Emoji:
+                showEmoji();
+                postStoryBar.onEmojiSelected();
+                break;
+
+            case Cats:
+                hideEmoji(keyboardController.getKeyboardHeight());
+                postStoryBar.onCastSelected();
+                break;
+
+            case Native:
+                hideEmoji(keyboardController.getKeyboardHeight());
+                postStoryBar.onNativeKeyboardSelected();
+                break;
+
+            case None:
+                postStoryBar.onNoneSelected();
+                break;
+
+            default:
+                throw new UnsupportedOperationException("KeyboardController.Keyboard unsupported type is using");
         }
     }
 
@@ -99,6 +115,16 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         @Override
         public void onEmojiClicked() {
             keyboardController.onEmojiClicked();
+        }
+
+        @Override
+        public void onKeyboardClicked() {
+            keyboardController.keyboardClicked();
+        }
+
+        @Override
+        public void onCatsClicked() {
+            keyboardController.catsClicked();
         }
     };
 }

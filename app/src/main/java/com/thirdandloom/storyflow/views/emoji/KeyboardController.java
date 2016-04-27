@@ -12,53 +12,63 @@ import android.view.View;
 
 public class KeyboardController implements SizeNotifierFrameLayout.Actions {
 
+    public enum Keyboard {
+        Native, Cats, Emoji, None
+    }
+
     private final View keyboardReplacerView;
     private final OpenEventDetectorEditText openEventDetectorEditText;
 
     private int keyboardHeight;
+    private Keyboard currentKeyboard = Keyboard.None;
+
     private boolean keyboardIsVisible;
-    private boolean emojiPopupIsVisible;
     private boolean keyboardReplaceViewIsVisible;
     private boolean waitingForKeyboardOpen;
-    private Action1<Boolean> emojiPopupVisibilityUpdater;
+    private Action1<Keyboard> keyboardStateUpdater;
 
     public KeyboardController(OpenEventDetectorEditText editText, View keyboardReplacerView) {
         this.openEventDetectorEditText = editText;
         this.keyboardReplacerView = keyboardReplacerView;
-        openEventDetectorEditText.setOpenEvent(this::openKeyboardInternal);
+        this.openEventDetectorEditText.setOpenEvent(this::openKeyboardInternal);
     }
 
     public int getKeyboardHeight() {
         return keyboardHeight;
     }
 
-    public void setEmojiPopupVisibilityUpdater(Action1<Boolean> emojiPopupVisibilityUpdater) {
-        this.emojiPopupVisibilityUpdater = emojiPopupVisibilityUpdater;
+    public void setKeyboardStateUpdater(Action1<Keyboard> keyboardStateUpdater) {
+        this.keyboardStateUpdater = keyboardStateUpdater;
     }
 
     public void onEmojiClicked() {
-        if (!emojiPopupIsVisible) {
-            if (keyboardIsVisible) {
-                closeKeyboardInternal();
-            } else {
-                if (!keyboardReplaceViewIsVisible) {
-                    showKeyboardReplacerView();
-                }
-            }
-        } else {
-            openKeyboardInternal();
-        }
-        emojiPopupIsVisible = !emojiPopupIsVisible;
-        emojiPopupVisibilityUpdated();
+        if (currentKeyboard == Keyboard.Emoji) return;
+        checkKeyboardReplacerView();
+        currentKeyboard = Keyboard.Emoji;
+        updateKeyboardVisibility();
+    }
+
+    public void keyboardClicked() {
+        if (currentKeyboard == Keyboard.Native) return;
+        currentKeyboard = Keyboard.Native;
+        openKeyboardInternal();
+        updateKeyboardVisibility();
+    }
+
+    public void catsClicked() {
+        if (currentKeyboard == Keyboard.Cats) return;
+        checkKeyboardReplacerView();
+        currentKeyboard = Keyboard.Cats;
+        updateKeyboardVisibility();
     }
 
     public void handleBackPressed(Action0 notHandled) {
-        if (emojiPopupIsVisible) {
-            emojiPopupIsVisible = false;
+        if (currentKeyboard != Keyboard.None) {
+            currentKeyboard = Keyboard.None;
             if (keyboardReplaceViewIsVisible) {
                 hideKeyboardReplacerView();
             }
-            emojiPopupVisibilityUpdated();
+            updateKeyboardVisibility();
         } else {
             notHandled.call();
         }
@@ -80,23 +90,27 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
 
     private void keyboardDidDisappear() {
         keyboardIsVisible = false;
-        emojiPopupVisibilityUpdated();
-        if (!emojiPopupIsVisible) {
+        if (currentKeyboard == Keyboard.Native) {
             hideKeyboardReplacerView();
+            currentKeyboard = Keyboard.None;
         }
+        updateKeyboardVisibility();
     }
 
     private void keyboardDidAppear(int appearedHeight) {
         keyboardIsVisible = true;
+        currentKeyboard = Keyboard.Native;
         keyboardHeight = appearedHeight;
-        if (!keyboardReplaceViewIsVisible) {
-            showKeyboardReplacerView();
-        }
+        showKeyboardReplacerView();
+        updateKeyboardVisibility();
+    }
 
-        if (emojiPopupIsVisible) {
-            emojiPopupIsVisible = false;
+    private void checkKeyboardReplacerView() {
+        if (currentKeyboard == Keyboard.None) {
+            showKeyboardReplacerView();
+        } else if (currentKeyboard == Keyboard.Native) {
+            closeKeyboardInternal();
         }
-        emojiPopupVisibilityUpdated();
     }
 
     private void hideKeyboardReplacerView() {
@@ -105,8 +119,10 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
     }
 
     private void showKeyboardReplacerView() {
-        keyboardReplaceViewIsVisible = true;
-        ViewUtils.applyHeight(keyboardReplacerView, keyboardHeight);
+        if (!keyboardReplaceViewIsVisible) {
+            keyboardReplaceViewIsVisible = true;
+            ViewUtils.applyHeight(keyboardReplacerView, keyboardHeight);
+        }
     }
 
     private void closeKeyboardInternal() {
@@ -123,9 +139,8 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
         }
     }
 
-
-    private void emojiPopupVisibilityUpdated() {
-        emojiPopupVisibilityUpdater.call(emojiPopupIsVisible);
+    private void updateKeyboardVisibility() {
+        keyboardStateUpdater.call(currentKeyboard);
     }
 
     private final Runnable openKeyboardRunnable = new Runnable() {
