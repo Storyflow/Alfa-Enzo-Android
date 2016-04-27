@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.Theme;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.views.alert.QuickAlertController;
 import com.thirdandloom.storyflow.views.alert.QuickAlertView;
@@ -32,6 +33,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Theme.loadRecources(this);
+
         DeviceUtils.updateStatusBarColor(getWindow(), getResources().getColor(getStatusBarColorResourceId()));
         initQuickAlertController();
         initProgressBar();

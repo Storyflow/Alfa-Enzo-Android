@@ -1,4 +1,4 @@
-package com.thirdandloom.storyflow.views;
+package com.thirdandloom.storyflow.views.edittext;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 import com.rockerhieu.emojicon.EmojiconEditText;
 import rx.functions.Action0;
 
-public class OpenEventDetectorEditText extends EmojiconEditText {
+public class OpenEventDetectorEditText extends StickersEditText {
 
     public OpenEventDetectorEditText(Context context) {
         super(context);

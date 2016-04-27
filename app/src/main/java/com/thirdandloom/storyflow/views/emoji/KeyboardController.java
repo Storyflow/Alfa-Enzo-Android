@@ -3,7 +3,7 @@ package com.thirdandloom.storyflow.views.emoji;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
-import com.thirdandloom.storyflow.views.OpenEventDetectorEditText;
+import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
 import rx.functions.Action0;
 import rx.functions.Action1;

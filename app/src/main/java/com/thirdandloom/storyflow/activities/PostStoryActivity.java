@@ -3,15 +3,17 @@ package com.thirdandloom.storyflow.activities;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.Timber;
-import com.thirdandloom.storyflow.views.OpenEventDetectorEditText;
+import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
 import com.thirdandloom.storyflow.views.PostStoryBar;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
+import com.thirdandloom.storyflow.views.emoji.CatsStickersView;
 import com.thirdandloom.storyflow.views.emoji.KeyboardController;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.EditText;
 
 public class PostStoryActivity extends EmojiKeyboardActivity {
 
@@ -19,6 +21,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private SizeNotifierFrameLayout sizeNotifierLayout;
     private View keyboardReplacerView;
     private KeyboardController keyboardController;
+    protected EditText postStoryEditText;
 
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.getInstance(), PostStoryActivity.class);
@@ -40,6 +43,9 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         keyboardReplacerView = findViewById(R.id.activity_post_story_keyboard_replacer);
         editText = (OpenEventDetectorEditText)findViewById(R.id.activity_post_story_edit_text);
         emojiContainerView = findViewById(R.id.activity_post_story_emoji_container);
+        catsStickersView = (CatsStickersView)findViewById(R.id.activity_post_story_cats_emoji);
+
+        postStoryEditText = editText;
     }
 
     private void initGui() {
@@ -74,16 +80,19 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         switch (keyboardType) {
             case Emoji:
                 showEmoji();
+                hideCatsEmoji(keyboardController.getKeyboardHeight());
                 postStoryBar.onEmojiSelected();
                 break;
 
             case Cats:
+                showCatsEmoji();
                 hideEmoji(keyboardController.getKeyboardHeight());
                 postStoryBar.onCastSelected();
                 break;
 
             case Native:
                 hideEmoji(keyboardController.getKeyboardHeight());
+                hideCatsEmoji(keyboardController.getKeyboardHeight());
                 postStoryBar.onNativeKeyboardSelected();
                 break;
 
