@@ -2,11 +2,13 @@ package com.thirdandloom.storyflow.views.edittext;
 
 import com.rockerhieu.emojicon.EmojiconEditText;
 import com.thirdandloom.storyflow.Theme;
+import com.thirdandloom.storyflow.utils.Timber;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -51,7 +53,7 @@ public class StickersEditText extends EmojiconEditText {
 
     private class EditTextInputConnection extends InputConnectionWrapper {
 
-        private Detecting detectingStatus;
+        private Detecting detectingStatus = Detecting.None;
         private String detectedIcon;
 
         public EditTextInputConnection(InputConnection target, boolean mutable) {
@@ -74,10 +76,11 @@ public class StickersEditText extends EmojiconEditText {
             }
 
             String enteredText = text.toString();
-            if (detectingStatus == Detecting.Start
-                    && Theme.Stickers.catMapKeysList.contains(START_SYMBOL + enteredText + END_SYMBOL)) {
+            if (detectingStatus == Detecting.Start) {
+                Timber.d("test commitText return false for enteredtext:%s, and currenttext: %s, status:%s", enteredText,  text, detectingStatus.toString());
                 return false;
             } else {
+                Timber.d("test commitText return super.commitText for entered text:%s, and currenttext: %s, status:%s", enteredText, text,   detectingStatus.toString());
                 return super.commitText(text, newCursorPosition);
             }
         }
@@ -100,40 +103,13 @@ public class StickersEditText extends EmojiconEditText {
     }
 
     private void init() {
-        setFilters(new InputFilter[] { filter });
+        setFilters(new InputFilter[]{filter});
     }
 
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter);
     }
-
-    static long currentTimeMillist;
-    private static Spannable getTextWithImages(Editable text) {
-        currentTimeMillist = System.currentTimeMillis();
-
-        //ImageSpan[] oldSpans = text.getSpans(0, text.length(), ImageSpan.class);
-        //for (int i = 0; i < oldSpans.length; i++) {
-        //    text.removeSpan(oldSpans[i]);
-        //}
-
-        Matcher matcher = FIND_IMAGE_REG_EXP.matcher(text.toString());
-        while (matcher.find()) {
-            String sticker = matcher.group();
-            if (Theme.Stickers.catMap.containsKey(sticker)) {
-                Drawable image = Theme.Stickers.catMap.get(sticker);
-                text.setSpan(new ImageSpan(image, ImageSpan.ALIGN_BASELINE),
-                        matcher.start(),
-                        matcher.end(),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
-            }
-        }
-
-        long deltaTime = System.currentTimeMillis() - currentTimeMillist;
-        return text;
-    }
-
 
     private String detectedSticker;
     private final InputFilter filter = new InputFilter() {
@@ -186,4 +162,32 @@ public class StickersEditText extends EmojiconEditText {
             return spannableResult; //if null == keep original
         }
     };
+
+
+
+    static long currentTimeMillist;
+    private static Spannable getTextWithImages(Editable text) {
+        currentTimeMillist = System.currentTimeMillis();
+
+        //ImageSpan[] oldSpans = text.getSpans(0, text.length(), ImageSpan.class);
+        //for (int i = 0; i < oldSpans.length; i++) {
+        //    text.removeSpan(oldSpans[i]);
+        //}
+
+        Matcher matcher = FIND_IMAGE_REG_EXP.matcher(text.toString());
+        while (matcher.find()) {
+            String sticker = matcher.group();
+            if (Theme.Stickers.catMap.containsKey(sticker)) {
+                Drawable image = Theme.Stickers.catMap.get(sticker);
+                text.setSpan(new ImageSpan(image, ImageSpan.ALIGN_BASELINE),
+                        matcher.start(),
+                        matcher.end(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                );
+            }
+        }
+
+        long deltaTime = System.currentTimeMillis() - currentTimeMillist;
+        return text;
+    }
 }
