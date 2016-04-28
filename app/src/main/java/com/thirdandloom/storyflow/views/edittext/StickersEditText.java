@@ -8,7 +8,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -55,6 +54,7 @@ public class StickersEditText extends EmojiconEditText {
 
         private Detecting detectingStatus = Detecting.None;
         private String detectedIcon;
+        private String failedText;
 
         public EditTextInputConnection(InputConnection target, boolean mutable) {
             super(target, mutable);
@@ -63,13 +63,23 @@ public class StickersEditText extends EmojiconEditText {
         @Override
         public boolean commitText(CharSequence text, int newCursorPosition) {
             if (text.length() == 1) {
-                if (text.charAt(0) == START_SYMBOL.charAt(0)) {
+                if (text.charAt(0) == START_SYMBOL.charAt(0) && detectingStatus == Detecting.None) {
                     detectingStatus = Detecting.Start;
                     return super.setComposingText(text, newCursorPosition);
 
                 } else if (text.charAt(0) == END_SYMBOL.charAt(0) && detectingStatus == Detecting.Start) {
                     detectingStatus = Detecting.End;
                     text = START_SYMBOL + detectedIcon + END_SYMBOL;
+                } else if (detectingStatus == Detecting.Start && !Character.isLetter(text.charAt(0))) {
+                    //user enter [ and then enter space or other symbol to commit
+                    if (START_SYMBOL.charAt(0) == text.charAt(0)) {
+                        detectingStatus = Detecting.Start;
+                    } else {
+                        detectingStatus = Detecting.None;
+                    }
+
+                    text = START_SYMBOL + failedText + text;
+                    return super.commitText(text, newCursorPosition);
                 } else {
                     detectingStatus = Detecting.None;
                 }
@@ -77,6 +87,7 @@ public class StickersEditText extends EmojiconEditText {
 
             String enteredText = text.toString();
             if (detectingStatus == Detecting.Start) {
+                failedText = enteredText;
                 Timber.d("test commitText return false for enteredtext:%s, and currenttext: %s, status:%s", enteredText,  text, detectingStatus.toString());
                 return false;
             } else {
