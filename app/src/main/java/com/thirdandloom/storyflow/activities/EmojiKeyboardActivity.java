@@ -54,13 +54,11 @@ public abstract class EmojiKeyboardActivity extends BaseActivity implements Emoj
 
     @Override
     public void onEmojiconClicked(Emojicon emojicon) {
-        editText.setEmojiChanged(true);
         EmojiconsFragment.input(editText, emojicon);
     }
 
     @Override
     public void onEmojiconBackspaceClicked(View v) {
-        editText.setEmojiChanged(true);
         EmojiconsFragment.backspace(editText);
     }
 
