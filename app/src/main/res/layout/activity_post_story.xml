@@ -14,7 +14,7 @@
         <include layout="@layout/layout_toolbar_simple"
             />
 
-        <com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText
+        <com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditTextDev
             android:id="@+id/activity_post_story_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

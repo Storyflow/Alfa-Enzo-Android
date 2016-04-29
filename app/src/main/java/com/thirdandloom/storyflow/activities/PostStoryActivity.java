@@ -3,7 +3,7 @@ package com.thirdandloom.storyflow.activities;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.Timber;
-import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
+import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditTextDev;
 import com.thirdandloom.storyflow.views.PostStoryBar;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
 import com.thirdandloom.storyflow.views.emoji.CatsStickersView;
@@ -41,7 +41,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         postStoryBar = (PostStoryBar)findViewById(R.id.activity_post_story_post_bar);
         sizeNotifierLayout = (SizeNotifierFrameLayout)findViewById(R.id.activity_post_story_size_notifier);
         keyboardReplacerView = findViewById(R.id.activity_post_story_keyboard_replacer);
-        editText = (OpenEventDetectorEditText)findViewById(R.id.activity_post_story_edit_text);
+        editText = (OpenEventDetectorEditTextDev)findViewById(R.id.activity_post_story_edit_text);
         emojiContainerView = findViewById(R.id.activity_post_story_emoji_container);
         catsStickersView = (CatsStickersView)findViewById(R.id.activity_post_story_cats_emoji);
 

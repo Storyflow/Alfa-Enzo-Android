@@ -3,15 +3,14 @@ package com.thirdandloom.storyflow.activities;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
-import com.thirdandloom.storyflow.utils.Timber;
-import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
+import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditTextDev;
 import com.thirdandloom.storyflow.views.emoji.CatsStickersView;
 
 import android.view.View;
 
 public abstract class EmojiKeyboardActivity extends BaseActivity implements EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
 
-    protected OpenEventDetectorEditText editText;
+    protected OpenEventDetectorEditTextDev editText;
     protected View emojiContainerView;
     protected CatsStickersView catsStickersView;
     private EmojiconsFragment emojiconsFragment = EmojiconsFragment.newInstance(false);

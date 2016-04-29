@@ -4,20 +4,19 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.rockerhieu.emojicon.EmojiconEditText;
 import rx.functions.Action0;
 
-public class OpenEventDetectorEditText extends StickersEditText {
+public class OpenEventDetectorEditTextDev extends StickersEditText {
 
-    public OpenEventDetectorEditText(Context context) {
+    public OpenEventDetectorEditTextDev(Context context) {
         super(context);
     }
 
-    public OpenEventDetectorEditText(Context context, AttributeSet attrs, int defStyleAttr) {
+    public OpenEventDetectorEditTextDev(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public OpenEventDetectorEditText(Context context, AttributeSet attrs) {
+    public OpenEventDetectorEditTextDev(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

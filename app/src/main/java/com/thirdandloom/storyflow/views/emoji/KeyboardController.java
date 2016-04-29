@@ -3,7 +3,7 @@ package com.thirdandloom.storyflow.views.emoji;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
-import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
+import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditTextDev;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -17,7 +17,7 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
     }
 
     private final View keyboardReplacerView;
-    private final OpenEventDetectorEditText openEventDetectorEditText;
+    private final OpenEventDetectorEditTextDev openEventDetectorEditText;
 
     private int keyboardHeight;
     private Keyboard currentKeyboard = Keyboard.None;
@@ -27,7 +27,7 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
     private boolean waitingForKeyboardOpen;
     private Action1<Keyboard> keyboardStateUpdater;
 
-    public KeyboardController(OpenEventDetectorEditText editText, View keyboardReplacerView) {
+    public KeyboardController(OpenEventDetectorEditTextDev editText, View keyboardReplacerView) {
         this.openEventDetectorEditText = editText;
         this.keyboardReplacerView = keyboardReplacerView;
         this.openEventDetectorEditText.setOpenEvent(this::openKeyboardInternal);
