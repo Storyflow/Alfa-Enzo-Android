@@ -20,7 +20,10 @@ public abstract class EmojiKeyboardActivity extends BaseActivity implements Emoj
                 .beginTransaction()
                 .replace(getEmojiContainerId(), emojiconsFragment)
                 .commit();
-        catsStickersView.setOnStickerSelected(editText::append);
+        catsStickersView.setOnStickerSelected(sticker -> {
+            int selectionStart = editText.getSelectionStart();
+            editText.getText().insert(selectionStart, sticker);
+        });
     }
 
     protected void hideEmoji(int keyboardHeight) {

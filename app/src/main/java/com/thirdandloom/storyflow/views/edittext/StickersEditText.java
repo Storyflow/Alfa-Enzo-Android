@@ -79,13 +79,14 @@ public class StickersEditText extends EmojiconEditText {
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         int oldTextLength = getText().length();
         int oldSelectionEnd = getSelectionEnd();
-        getTextWithImages(getText(), newText -> {
+        getTextWithImages(getText(), getSelectionStart(), getSelectionEnd(), newText -> {
             setText(newText);
             setSelection(oldSelectionEnd-(oldTextLength - newText.length()));
         }, () -> super.onTextChanged(text, start, lengthBefore, lengthAfter));
     }
 
-    private static void getTextWithImages(Editable text, Action1<Editable> onChanged, Action0 onNotChanged) {
+    private static void getTextWithImages(Editable text, int selectionStart, int selectionEnd,
+                                          Action1<Editable> onChanged, Action0 onNotChanged) {
         Matcher matcher = FIND_IMAGE_PATTERN.matcher(text.toString());
 
         ImageSpan[] oldSpans = text.getSpans(0, text.length(), ImageSpan.class);
@@ -128,6 +129,15 @@ public class StickersEditText extends EmojiconEditText {
                     text = new SpannableStringBuilder(stringBuilder);
                 }
             }
+        }
+
+        if (!removedStickersDetected && selectionEnd == selectionStart && selectionEnd > 2) {
+            int lastStickerPosition = selectionEnd + 1;
+            String sticker = getStickerWithEndStickerPos(lastStickerPosition);
+            removedStickersDetected |= sticker.length() > 2;
+            StringBuilder stringBuilder = new StringBuilder(text);
+            stringBuilder.replace(selectionEnd - (sticker.length() - 1), selectionEnd, "");
+            text = new SpannableStringBuilder(stringBuilder);
         }
 
         oldDetectedStickers = detectedStickers;
