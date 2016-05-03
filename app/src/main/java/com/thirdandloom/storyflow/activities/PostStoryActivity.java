@@ -1,8 +1,16 @@
 package com.thirdandloom.storyflow.activities;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.Request;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.utils.ActivityUtils;
 import com.thirdandloom.storyflow.utils.Timber;
+import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
 import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditTextDev;
 import com.thirdandloom.storyflow.views.PostStoryBar;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
@@ -10,18 +18,27 @@ import com.thirdandloom.storyflow.views.emoji.CatsStickersView;
 import com.thirdandloom.storyflow.views.emoji.KeyboardController;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
+import java.io.Serializable;
+
 public class PostStoryActivity extends EmojiKeyboardActivity {
+    private static final int CAPTURE_PHOTO = 1;
+    private static final int SELECT_PHOTO = CAPTURE_PHOTO + 1;
 
     private PostStoryBar postStoryBar;
     private SizeNotifierFrameLayout sizeNotifierLayout;
     private View keyboardReplacerView;
     private KeyboardController keyboardController;
     protected EditText postStoryEditText;
+    private SavedState state = new SavedState();
 
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.getInstance(), PostStoryActivity.class);
@@ -35,6 +52,9 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         findViews();
         initGui();
         keyboardController.openKeyboardInternal();
+        restoreState(savedInstanceState, restoredState -> {
+            state = (SavedState) restoredState;
+        });
     }
 
     private void findViews() {
@@ -54,6 +74,27 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         keyboardController.setKeyboardStateUpdater(this::updatePostStoryBarIcons);
         postStoryBar.setActions(postStoryActions);
         sizeNotifierLayout.setActions(keyboardController);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PhotoFileUtils.REQUEST_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startCapturePhotoIntent();
+                } else {
+                    showWarning(R.string.permissions_were_not_guaranteed);
+                }
+                break;
+        }
+    }
+
+    private void startCapturePhotoIntent() {
+        state.capturedAbsolutePhotoPath = ActivityUtils.capturePhoto(this, CAPTURE_PHOTO);
+    }
+
+    private void selectPhoto() {
+        ActivityUtils.selectPhoto(this, SELECT_PHOTO);
     }
 
     @Override
@@ -113,12 +154,12 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
 
         @Override
         public void onCameraClicked() {
-            Timber.d("PostStoryBar Actions onCameraClicked");
+            PhotoFileUtils.checkStoragePermissionsAreGuaranteed(PostStoryActivity.this, PostStoryActivity.this::startCapturePhotoIntent);
         }
 
         @Override
         public void onGalleryClicked() {
-            Timber.d("PostStoryBar Actions onGalleryClicked");
+            PhotoFileUtils.checkStoragePermissionsAreGuaranteed(PostStoryActivity.this, PostStoryActivity.this::selectPhoto);
         }
 
         @Override
@@ -136,4 +177,42 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
             keyboardController.catsClicked();
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String selectedPhoto = "";
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CAPTURE_PHOTO:
+                    selectedPhoto = state.capturedAbsolutePhotoPath;
+                    Glide
+                            .with(this)
+                            .load(selectedPhoto)
+                            .asBitmap()
+                            .into(new SimpleTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+//                                    editText.setCo;
+                                }
+                            });
+                    break;
+                case SELECT_PHOTO:
+                    selectedPhoto = data.getData().toString();
+                    break;
+            }
+        }
+        Timber.d("selected photo: %s", selectedPhoto);
+    }
+
+    @Nullable
+    @Override
+    protected Serializable getSavedState() {
+        return state;
+    }
+
+    private static class SavedState implements Serializable {
+        private static final long serialVersionUID = 8645864584763024484L;
+        String capturedAbsolutePhotoPath;
+    }
 }

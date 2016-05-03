@@ -61,7 +61,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-
     protected Serializable getState() {
         return getIntent().getSerializableExtra(SAVED_INSTANCE_KEY);
     }
