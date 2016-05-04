@@ -1,17 +1,16 @@
 package com.thirdandloom.storyflow.activities;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
-import com.bumptech.glide.request.target.Target;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
+import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.Timber;
+import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
-import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditTextDev;
+import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
 import com.thirdandloom.storyflow.views.PostStoryBar;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
 import com.thirdandloom.storyflow.views.emoji.CatsStickersView;
@@ -20,12 +19,11 @@ import com.thirdandloom.storyflow.views.emoji.KeyboardController;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ScrollView;
 
 import java.io.Serializable;
 
@@ -37,7 +35,9 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private SizeNotifierFrameLayout sizeNotifierLayout;
     private View keyboardReplacerView;
     private KeyboardController keyboardController;
-    protected EditText postStoryEditText;
+    private EditText postStoryEditText;
+    private ScrollView scrollViewContainer;
+    private int defaultScrollViewHeight;
     private SavedState state = new SavedState();
 
     public static Intent newInstance() {
@@ -51,19 +51,24 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         setTitle(R.string.post_story);
         findViews();
         initGui();
-        keyboardController.openKeyboardInternal();
         restoreState(savedInstanceState, restoredState -> {
             state = (SavedState) restoredState;
         });
+        ViewUtils.callOnPreDraw(scrollViewContainer, view -> {
+            defaultScrollViewHeight = view.getHeight();
+        });
+        //does not work ;(
+        AndroidUtils.showKeyboard(postStoryEditText);
     }
 
     private void findViews() {
         postStoryBar = (PostStoryBar)findViewById(R.id.activity_post_story_post_bar);
         sizeNotifierLayout = (SizeNotifierFrameLayout)findViewById(R.id.activity_post_story_size_notifier);
         keyboardReplacerView = findViewById(R.id.activity_post_story_keyboard_replacer);
-        editText = (OpenEventDetectorEditTextDev)findViewById(R.id.activity_post_story_edit_text);
+        editText = (OpenEventDetectorEditText)findViewById(R.id.activity_post_story_edit_text);
         emojiContainerView = findViewById(R.id.activity_post_story_emoji_container);
         catsStickersView = (CatsStickersView)findViewById(R.id.activity_post_story_cats_emoji);
+        scrollViewContainer = (ScrollView)findViewById(R.id.activity_post_story_scroll_view);
 
         postStoryEditText = editText;
     }
@@ -118,32 +123,43 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     }
 
     private void updatePostStoryBarIcons(KeyboardController.Keyboard keyboardType) {
+        int newScrollViewHeight;
         switch (keyboardType) {
             case Emoji:
                 showEmoji();
                 hideCatsEmoji(keyboardController.getKeyboardHeight());
                 postStoryBar.onEmojiSelected();
+
+                newScrollViewHeight = defaultScrollViewHeight - keyboardController.getKeyboardHeight();
                 break;
 
             case Cats:
                 showCatsEmoji();
                 hideEmoji(keyboardController.getKeyboardHeight());
                 postStoryBar.onCastSelected();
+
+                newScrollViewHeight = defaultScrollViewHeight - keyboardController.getKeyboardHeight();
                 break;
 
             case Native:
                 hideEmoji(keyboardController.getKeyboardHeight());
                 hideCatsEmoji(keyboardController.getKeyboardHeight());
                 postStoryBar.onNativeKeyboardSelected();
+                newScrollViewHeight = defaultScrollViewHeight - keyboardController.getKeyboardHeight();
                 break;
 
             case None:
                 postStoryBar.onNoneSelected();
+
+                newScrollViewHeight = defaultScrollViewHeight;
                 break;
 
             default:
                 throw new UnsupportedOperationException("KeyboardController.Keyboard unsupported type is using");
         }
+        int newEditTextHeight = newScrollViewHeight - postStoryBar.getHeight();
+        ViewUtils.applyHeight(postStoryEditText, newEditTextHeight);
+        ViewUtils.applyHeight(scrollViewContainer, newScrollViewHeight);
     }
 
     private final PostStoryBar.Actions postStoryActions = new PostStoryBar.Actions() {

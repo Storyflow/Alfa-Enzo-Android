@@ -6,17 +6,17 @@ import android.view.MotionEvent;
 
 import rx.functions.Action0;
 
-public class OpenEventDetectorEditTextDev extends StickersEditText {
+public class OpenEventDetectorEditText extends StickersEditText {
 
-    public OpenEventDetectorEditTextDev(Context context) {
+    public OpenEventDetectorEditText(Context context) {
         super(context);
     }
 
-    public OpenEventDetectorEditTextDev(Context context, AttributeSet attrs, int defStyleAttr) {
+    public OpenEventDetectorEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public OpenEventDetectorEditTextDev(Context context, AttributeSet attrs) {
+    public OpenEventDetectorEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -29,7 +29,7 @@ public class OpenEventDetectorEditTextDev extends StickersEditText {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            this.openEvent.call();
+            openEvent.call();
         }
         return super.onTouchEvent(event);
     }

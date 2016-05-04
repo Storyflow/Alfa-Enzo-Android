@@ -1,9 +1,8 @@
 package com.thirdandloom.storyflow.views.emoji;
 
-import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
-import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditTextDev;
+import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -17,17 +16,16 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
     }
 
     private final View keyboardReplacerView;
-    private final OpenEventDetectorEditTextDev openEventDetectorEditText;
+    private final OpenEventDetectorEditText openEventDetectorEditText;
 
     private int keyboardHeight;
     private Keyboard currentKeyboard = Keyboard.None;
 
     private boolean keyboardIsVisible;
     private boolean keyboardReplaceViewIsVisible;
-    private boolean waitingForKeyboardOpen;
     private Action1<Keyboard> keyboardStateUpdater;
 
-    public KeyboardController(OpenEventDetectorEditTextDev editText, View keyboardReplacerView) {
+    public KeyboardController(OpenEventDetectorEditText editText, View keyboardReplacerView) {
         this.openEventDetectorEditText = editText;
         this.keyboardReplacerView = keyboardReplacerView;
         this.openEventDetectorEditText.setOpenEvent(this::openKeyboardInternal);
@@ -50,9 +48,7 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
 
     public void keyboardClicked() {
         if (currentKeyboard == Keyboard.Native) return;
-        currentKeyboard = Keyboard.Native;
         openKeyboardInternal();
-        updateKeyboardVisibility();
     }
 
     public void catsClicked() {
@@ -80,11 +76,6 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
             keyboardDidAppear(appearedHeight);
         } else if (appearedHeight < AndroidUtils.dp(50) && keyboardIsVisible) {
             keyboardDidDisappear();
-        }
-
-        if (keyboardIsVisible && waitingForKeyboardOpen) {
-            waitingForKeyboardOpen = false;
-            StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
         }
     }
 
@@ -130,28 +121,12 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
     }
 
     public void openKeyboardInternal() {
-        openEventDetectorEditText.requestFocus();
+        currentKeyboard = Keyboard.Native;
         AndroidUtils.showKeyboard(openEventDetectorEditText);
-        if (!keyboardIsVisible) {
-            waitingForKeyboardOpen = true;
-            StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
-            StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
-        }
+        updateKeyboardVisibility();
     }
 
     private void updateKeyboardVisibility() {
         keyboardStateUpdater.call(currentKeyboard);
     }
-
-    private final Runnable openKeyboardRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (openEventDetectorEditText != null && waitingForKeyboardOpen && !keyboardIsVisible) {
-                openEventDetectorEditText.requestFocus();
-                AndroidUtils.showKeyboard(openEventDetectorEditText);
-                StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
-                StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
-            }
-        }
-    };
 }

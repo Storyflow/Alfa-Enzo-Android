@@ -14,24 +14,52 @@
         <include layout="@layout/layout_toolbar_simple"
             />
 
-        <com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditTextDev
-            android:id="@+id/activity_post_story_edit_text"
+        <ScrollView
+            android:id="@+id/activity_post_story_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/post_story_is_about"
-            android:background="@null"
-            android:padding="@dimen/sizeXXLarge"
-            android:gravity="top"
-            android:layout_weight="1"
-            style="@style/GreyLineStrokedEditText"
-            />
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-        <com.thirdandloom.storyflow.views.PostStoryBar
-            android:id="@+id/activity_post_story_post_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        </com.thirdandloom.storyflow.views.PostStoryBar>
+                <RelativeLayout
+                    android:id="@+id/top_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top">
+
+                    <com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText
+                        android:id="@+id/activity_post_story_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/post_story_is_about"
+                        android:background="@null"
+                        android:padding="@dimen/sizeXXLarge"
+                        android:gravity="top"
+                        style="@style/GreyLineStrokedEditText"
+                        />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/ButtonLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom">
+
+                    <com.thirdandloom.storyflow.views.PostStoryBar
+                        android:id="@+id/activity_post_story_post_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true">
+                    </com.thirdandloom.storyflow.views.PostStoryBar>
+                </RelativeLayout>
+
+            </LinearLayout>
+        </ScrollView>
 
         <FrameLayout
             android:id="@+id/activity_post_story_keyboard_replacer"
@@ -54,7 +82,6 @@
                 android:background="@color/white">
 
             </com.thirdandloom.storyflow.views.emoji.CatsStickersView>
-
         </FrameLayout>
 
     </LinearLayout>
