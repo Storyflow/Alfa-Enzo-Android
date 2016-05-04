@@ -1,5 +1,6 @@
 package com.thirdandloom.storyflow.views.emoji;
 
+import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
@@ -23,6 +24,7 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
 
     private boolean keyboardIsVisible;
     private boolean keyboardReplaceViewIsVisible;
+    private boolean waitingForKeyboardOpen;
     private Action1<Keyboard> keyboardStateUpdater;
 
     public KeyboardController(OpenEventDetectorEditText editText, View keyboardReplacerView) {
@@ -48,7 +50,9 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
 
     public void keyboardClicked() {
         if (currentKeyboard == Keyboard.Native) return;
+        currentKeyboard = Keyboard.Native;
         openKeyboardInternal();
+        updateKeyboardVisibility();
     }
 
     public void catsClicked() {
@@ -76,6 +80,11 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
             keyboardDidAppear(appearedHeight);
         } else if (appearedHeight < AndroidUtils.dp(50) && keyboardIsVisible) {
             keyboardDidDisappear();
+        }
+
+        if (keyboardIsVisible && waitingForKeyboardOpen) {
+            waitingForKeyboardOpen = false;
+            StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
         }
     }
 
@@ -126,7 +135,29 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
         updateKeyboardVisibility();
     }
 
+    public void openKeyboardOnCreate() {
+        openEventDetectorEditText.requestFocus();
+        AndroidUtils.showKeyboard(openEventDetectorEditText);
+        if (!keyboardIsVisible) {
+            waitingForKeyboardOpen = true;
+            StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
+            StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
+        }
+    }
+
     private void updateKeyboardVisibility() {
         keyboardStateUpdater.call(currentKeyboard);
     }
+
+    private final Runnable openKeyboardRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (openEventDetectorEditText != null && waitingForKeyboardOpen && !keyboardIsVisible) {
+                openEventDetectorEditText.requestFocus();
+                AndroidUtils.showKeyboard(openEventDetectorEditText);
+                StoryflowApplication.cancelRunOnUIThread(openKeyboardRunnable);
+                StoryflowApplication.runOnUIThread(openKeyboardRunnable, 100);
+            }
+        }
+    };
 }

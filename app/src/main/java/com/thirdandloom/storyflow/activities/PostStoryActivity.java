@@ -6,7 +6,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
-import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
@@ -57,8 +56,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         ViewUtils.callOnPreDraw(scrollViewContainer, view -> {
             defaultScrollViewHeight = view.getHeight();
         });
-        //does not work ;(
-        AndroidUtils.showKeyboard(postStoryEditText);
+        keyboardController.openKeyboardOnCreate();
     }
 
     private void findViews() {
