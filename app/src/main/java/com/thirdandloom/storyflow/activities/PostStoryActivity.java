@@ -1,11 +1,10 @@
 package com.thirdandloom.storyflow.activities;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
+import com.thirdandloom.storyflow.utils.EditTextUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
@@ -17,11 +16,10 @@ import com.thirdandloom.storyflow.views.emoji.KeyboardController;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import java.io.Serializable;
@@ -36,6 +34,8 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private KeyboardController keyboardController;
     private ScrollView scrollViewContainer;
     private int defaultScrollViewHeight;
+    private ImageView postStoryImageView;
+
     private SavedState state = new SavedState();
 
     public static Intent newInstance() {
@@ -55,7 +55,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         ViewUtils.callOnPreDraw(scrollViewContainer, view -> {
             defaultScrollViewHeight = view.getHeight();
         });
-        keyboardController.openKeyboardOnCreate();
+        //keyboardController.openKeyboardInternal();
     }
 
     private void findViews() {
@@ -66,6 +66,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         emojiContainerView = findViewById(R.id.activity_post_story_emoji_container);
         catsStickersView = (CatsStickersView)findViewById(R.id.activity_post_story_cats_emoji);
         scrollViewContainer = (ScrollView)findViewById(R.id.activity_post_story_scroll_view);
+        postStoryImageView = (ImageView)findViewById(R.id.activity_post_story_image_view);
     }
 
     private void initGui() {
@@ -124,7 +125,6 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                 showEmoji();
                 hideCatsEmoji(keyboardController.getKeyboardHeight());
                 postStoryBar.onEmojiSelected();
-
                 newScrollViewHeight = defaultScrollViewHeight - keyboardController.getKeyboardHeight();
                 break;
 
@@ -132,7 +132,6 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                 showCatsEmoji();
                 hideEmoji(keyboardController.getKeyboardHeight());
                 postStoryBar.onCastSelected();
-
                 newScrollViewHeight = defaultScrollViewHeight - keyboardController.getKeyboardHeight();
                 break;
 
@@ -145,16 +144,30 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
 
             case None:
                 postStoryBar.onNoneSelected();
-
                 newScrollViewHeight = defaultScrollViewHeight;
                 break;
 
             default:
                 throw new UnsupportedOperationException("KeyboardController.Keyboard unsupported type is using");
         }
-        int newEditTextHeight = newScrollViewHeight - postStoryBar.getHeight();
-        ViewUtils.applyHeight(editText, newEditTextHeight);
+        //int newEditTextHeight = newScrollViewHeight - postStoryBar.getHeight() - postStoryImageView.getHeight();
+        //ViewUtils.applyHeight(editText, newEditTextHeight);
+
+        //int newEditTextHeight = newScrollViewHeight - postStoryBar.getHeight();
+        //ViewUtils.applyHeight(editText, newEditTextHeight);
+
         ViewUtils.applyHeight(scrollViewContainer, newScrollViewHeight);
+
+        int currentSelectedLine = EditTextUtils.getCurrentCursorLine(editText);
+        int scrollPosition = editText.getLineHeight()*currentSelectedLine;
+        scrollViewContainer.scrollTo(0, scrollPosition);
+
+        //StoryflowApplication.runOnUIThread(new Runnable() {
+        //    @Override
+        //    public void run() {
+        //        ViewUtils.applyHeight(scrollViewContainer, newScrollViewHeight);
+        //    }
+        //}, 100);
     }
 
     private final PostStoryBar.Actions postStoryActions = new PostStoryBar.Actions() {
@@ -197,21 +210,15 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
             switch (requestCode) {
                 case CAPTURE_PHOTO:
                     selectedPhoto = state.capturedAbsolutePhotoPath;
-                    Glide
-                            .with(this)
-                            .load(selectedPhoto)
-                            .asBitmap()
-                            .into(new SimpleTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-//                                    editText.setCo;
-                                }
-                            });
                     break;
                 case SELECT_PHOTO:
                     selectedPhoto = data.getData().toString();
                     break;
             }
+            Glide
+                    .with(this)
+                    .load(selectedPhoto)
+                    .into(postStoryImageView);
         }
         Timber.d("selected photo: %s", selectedPhoto);
     }

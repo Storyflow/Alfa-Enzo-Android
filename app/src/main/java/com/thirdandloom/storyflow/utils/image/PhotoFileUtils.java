@@ -28,7 +28,7 @@ public class PhotoFileUtils extends BaseUtils {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-    public static void checkStoragePermissionsAreGuaranteed(Activity activity, Action0 onPermissionAreGuranteed) {
+    public static void checkStoragePermissionsAreGuaranteed(Activity activity, Action0 onPermissionAreGuaranteed) {
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
@@ -38,7 +38,7 @@ public class PhotoFileUtils extends BaseUtils {
             );
             return;
         }
-        onPermissionAreGuranteed.call();
+        onPermissionAreGuaranteed.call();
     }
 
     public static File createOutputUniqueFile() {

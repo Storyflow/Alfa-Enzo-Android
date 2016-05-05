@@ -30,7 +30,7 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
     public KeyboardController(OpenEventDetectorEditText editText, View keyboardReplacerView) {
         this.openEventDetectorEditText = editText;
         this.keyboardReplacerView = keyboardReplacerView;
-        this.openEventDetectorEditText.setOpenEvent(this::openKeyboardInternal);
+        this.openEventDetectorEditText.setOpenEvent(this::openKeyboard);
     }
 
     public int getKeyboardHeight() {
@@ -51,7 +51,7 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
     public void keyboardClicked() {
         if (currentKeyboard == Keyboard.Native) return;
         currentKeyboard = Keyboard.Native;
-        openKeyboardInternal();
+        openKeyboard();
         updateKeyboardVisibility();
     }
 
@@ -129,13 +129,13 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
         AndroidUtils.hideKeyboard(openEventDetectorEditText);
     }
 
-    public void openKeyboardInternal() {
+    public void openKeyboard() {
         currentKeyboard = Keyboard.Native;
         AndroidUtils.showKeyboard(openEventDetectorEditText);
         updateKeyboardVisibility();
     }
 
-    public void openKeyboardOnCreate() {
+    public void openKeyboardInternal() {
         openEventDetectorEditText.requestFocus();
         AndroidUtils.showKeyboard(openEventDetectorEditText);
         if (!keyboardIsVisible) {

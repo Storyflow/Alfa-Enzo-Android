@@ -17,49 +17,44 @@
         <ScrollView
             android:id="@+id/activity_post_story_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:fillViewport="true">
 
-            <LinearLayout
-                android:orientation="vertical"
+            <RelativeLayout
+                android:id="@+id/top_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <RelativeLayout
-                    android:id="@+id/top_content"
+                <ImageView
+                    android:id="@+id/activity_post_story_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="top">
+                    android:layout_centerHorizontal="true"
+                    android:scaleType="centerCrop"
+                    android:layout_below="@+id/activity_post_story_edit_text"
+                    />
 
-                    <com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText
-                        android:id="@+id/activity_post_story_edit_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/post_story_is_about"
-                        android:background="@null"
-                        android:padding="@dimen/sizeXXLarge"
-                        android:gravity="top"
-                        style="@style/GreyLineStrokedEditText"
-                        />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/ButtonLayout"
+                <com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText
+                    android:id="@+id/activity_post_story_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="bottom">
+                    android:hint="@string/post_story_is_about"
+                    android:background="@null"
+                    android:padding="@dimen/sizeXXLarge"
+                    android:gravity="top"
+                    style="@style/GreyLineStrokedEditText"
+                    />
 
-                    <com.thirdandloom.storyflow.views.PostStoryBar
-                        android:id="@+id/activity_post_story_post_bar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true">
-                    </com.thirdandloom.storyflow.views.PostStoryBar>
-                </RelativeLayout>
+            </RelativeLayout>
 
-            </LinearLayout>
         </ScrollView>
+
+        <com.thirdandloom.storyflow.views.PostStoryBar
+            android:id="@+id/activity_post_story_post_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </com.thirdandloom.storyflow.views.PostStoryBar>
 
         <FrameLayout
             android:id="@+id/activity_post_story_keyboard_replacer"
