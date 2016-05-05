@@ -34,7 +34,6 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private SizeNotifierFrameLayout sizeNotifierLayout;
     private View keyboardReplacerView;
     private KeyboardController keyboardController;
-    private EditText postStoryEditText;
     private ScrollView scrollViewContainer;
     private int defaultScrollViewHeight;
     private SavedState state = new SavedState();
@@ -67,8 +66,6 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         emojiContainerView = findViewById(R.id.activity_post_story_emoji_container);
         catsStickersView = (CatsStickersView)findViewById(R.id.activity_post_story_cats_emoji);
         scrollViewContainer = (ScrollView)findViewById(R.id.activity_post_story_scroll_view);
-
-        postStoryEditText = editText;
     }
 
     private void initGui() {
@@ -156,7 +153,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                 throw new UnsupportedOperationException("KeyboardController.Keyboard unsupported type is using");
         }
         int newEditTextHeight = newScrollViewHeight - postStoryBar.getHeight();
-        ViewUtils.applyHeight(postStoryEditText, newEditTextHeight);
+        ViewUtils.applyHeight(editText, newEditTextHeight);
         ViewUtils.applyHeight(scrollViewContainer, newScrollViewHeight);
     }
 
