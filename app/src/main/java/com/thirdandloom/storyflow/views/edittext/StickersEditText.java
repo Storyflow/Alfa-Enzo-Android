@@ -71,6 +71,10 @@ public class StickersEditText extends EmojiconEditText {
                     selStart = selStart + 1;
                 }
             }
+        } else if (selStart != 0 && isPartPosition(selStart, oldDetectedStickers)) {
+            selectionWasModified = true;
+            selStart = getStickerEndPosition(selStart, oldDetectedStickers);
+            selEnd = selStart;
         }
         if (!selectionWasModified) {
             super.onSelectionChanged(selStart, selEnd);
@@ -180,6 +184,26 @@ public class StickersEditText extends EmojiconEditText {
             }
         }
         return " ";
+    }
+
+    private static boolean isPartPosition(int position, List<DisplayedSticker> oldDetectedStickers) {
+        for (DisplayedSticker sticker :  oldDetectedStickers) {
+            if (sticker.startPosition <= position
+                    && sticker.endPosition >= position) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int getStickerEndPosition(int position, List<DisplayedSticker> oldDetectedStickers) {
+        for (DisplayedSticker sticker :  oldDetectedStickers) {
+            if (sticker.startPosition <= position
+                    && sticker.endPosition >= position) {
+                return sticker.endPosition;
+            }
+        }
+        return -1;
     }
 
     private static boolean isPart(String sticker) {
