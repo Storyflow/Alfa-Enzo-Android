@@ -35,6 +35,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private ScrollView scrollViewContainer;
     private int defaultScrollViewHeight;
     private ImageView postStoryImageView;
+    private View postStoryBotView;
 
     private SavedState state = new SavedState();
 
@@ -55,7 +56,18 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         ViewUtils.callOnPreDraw(scrollViewContainer, view -> {
             defaultScrollViewHeight = view.getHeight();
         });
-        //keyboardController.openKeyboardInternal();
+        keyboardController.openKeyboardInternal();
+        keyboardController.setKeyboardWillAppear(keyboardHeight -> {
+            int botHeight = editText.getHeight();
+            int keyboardAppearingHeight = defaultScrollViewHeight - keyboardHeight
+                    + postStoryBar.getHeight();
+            editText.keyboardWillAppear(keyboardAppearingHeight);
+            ViewUtils.applyHeight(postStoryBotView, botHeight - keyboardAppearingHeight);
+            editText.requestFocus();
+            int currentSelectedLine = EditTextUtils.getCurrentCursorLine(editText);
+            int scrollPosition = editText.getLineHeight()*currentSelectedLine;
+            scrollViewContainer.scrollTo(0, scrollPosition - (botHeight + keyboardAppearingHeight));
+        });
     }
 
     private void findViews() {
@@ -67,6 +79,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         catsStickersView = (CatsStickersView)findViewById(R.id.activity_post_story_cats_emoji);
         scrollViewContainer = (ScrollView)findViewById(R.id.activity_post_story_scroll_view);
         postStoryImageView = (ImageView)findViewById(R.id.activity_post_story_image_view);
+        postStoryBotView = findViewById(R.id.activity_post_story_edit_text_bot_view);
     }
 
     private void initGui() {
@@ -150,24 +163,16 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
             default:
                 throw new UnsupportedOperationException("KeyboardController.Keyboard unsupported type is using");
         }
-        //int newEditTextHeight = newScrollViewHeight - postStoryBar.getHeight() - postStoryImageView.getHeight();
-        //ViewUtils.applyHeight(editText, newEditTextHeight);
-
-        //int newEditTextHeight = newScrollViewHeight - postStoryBar.getHeight();
-        //ViewUtils.applyHeight(editText, newEditTextHeight);
 
         ViewUtils.applyHeight(scrollViewContainer, newScrollViewHeight);
-
-        int currentSelectedLine = EditTextUtils.getCurrentCursorLine(editText);
-        int scrollPosition = editText.getLineHeight()*currentSelectedLine;
-        scrollViewContainer.scrollTo(0, scrollPosition);
-
-        //StoryflowApplication.runOnUIThread(new Runnable() {
-        //    @Override
-        //    public void run() {
-        //        ViewUtils.applyHeight(scrollViewContainer, newScrollViewHeight);
-        //    }
-        //}, 100);
+        if (keyboardType != KeyboardController.Keyboard.None) {
+            editText.requestFocus();
+            StoryflowApplication.runOnUIThread(() -> {
+                ViewUtils.applyHeight(postStoryBotView, 1);
+                editText.keyboardDidAppear();
+                editText.requestLayout();
+            }, 300);
+        }
     }
 
     private final PostStoryBar.Actions postStoryActions = new PostStoryBar.Actions() {
@@ -193,7 +198,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
 
         @Override
         public void onKeyboardClicked() {
-            keyboardController.keyboardClicked();
+            keyboardController.openKeyboard();
         }
 
         @Override
@@ -220,7 +225,6 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                     .load(selectedPhoto)
                     .into(postStoryImageView);
         }
-        Timber.d("selected photo: %s", selectedPhoto);
     }
 
     @Nullable

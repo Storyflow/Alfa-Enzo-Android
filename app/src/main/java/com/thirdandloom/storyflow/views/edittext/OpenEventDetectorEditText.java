@@ -21,6 +21,8 @@ public class OpenEventDetectorEditText extends StickersEditText {
     }
 
     private Action0 openEvent;
+    private boolean keyboardAppearing;
+    private int featureHeight;
 
     public void setOpenEvent(Action0 openEvent) {
         this.openEvent = openEvent;
@@ -32,5 +34,23 @@ public class OpenEventDetectorEditText extends StickersEditText {
             openEvent.call();
         }
         return super.onTouchEvent(event);
+    }
+
+    public void keyboardWillAppear(int futureHeight) {
+        this.keyboardAppearing = true;
+        this.featureHeight = futureHeight;
+    }
+
+    public void keyboardDidAppear() {
+        keyboardAppearing = false;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (!keyboardAppearing) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        } else {
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), featureHeight);
+        }
     }
 }

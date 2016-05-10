@@ -26,19 +26,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/activity_post_story_image_view"
+                <FrameLayout android:layout_width="match_parent"
+                             android:layout_height="wrap_content"
+                             android:layout_centerHorizontal="true"
+                             android:layout_below="@+id/activity_post_story_edit_text_bot_view"
+                             android:paddingRight="@dimen/sizeNormal"
+                             android:paddingLeft="@dimen/sizeNormal"
+                    >
+                    <ImageView
+                        android:id="@+id/activity_post_story_image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
+                        />
+
+                </FrameLayout>
+
+                <View
+                    android:id="@+id/activity_post_story_edit_text_bot_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:scaleType="centerCrop"
+                    android:layout_height="1px"
                     android:layout_below="@+id/activity_post_story_edit_text"
+
                     />
 
                 <com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText
                     android:id="@+id/activity_post_story_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
                     android:hint="@string/post_story_is_about"
                     android:background="@null"
                     android:padding="@dimen/sizeXXLarge"

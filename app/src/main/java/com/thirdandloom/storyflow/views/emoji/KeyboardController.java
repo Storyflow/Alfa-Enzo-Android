@@ -26,11 +26,16 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
     private boolean keyboardReplaceViewIsVisible;
     private boolean waitingForKeyboardOpen;
     private Action1<Keyboard> keyboardStateUpdater;
+    private Action1<Integer> keyboardWillAppear;
 
     public KeyboardController(OpenEventDetectorEditText editText, View keyboardReplacerView) {
         this.openEventDetectorEditText = editText;
         this.keyboardReplacerView = keyboardReplacerView;
-        this.openEventDetectorEditText.setOpenEvent(this::openKeyboard);
+        this.openEventDetectorEditText.setOpenEvent(this::openKeyboardFromEditText);
+    }
+
+    public void setKeyboardWillAppear(Action1<Integer> keyboardWillAppear) {
+        this.keyboardWillAppear = keyboardWillAppear;
     }
 
     public int getKeyboardHeight() {
@@ -45,13 +50,6 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
         if (currentKeyboard == Keyboard.Emoji) return;
         checkKeyboardReplacerView();
         currentKeyboard = Keyboard.Emoji;
-        updateKeyboardVisibility();
-    }
-
-    public void keyboardClicked() {
-        if (currentKeyboard == Keyboard.Native) return;
-        currentKeyboard = Keyboard.Native;
-        openKeyboard();
         updateKeyboardVisibility();
     }
 
@@ -95,6 +93,7 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
             currentKeyboard = Keyboard.None;
         }
         updateKeyboardVisibility();
+        openEventDetectorEditText.setFocusableInTouchMode(currentKeyboard == Keyboard.None);
     }
 
     private void keyboardDidAppear(int appearedHeight) {
@@ -103,6 +102,7 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
         keyboardHeight = appearedHeight;
         showKeyboardReplacerView();
         updateKeyboardVisibility();
+        openEventDetectorEditText.setFocusableInTouchMode(false);
     }
 
     private void checkKeyboardReplacerView() {
@@ -129,7 +129,14 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
         AndroidUtils.hideKeyboard(openEventDetectorEditText);
     }
 
+    public void openKeyboardFromEditText() {
+        if (currentKeyboard == Keyboard.None) openKeyboard();
+    }
+
     public void openKeyboard() {
+        if (currentKeyboard == Keyboard.Native) return;
+        if (keyboardWillAppear != null && currentKeyboard == Keyboard.None) keyboardWillAppear.call(keyboardHeight);
+
         currentKeyboard = Keyboard.Native;
         AndroidUtils.showKeyboard(openEventDetectorEditText);
         updateKeyboardVisibility();

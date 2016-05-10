@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.ScrollView;
 
 public class ViewUtils extends BaseUtils{
 
@@ -65,6 +66,13 @@ public class ViewUtils extends BaseUtils{
         view.setLayoutParams(params);
     }
 
+    public static void applyWrapContentHeight(View view) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        view.setLayoutParams(params);
+    }
+
+
     public static void callOnPreDraw(View view, Action1<View> action) {
         view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -80,6 +88,10 @@ public class ViewUtils extends BaseUtils{
         int[] location = new int[2];
         view.getLocationInWindow(location);
         action.call(location[0], location[1]);
+    }
+
+    public static int getScrollViewContentHeight(ScrollView view) {
+        return view.getChildAt(0).getHeight();
     }
 
 }
