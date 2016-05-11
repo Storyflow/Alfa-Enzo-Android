@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.thirdandloom.storyflow.utils.Timber;
 import rx.functions.Action0;
 
 public class OpenEventDetectorEditText extends StickersEditText {
@@ -32,18 +31,12 @@ public class OpenEventDetectorEditText extends StickersEditText {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
-            case  MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_UP:
                 openEvent.call();
                 super.onTouchEvent(event);
                 return true;
         }
-        if (keyboardAppearing) {
-            Timber.d("keyboardAppearing true");
-            return true;
-        } else {
-            Timber.d("keyboardAppearing false return super()");
-            return super.onTouchEvent(event);
-        }
+        return keyboardAppearing || super.onTouchEvent(event);
     }
 
     public void keyboardWillAppear(int futureHeight) {

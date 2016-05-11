@@ -5,6 +5,7 @@ import com.thirdandloom.storyflow.Theme;
 
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Action2;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -51,67 +52,138 @@ public class StickersEditText extends EmojiconEditText {
     }
 
     @Override
-    protected void onSelectionChanged(int selStart, int selEnd) {
-        boolean selectionWasModified = false;
+    protected void onSelectionChanged(final int selStart, final int selEnd) {
+        detectGroupStickerSelection(getText(), selStart, selEnd, getOldDetectedStickers(),
+                this::setSelection, () -> {
+                    detectTapStickerSelection(selStart, selEnd, getOldDetectedStickers(),
+                            this::setSelection, () -> {
+                                super.onSelectionChanged(selStart, selEnd);
+                            });
+                });
+    }
 
+    private static void detectTapStickerSelection(int selStart, int selEnd, List<DisplayedSticker> oldDetectedStickers,
+            Action2<Integer, Integer> detected, Action0 notDetected) {
+        if (selStart == selEnd) {
+            DisplayedSticker sticker = getDisplayedStickerForPosition(selStart, oldDetectedStickers);
+            if (sticker != null) {
+                selStart = selStart == sticker.startPosition
+                        ? selStart
+                        : sticker.endPosition;
+                selEnd = selStart;
+                detected.call(selStart, selEnd);
+                return;
+            }
+        }
+        notDetected.call();
+    }
+
+    private static void detectGroupStickerSelection(Editable text, int selStart, int selEnd, List<DisplayedSticker> oldDetectedStickers,
+            Action2<Integer, Integer> detected, Action0 notDetected) {
         if (selStart != selEnd) {
-            String currentText = getText().toString();
+            boolean found = false;
+            String currentText = text.toString();
             String selectedText = currentText.substring(selStart, selEnd);
             boolean lastSymbolIsStartSticker = selectedText.charAt(selectedText.length() - 1) == START_STICKER;
             boolean firstSymbolIsEndSticker = selectedText.charAt(0) == END_STICKER;
 
             if (lastSymbolIsStartSticker) {
-                String detectedSticker = getStickerWithStartStickerPos(selEnd - 1, getOldDetectedStickers());
-                selectionWasModified = detectedSticker.length() > 1;
-                selEnd = selEnd + detectedSticker.length() - 1;
+                String detectedSticker = getStickerWithStartStickerPos(selEnd - 1, oldDetectedStickers);
+                if (detectedSticker != null) {
+                    found = true;
+                    selEnd = selEnd + detectedSticker.length() - 1;
+                }
             }
             if (firstSymbolIsEndSticker) {
-                String detectedSticker = getStickerWithEndStickerPos(selStart + 1, getOldDetectedStickers());
-                if (detectedSticker.length() > 1) {
-                    selectionWasModified = true;
+                String detectedSticker = getStickerWithEndStickerPos(selStart + 1, oldDetectedStickers);
+                if (detectedSticker != null) {
+                    found = true;
                     selStart = selStart + 1;
                 }
             }
-        }
-        if (!selectionWasModified && selStart == selEnd) {
-            DisplayedSticker sticker = getDisplayedStickerForPosition(selStart, getOldDetectedStickers());
-            if (sticker != null) {
-                selectionWasModified = true;
-                selStart = selStart == sticker.startPosition
-                        ? selStart
-                        : sticker.endPosition;
-                selEnd = selStart;
+            if (found) {
+                detected.call(selStart, selEnd);
+                return;
             }
         }
-        if (!selectionWasModified) {
-            super.onSelectionChanged(selStart, selEnd);
-        } else {
-            setSelection(selStart, selEnd);
-        }
+        notDetected.call();
     }
 
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         int oldTextLength = getText().length();
         int oldSelectionEnd = getSelectionEnd();
-        getTextWithImages(getOldDetectedStickers(), getText(), getSelectionStart(), getSelectionEnd()
-                , newText -> {
-            setText(newText);
-            setSelection(oldSelectionEnd - (oldTextLength - newText.length()));
-        }, () -> super.onTextChanged(text, start, lengthBefore, lengthAfter)
-                , (detectedStickers) -> oldDetectedStickers = detectedStickers);
+        getTextWithImages(getOldDetectedStickers(), getText(), getSelectionStart(), getSelectionEnd(),
+                (newText, detectedStickers) -> {
+                    oldDetectedStickers = detectedStickers;
+                    setText(newText);
+                    setSelection(oldSelectionEnd - (oldTextLength - newText.length()));
+                }, detectedStickers -> {
+                    oldDetectedStickers = detectedStickers;
+                    super.onTextChanged(text, start, lengthBefore, lengthAfter);
+                });
     }
 
-    private static void getTextWithImages(List<DisplayedSticker> oldDetectedStickers, Editable text, int selectionStart, int selectionEnd,
-                                          Action1<Editable> onChanged, Action0 onNotChanged, Action1<List<DisplayedSticker>> oldStickersUpdate) {
+    private static void getTextWithImages(List<DisplayedSticker> oldDetectedStickers, final Editable text, int selectionStart, int selectionEnd,
+                                          Action2<Editable, List<DisplayedSticker>> onChanged, Action1<List<DisplayedSticker>> onNotChanged) {
         Matcher matcher = FIND_IMAGE_PATTERN.matcher(text.toString());
+        removeImageSpans(text);
+        List<DisplayedSticker> detectedStickers = addNewSpans(matcher, text);
 
-        ImageSpan[] oldSpans = text.getSpans(0, text.length(), ImageSpan.class);
-        List<ImageSpan> oldSpansList = new ArrayList<>(new ArrayList<>(Arrays.asList(oldSpans)));
-        for (ImageSpan span : oldSpansList) {
-            text.removeSpan(span);
+        checkRemovedStickers(text, oldDetectedStickers, detectedStickers, newEditable -> {
+            onChanged.call(newEditable, detectedStickers);
+        }, () -> {
+            checkLastSticker(text, selectionEnd, selectionStart, oldDetectedStickers, newEditable -> {
+                onChanged.call(newEditable, detectedStickers);
+            }, () -> {
+                onNotChanged.call(detectedStickers);
+            });
+        });
+    }
+
+    private static void checkLastSticker(Editable text, int selectionEnd, int selectionStart, List<DisplayedSticker> oldDetectedStickers,
+            Action1<Editable> detected, Action0 notDetected) {
+        if (selectionEnd == selectionStart && selectionEnd > 2) {
+            int lastStickerPosition = selectionEnd + 1;
+            String sticker = getStickerWithEndStickerPos(lastStickerPosition, oldDetectedStickers);
+            if (sticker != null) {
+                StringBuilder stringBuilder = new StringBuilder(text);
+                stringBuilder.replace(selectionEnd - (sticker.length() - 1), selectionEnd, "");
+                detected.call(new SpannableStringBuilder(stringBuilder));
+                return;
+            }
         }
+        notDetected.call();
+    }
 
+    private static void checkRemovedStickers(Editable text, List<DisplayedSticker> oldDetectedStickers, List<DisplayedSticker> detectedStickers,
+            Action1<Editable> detected, Action0 notDetected) {
+        boolean found = false;
+        if (oldDetectedStickers.size() > detectedStickers.size()) {
+            Matcher deletedMatcher = FIND_DELETE_IMAGE_PATTERN.matcher(text.toString());
+            while (deletedMatcher.find()) {
+                String sticker = deletedMatcher.group();
+                boolean isPart = isPart(sticker);
+                if (isPart) {
+                    found = true;
+                    StringBuilder stringBuilder = new StringBuilder(text);
+                    if (sticker.charAt(sticker.length() - 1) == START_STICKER) {
+                        stringBuilder.replace(deletedMatcher.start() + 1, deletedMatcher.end(), "");
+                    } else {
+                        stringBuilder.replace(deletedMatcher.start(), deletedMatcher.end(), "");
+                    }
+                    text = new SpannableStringBuilder(stringBuilder);
+                }
+            }
+        }
+        if (found) {
+            detected.call(text);
+        } else {
+            notDetected.call();
+        }
+    }
+
+    private static List<DisplayedSticker> addNewSpans(Matcher matcher, Editable text) {
         List<DisplayedSticker> detectedStickers = new ArrayList<>();
         while (matcher.find()) {
             String sticker = matcher.group();
@@ -128,61 +200,36 @@ public class StickersEditText extends EmojiconEditText {
                 );
             }
         }
+        return detectedStickers;
+    }
 
-        boolean removedStickersDetected = false;
-        if (oldDetectedStickers.size() > detectedStickers.size()) {
-            Matcher deletedMatcher = FIND_DELETE_IMAGE_PATTERN.matcher(text.toString());
-            while (deletedMatcher.find()) {
-                String sticker = deletedMatcher.group();
-                boolean isPart = isPart(sticker);
-                if (isPart) {
-                    removedStickersDetected = true;
-                    StringBuilder stringBuilder = new StringBuilder(text);
-                    if (sticker.charAt(sticker.length() - 1) == START_STICKER) {
-                        stringBuilder.replace(deletedMatcher.start() + 1, deletedMatcher.end(), "");
-                    } else {
-                        stringBuilder.replace(deletedMatcher.start(), deletedMatcher.end(), "");
-                    }
-                    text = new SpannableStringBuilder(stringBuilder);
-                }
-            }
-        }
-
-        if (!removedStickersDetected && selectionEnd == selectionStart && selectionEnd > 2) {
-            int lastStickerPosition = selectionEnd + 1;
-            String sticker = getStickerWithEndStickerPos(lastStickerPosition, oldDetectedStickers);
-            removedStickersDetected = sticker.length() > 2;
-            StringBuilder stringBuilder = new StringBuilder(text);
-            stringBuilder.replace(selectionEnd - (sticker.length() - 1), selectionEnd, "");
-            text = new SpannableStringBuilder(stringBuilder);
-        }
-
-        oldStickersUpdate.call(detectedStickers);
-        if (removedStickersDetected) {
-            onChanged.call(text);
-        } else {
-            onNotChanged.call();
+    private static void removeImageSpans(Editable text) {
+        ImageSpan[] oldSpans = text.getSpans(0, text.length(), ImageSpan.class);
+        List<ImageSpan> oldSpansList = new ArrayList<>(new ArrayList<>(Arrays.asList(oldSpans)));
+        for (ImageSpan span : oldSpansList) {
+            text.removeSpan(span);
         }
     }
 
     /**
      *
      * @param endPosition
-     * @return whitespace if not detected
+     * @return null if not detected
      */
+    @Nullable
     private static String getStickerWithEndStickerPos(int endPosition, List<DisplayedSticker> oldDetectedStickers) {
         for (DisplayedSticker sticker : oldDetectedStickers) {
             if (sticker.endPosition == endPosition) {
                 return sticker.text;
             }
         }
-        return " ";
+        return null;
     }
 
     /**
      *
      * @param startPosition
-     * @return whitespace if not detected
+     * @return null if not detected
      */
     private static String getStickerWithStartStickerPos(int startPosition, List<DisplayedSticker> oldDetectedStickers) {
         for (DisplayedSticker sticker : oldDetectedStickers) {
@@ -190,7 +237,7 @@ public class StickersEditText extends EmojiconEditText {
                 return sticker.text;
             }
         }
-        return " ";
+        return null;
     }
 
     @Nullable

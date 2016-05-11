@@ -54,36 +54,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         ViewUtils.callOnPreDraw(scrollViewContainer, view -> {
             defaultScrollViewHeight = view.getHeight();
         });
-        editText.setText("jcjc\n"
-                + "JV\n"
-                + "\n"
-                + "JV\n"
-                + "JC\n"
-                + "cj\n"
-                + "c\n"
-                + "JV\n"
-                + "j\n"
-                + "v\n"
-                + "j\n"
-                + "vj\n"
-                + "v\n"
-                + "j\n"
-                + "vj\n"
-                + "cjvjvjjj\n"
-                + "j\n"
-                + "v\n"
-                + "JV\n"
-                + "j\n"
-                + "v\n"
-                + "jf\n"
-                + "[content][dizzy][dizzy][content][ignoring][ignoring][perplexed][mad][love][perplexed][ignoring][happy][ignoring][cry][ignoring][love][dizzy][ignoring][ignoring][perplexed][indifferent]");
-        keyboardController.openKeyboardInternal();
-        keyboardController.setKeyboardWillAppear(keyboardHeight -> {
-            int keyboardAppearingHeight = defaultScrollViewHeight - keyboardHeight
-                    + postStoryBar.getHeight();
-            editText.keyboardWillAppear(keyboardAppearingHeight);
-            editText.requestFocus();
-        });
+        if (savedInstanceState == null) keyboardController.openKeyboardInternal();
     }
 
     private void findViews() {
@@ -101,6 +72,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         initializeEmoji();
         keyboardController = new KeyboardController(editText, keyboardReplacerView);
         keyboardController.setKeyboardStateUpdater(this::updatePostStoryBarIcons);
+        keyboardController.setKeyboardWillAppear(this::onKeyboardWillAppear);
         postStoryBar.setActions(postStoryActions);
         sizeNotifierLayout.setActions(keyboardController);
     }
@@ -150,35 +122,24 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         int newScrollViewHeight;
         switch (keyboardType) {
             case Emoji:
-                showEmoji();
-                hideCatsEmoji(keyboardController.getKeyboardHeight());
-                postStoryBar.onEmojiSelected();
-                newScrollViewHeight = defaultScrollViewHeight - keyboardController.getKeyboardHeight();
+                newScrollViewHeight = onEmojiSelected();
                 break;
-
             case Cats:
-                showCatsEmoji();
-                hideEmoji(keyboardController.getKeyboardHeight());
-                postStoryBar.onCastSelected();
-                newScrollViewHeight = defaultScrollViewHeight - keyboardController.getKeyboardHeight();
+                newScrollViewHeight = onCatsSelected();
                 break;
-
             case Native:
-                hideEmoji(keyboardController.getKeyboardHeight());
-                hideCatsEmoji(keyboardController.getKeyboardHeight());
-                postStoryBar.onNativeKeyboardSelected();
-                newScrollViewHeight = defaultScrollViewHeight - keyboardController.getKeyboardHeight();
+                newScrollViewHeight = onNativeSelected();
                 break;
-
             case None:
-                postStoryBar.onNoneSelected();
-                newScrollViewHeight = defaultScrollViewHeight;
+                newScrollViewHeight = onNoneSelected();
                 break;
-
             default:
                 throw new UnsupportedOperationException("KeyboardController.Keyboard unsupported type is using");
         }
+        keyboardTypeDidChange(keyboardType, newScrollViewHeight);
+    }
 
+    private void keyboardTypeDidChange(KeyboardController.Keyboard keyboardType, int newScrollViewHeight) {
         editText.setCursorVisible(keyboardType != KeyboardController.Keyboard.None);
         ViewUtils.applyHeight(scrollViewContainer, newScrollViewHeight);
         if (keyboardType != KeyboardController.Keyboard.None) {
@@ -188,6 +149,39 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                 editText.requestLayout();
             }, 300);
         }
+    }
+
+    private int onNoneSelected() {
+        postStoryBar.onNoneSelected();
+        return defaultScrollViewHeight;
+    }
+
+    private int onNativeSelected() {
+        hideEmoji(keyboardController.getKeyboardHeight());
+        hideCatsEmoji(keyboardController.getKeyboardHeight());
+        postStoryBar.onNativeKeyboardSelected();
+        return defaultScrollViewHeight - keyboardController.getKeyboardHeight();
+    }
+
+    private int onCatsSelected() {
+        showCatsEmoji();
+        hideEmoji(keyboardController.getKeyboardHeight());
+        postStoryBar.onCastSelected();
+        return defaultScrollViewHeight - keyboardController.getKeyboardHeight();
+    }
+
+    private int onEmojiSelected() {
+        showEmoji();
+        hideCatsEmoji(keyboardController.getKeyboardHeight());
+        postStoryBar.onEmojiSelected();
+        return defaultScrollViewHeight - keyboardController.getKeyboardHeight();
+    }
+
+    private void onKeyboardWillAppear(int keyboardHeight) {
+        int keyboardAppearingHeight = defaultScrollViewHeight - keyboardHeight
+                + postStoryBar.getHeight();
+        editText.keyboardWillAppear(keyboardAppearingHeight);
+        editText.requestFocus();
     }
 
     private final PostStoryBar.Actions postStoryActions = new PostStoryBar.Actions() {
