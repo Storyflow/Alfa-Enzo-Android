@@ -47,6 +47,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
+                    android:maxLength="2000"
                     android:hint="@string/post_story_is_about"
                     android:background="@null"
                     android:padding="@dimen/sizeXXLarge"

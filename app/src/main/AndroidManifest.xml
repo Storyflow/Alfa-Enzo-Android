@@ -9,6 +9,8 @@
         android:supportsRtl="true"
         android:name=".StoryflowApplication"
         android:theme="@style/AppTheme">
+        <service android:name=".service.UploadStoriesService" />
+
         <activity android:name=".activities.LaunchActivity"
                   android:screenOrientation="portrait">
 
