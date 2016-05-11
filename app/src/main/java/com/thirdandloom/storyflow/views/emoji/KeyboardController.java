@@ -93,7 +93,6 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
             currentKeyboard = Keyboard.None;
         }
         updateKeyboardVisibility();
-        openEventDetectorEditText.setFocusableInTouchMode(currentKeyboard == Keyboard.None);
     }
 
     private void keyboardDidAppear(int appearedHeight) {
@@ -102,7 +101,6 @@ public class KeyboardController implements SizeNotifierFrameLayout.Actions {
         keyboardHeight = appearedHeight;
         showKeyboardReplacerView();
         updateKeyboardVisibility();
-        openEventDetectorEditText.setFocusableInTouchMode(false);
     }
 
     private void checkKeyboardReplacerView() {

@@ -8,6 +8,7 @@ import rx.functions.Action1;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -71,10 +72,16 @@ public class StickersEditText extends EmojiconEditText {
                     selStart = selStart + 1;
                 }
             }
-        } else if (selStart != 0 && isPartPosition(selStart, oldDetectedStickers)) {
-            selectionWasModified = true;
-            selStart = getStickerEndPosition(selStart, oldDetectedStickers);
-            selEnd = selStart;
+        }
+        if (!selectionWasModified && selStart == selEnd) {
+            DisplayedSticker sticker = getDisplayedStickerForPosition(selStart, getOldDetectedStickers());
+            if (sticker != null) {
+                selectionWasModified = true;
+                selStart = selStart == sticker.startPosition
+                        ? selStart
+                        : sticker.endPosition;
+                selEnd = selStart;
+            }
         }
         if (!selectionWasModified) {
             super.onSelectionChanged(selStart, selEnd);
@@ -88,11 +95,11 @@ public class StickersEditText extends EmojiconEditText {
         int oldTextLength = getText().length();
         int oldSelectionEnd = getSelectionEnd();
         getTextWithImages(getOldDetectedStickers(), getText(), getSelectionStart(), getSelectionEnd()
-         , newText -> {
+                , newText -> {
             setText(newText);
             setSelection(oldSelectionEnd - (oldTextLength - newText.length()));
         }, () -> super.onTextChanged(text, start, lengthBefore, lengthAfter)
-         , (detectedStickers) -> oldDetectedStickers = detectedStickers);
+                , (detectedStickers) -> oldDetectedStickers = detectedStickers);
     }
 
     private static void getTextWithImages(List<DisplayedSticker> oldDetectedStickers, Editable text, int selectionStart, int selectionEnd,
@@ -186,24 +193,15 @@ public class StickersEditText extends EmojiconEditText {
         return " ";
     }
 
-    private static boolean isPartPosition(int position, List<DisplayedSticker> oldDetectedStickers) {
-        for (DisplayedSticker sticker :  oldDetectedStickers) {
+    @Nullable
+    private static DisplayedSticker getDisplayedStickerForPosition(int position, List<DisplayedSticker> detectedStickers) {
+        for (DisplayedSticker sticker :  detectedStickers) {
             if (sticker.startPosition <= position
                     && sticker.endPosition >= position) {
-                return true;
+                return sticker;
             }
         }
-        return false;
-    }
-
-    private static int getStickerEndPosition(int position, List<DisplayedSticker> oldDetectedStickers) {
-        for (DisplayedSticker sticker :  oldDetectedStickers) {
-            if (sticker.startPosition <= position
-                    && sticker.endPosition >= position) {
-                return sticker.endPosition;
-            }
-        }
-        return -1;
+        return null;
     }
 
     private static boolean isPart(String sticker) {

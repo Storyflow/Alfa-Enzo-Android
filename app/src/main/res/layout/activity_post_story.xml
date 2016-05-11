@@ -29,7 +29,7 @@
                 <FrameLayout android:layout_width="match_parent"
                              android:layout_height="wrap_content"
                              android:layout_centerHorizontal="true"
-                             android:layout_below="@+id/activity_post_story_edit_text_bot_view"
+                             android:layout_below="@+id/activity_post_story_edit_text"
                              android:paddingRight="@dimen/sizeNormal"
                              android:paddingLeft="@dimen/sizeNormal"
                     >
@@ -41,14 +41,6 @@
                         />
 
                 </FrameLayout>
-
-                <View
-                    android:id="@+id/activity_post_story_edit_text_bot_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_below="@+id/activity_post_story_edit_text"
-
-                    />
 
                 <com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText
                     android:id="@+id/activity_post_story_edit_text"

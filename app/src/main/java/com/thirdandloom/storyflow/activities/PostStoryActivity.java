@@ -4,7 +4,6 @@ import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
-import com.thirdandloom.storyflow.utils.EditTextUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
@@ -35,7 +34,6 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private ScrollView scrollViewContainer;
     private int defaultScrollViewHeight;
     private ImageView postStoryImageView;
-    private View postStoryBotView;
 
     private SavedState state = new SavedState();
 
@@ -56,17 +54,35 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         ViewUtils.callOnPreDraw(scrollViewContainer, view -> {
             defaultScrollViewHeight = view.getHeight();
         });
+        editText.setText("jcjc\n"
+                + "JV\n"
+                + "\n"
+                + "JV\n"
+                + "JC\n"
+                + "cj\n"
+                + "c\n"
+                + "JV\n"
+                + "j\n"
+                + "v\n"
+                + "j\n"
+                + "vj\n"
+                + "v\n"
+                + "j\n"
+                + "vj\n"
+                + "cjvjvjjj\n"
+                + "j\n"
+                + "v\n"
+                + "JV\n"
+                + "j\n"
+                + "v\n"
+                + "jf\n"
+                + "[content][dizzy][dizzy][content][ignoring][ignoring][perplexed][mad][love][perplexed][ignoring][happy][ignoring][cry][ignoring][love][dizzy][ignoring][ignoring][perplexed][indifferent]");
         keyboardController.openKeyboardInternal();
         keyboardController.setKeyboardWillAppear(keyboardHeight -> {
-            int botHeight = editText.getHeight();
             int keyboardAppearingHeight = defaultScrollViewHeight - keyboardHeight
                     + postStoryBar.getHeight();
             editText.keyboardWillAppear(keyboardAppearingHeight);
-            ViewUtils.applyHeight(postStoryBotView, botHeight - keyboardAppearingHeight);
             editText.requestFocus();
-            int currentSelectedLine = EditTextUtils.getCurrentCursorLine(editText);
-            int scrollPosition = editText.getLineHeight()*currentSelectedLine;
-            scrollViewContainer.scrollTo(0, scrollPosition - (botHeight + keyboardAppearingHeight));
         });
     }
 
@@ -79,7 +95,6 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         catsStickersView = (CatsStickersView)findViewById(R.id.activity_post_story_cats_emoji);
         scrollViewContainer = (ScrollView)findViewById(R.id.activity_post_story_scroll_view);
         postStoryImageView = (ImageView)findViewById(R.id.activity_post_story_image_view);
-        postStoryBotView = findViewById(R.id.activity_post_story_edit_text_bot_view);
     }
 
     private void initGui() {
@@ -164,11 +179,11 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                 throw new UnsupportedOperationException("KeyboardController.Keyboard unsupported type is using");
         }
 
+        editText.setCursorVisible(keyboardType != KeyboardController.Keyboard.None);
         ViewUtils.applyHeight(scrollViewContainer, newScrollViewHeight);
         if (keyboardType != KeyboardController.Keyboard.None) {
             editText.requestFocus();
             StoryflowApplication.runOnUIThread(() -> {
-                ViewUtils.applyHeight(postStoryBotView, 1);
                 editText.keyboardDidAppear();
                 editText.requestLayout();
             }, 300);
