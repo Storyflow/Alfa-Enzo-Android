@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.rest.ErrorHandler;
 import com.thirdandloom.storyflow.utils.animations.AnimatorListener;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 
@@ -15,12 +16,15 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
 public class LaunchActivity extends BaseActivity {
-    private static boolean RUN_SIGN_UP = false;
-    private static int FLIP_REPEAT_COUNT_MIN = 4;
+    private static int FLIP_REPEAT_COUNT_MIN = 2;
 
     private View circleView;
     private View textView;
+    private View retryView;
     private Intent launchedIntent;
+    private int repeatCount = 0;
+    private boolean terminateAnimation;
+    private boolean signInInProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,37 +32,49 @@ public class LaunchActivity extends BaseActivity {
         setContentView(R.layout.activity_launch);
         findViews();
 
-        if (RUN_SIGN_UP) {
-            startActivity(WelcomeActivity.newInstance());
-            return;
-        }
-
         ViewUtils.getMeasuredSize(textView, (width, height) -> {
             ViewUtils.setViewFrame(circleView, height, height);
             applyCameraDistance();
             startRotateAnimation();
         });
 
-        signInWithSavedAccount();
+        if (savedInstanceState == null) signInWithSavedAccount();
+        ViewUtils.setHidden(retryView, savedInstanceState == null);
+        retryView.setOnClickListener(v -> {
+            if (!signInInProgress) {
+                startRotateAnimation();
+                signInWithSavedAccount();
+            }
+        });
     }
 
     private void signInWithSavedAccount() {
-        String password = StoryflowApplication.account().getPassword();
-        String email = StoryflowApplication.account().getUser().getEmail();
-        if (!TextUtils.isEmpty(password)) {
-            signIn(email, password);
-        } else {
-            launchedIntent = WelcomeActivity.newInstance();
-        }
+        signInInProgress = true;
+        StoryflowApplication.account().getUser(user -> {
+            String password = StoryflowApplication.account().getPassword();
+            if (!TextUtils.isEmpty(password)) {
+                signIn(user.getEmail(), password);
+            } else {
+                launchedIntent = WelcomeActivity.newInstance();
+                terminateAnimation = true;
+            }
+        });
     }
 
     private void signIn(String email, String password) {
         StoryflowApplication.restClient().signIn(email, password, user -> {
             StoryflowApplication.account().updateProfile(user);
             launchedIntent = BrowseStoriesActivity.newInstance(true);
-        }, errorMessage -> {
-            StoryflowApplication.account().resetAccount();
-            launchedIntent = WelcomeActivity.newInstance();
+            signInInProgress = false;
+        }, (errorMessage, type) -> {
+            signInInProgress = false;
+            if (type == ErrorHandler.Type.Connection) {
+                showError(errorMessage);
+                terminateAnimation = true;
+            } else {
+                StoryflowApplication.account().resetAccount();
+                launchedIntent = WelcomeActivity.newInstance();
+            }
         });
     }
 
@@ -76,6 +92,7 @@ public class LaunchActivity extends BaseActivity {
         View launchView = findViewById(R.id.launch_layout);
         circleView = launchView.findViewById(R.id.launch_circle_view);
         textView = launchView.findViewById(R.id.launch_text_view);
+        retryView = findViewById(R.id.launch_retry_view);
     }
 
     private void applyCameraDistance() {
@@ -84,8 +101,10 @@ public class LaunchActivity extends BaseActivity {
         circleView.setCameraDistance(scale);
     }
 
-    static int repeatCount = 0;
     private void startRotateAnimation() {
+        repeatCount = 0;
+        if (circleView.getAnimation() != null) circleView.getAnimation().cancel();
+
         circleView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         ObjectAnimator flip = ObjectAnimator.ofFloat(circleView, "rotationY", 0f, 180f);
         flip.setDuration(1000);
@@ -93,20 +112,26 @@ public class LaunchActivity extends BaseActivity {
         flip.setRepeatCount(ValueAnimator.INFINITE);
         flip.setRepeatMode(ValueAnimator.INFINITE);
         flip.setTarget(circleView);
+        flip.addListener(flipAnimatorListener);
         flip.start();
+    }
 
-        flip.addListener(new AnimatorListener() {
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-                repeatCount++;
-                if (repeatCount >= FLIP_REPEAT_COUNT_MIN && (launchedIntent != null)) {
-                    animation.end();
-                    circleView.setLayerType(View.LAYER_TYPE_NONE, null);
+    private final AnimatorListener flipAnimatorListener = new AnimatorListener() {
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+            repeatCount++;
+            if (terminateAnimation || repeatCount >= FLIP_REPEAT_COUNT_MIN) {
+                animation.end();
+                circleView.setLayerType(View.LAYER_TYPE_NONE, null);
+                if (launchedIntent != null) {
                     startActivity(launchedIntent);
                     overridePendingTransition(0, 0);
                     LaunchActivity.this.finish();
+                } else {
+                    terminateAnimation = false;
+                    ViewUtils.show(retryView);
                 }
             }
-        });
-    }
+        }
+    };
 }

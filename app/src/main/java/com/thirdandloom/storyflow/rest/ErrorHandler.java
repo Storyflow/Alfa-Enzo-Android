@@ -14,6 +14,7 @@ import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import org.json.JSONArray;
 import retrofit2.Response;
+import rx.functions.Action2;
 
 import android.text.TextUtils;
 
@@ -28,41 +29,50 @@ import java.util.Map;
 
 public class ErrorHandler {
 
-    public static String getMessage(Response response) {
+    public enum Type {
+        Connection, Backend, Unknown
+    }
+
+    public static void getMessage(Response response, Action2<String, Type> error) {
         String errorBodyString;
         try {
             errorBodyString = response.errorBody().string();
         } catch (IOException e) {
             Timber.e(e, response.message());
-            return unknownServerErrorMessage();
+            error.call(unknownServerErrorMessage(), Type.Unknown);
+            return;
         }
-        if (TextUtils.isEmpty(errorBodyString)) return unknownServerErrorMessage();
+        if (TextUtils.isEmpty(errorBodyString)) {
+            error.call(unknownServerErrorMessage(), Type.Unknown);
+            return;
+        }
 
         try {
             JsonElement jsonElement = new JsonParser().parse(errorBodyString);
 
             if (jsonElement.getAsJsonObject().get("errors") instanceof JsonArray) {
-                ApiError error = ApiError.newInstance(errorBodyString);
-                return ApiError.getMessage(error);
+                ApiError apiError = ApiError.newInstance(errorBodyString);
+                error.call(ApiError.getMessage(apiError), Type.Backend);
             } else if (jsonElement.getAsJsonObject().get("errors") instanceof JsonPrimitive) {
                 // TODO temp solution, should be removed after backend fixes:
                 // https://www.pivotaltracker.com/story/show/117060705
                 JsonPrimitive primitive = (JsonPrimitive) jsonElement.getAsJsonObject().get("errors");
-                return primitive.getAsString();
+                error.call(primitive.getAsString(), Type.Backend);
             }
 
         } catch (JsonSyntaxException e) {
             Timber.e(e, e.getMessage());
-            return unknownServerErrorMessage();
+            error.call(unknownServerErrorMessage(), Type.Backend);
+            return;
         }
-        return unknownServerErrorMessage();
+        error.call(unknownServerErrorMessage(), Type.Backend);
     }
 
-    public static String getMessage(Throwable t) {
+    public static void getMessage(Throwable t, Action2<String, Type> error) {
         if (t instanceof ConnectException || t instanceof SocketTimeoutException) {
-            return StoryflowApplication.resources().getString(R.string.no_internet_connection);
+            error.call(StoryflowApplication.resources().getString(R.string.no_internet_connection), Type.Connection);
         } else {
-            return StoryflowApplication.resources().getString(R.string.unknown_error);
+            error.call(StoryflowApplication.resources().getString(R.string.unknown_error), Type.Unknown);
         }
     }
 

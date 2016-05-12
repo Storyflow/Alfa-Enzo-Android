@@ -3,9 +3,10 @@ package com.thirdandloom.storyflow;
 import com.crashlytics.android.Crashlytics;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.managers.AccountManager;
-import com.thirdandloom.storyflow.preferences.CommonPreferences;
+import com.thirdandloom.storyflow.preferences.userDataPreferences;
 import com.thirdandloom.storyflow.rest.IRestClient;
 import com.thirdandloom.storyflow.rest.RestClient;
+import com.thirdandloom.storyflow.service.UploadStoriesService;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.SimpleExecutor;
 import com.thirdandloom.storyflow.utils.connectivity.ConnectivityObserver;
@@ -21,7 +22,7 @@ public class StoryflowApplication extends Application {
     public static volatile Handler applicationHandler;
 
     private IRestClient restClient;
-    private CommonPreferences preferences;
+    private userDataPreferences userDataPreferences;
     private AccountManager accountManager;
     private ConnectivityObserver connectivityObserver;
     private SimpleExecutor<Runnable> backgroundThreadExecutor = new SimpleExecutor<>("backgroundThreadExecutor");
@@ -30,8 +31,8 @@ public class StoryflowApplication extends Application {
         return instance;
     }
 
-    public static CommonPreferences preferences() {
-        return instance.preferences;
+    public static userDataPreferences userDataPreferences() {
+        return instance.userDataPreferences;
     }
 
     public static AccountManager account() {
@@ -76,7 +77,6 @@ public class StoryflowApplication extends Application {
         instance = this;
         applicationHandler = new Handler(getApplicationContext().getMainLooper());
 
-
         initTimber();
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics())
@@ -89,9 +89,10 @@ public class StoryflowApplication extends Application {
                         .build()
         );
         this.restClient = new RestClient(this);
-        this.preferences = new CommonPreferences();
+        this.userDataPreferences = new userDataPreferences();
         this.accountManager = new AccountManager();
         this.connectivityObserver = new ConnectivityObserver();
+        UploadStoriesService.notifyService();
     }
 
     private void initTimber() {

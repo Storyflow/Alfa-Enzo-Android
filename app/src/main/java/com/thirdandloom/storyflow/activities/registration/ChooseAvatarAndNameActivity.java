@@ -157,21 +157,23 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
                 startBrowsing();
             }
 
-        }, this::showError);
+        }, (errorMessage, type) -> {
+            showError(errorMessage);
+        });
     }
 
     private void uploadFullImage() {
         StoryflowApplication.restClient().createProfileImage(createGlideRequest(this, state.takenAction, state.imageUrl), state.cachedSize, avatar -> {
             StoryflowApplication.account().updateProfile(avatar);
             uploadCroppedAvatar(avatar.getId());
-        }, errorMessage -> startBrowsing());
+        }, (errorMessage, type) -> startBrowsing());
     }
 
     private void uploadCroppedAvatar(int id) {
         StoryflowApplication.restClient().createCroppedProfileImage(createGlideRequest(this, state.takenAction, state.imageUrl), id, state.cachedSize, state.rect.getRectF(), croppedAvatar -> {
             StoryflowApplication.account().updateProfile(croppedAvatar);
             startBrowsing();
-        }, errorMessage -> startBrowsing());
+        }, (errorMessage, type) -> startBrowsing());
     }
 
     private void startBrowsing() {

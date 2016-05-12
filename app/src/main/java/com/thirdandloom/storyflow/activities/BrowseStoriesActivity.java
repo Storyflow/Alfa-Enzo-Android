@@ -266,7 +266,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
             storiesManager.addFetchedStoryPosition(position);
             StoryflowApplication.restClient().loadStories(storiesManager.getRequestData(calendar), (Story.WrapList list) -> {
                 getPeriodsAdapter().onNewStoriesFetched(list, calendar);
-            }, errorMessage -> {
+            }, (errorMessage, type) -> {
                 showError(errorMessage);
                 getPeriodsAdapter().onNewStoriesFetchFailed(position);
             });
@@ -333,7 +333,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
             StoryflowApplication.restClient().loadStories(getPeriodsAdapter().getStoriesManager().getRequestData(calendar), (Story.WrapList list) -> {
                 getPeriodsAdapter().onNewStoriesFetched(list, calendar);
                 refreshLayout.setRefreshing(false);
-            }, errorMessage -> {
+            }, (errorMessage, type) -> {
                 showError(errorMessage);
                 refreshLayout.setRefreshing(false);
             });

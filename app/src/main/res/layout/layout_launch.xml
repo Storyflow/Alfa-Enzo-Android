@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:background="@color/yellow"
-             xmlns:tools="http://schemas.android.com/tools">
+             android:background="@color/yellow">
 
     <View
         android:id="@+id/launch_circle_view"
@@ -23,6 +23,20 @@
         android:layout_gravity="center"
         android:textSize="@dimen/textSizeXXXLarge"
         android:textColor="@color/yellow"
+        />
+
+    <TextView
+        android:id="@+id/launch_retry_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:padding="@dimen/sizeXLarge"
+        android:textSize="@dimen/textSizeLarge"
+        android:text="@string/retry"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@drawable/selector_white_text"
+        tools:visibility="visible"
         />
 
 </FrameLayout>

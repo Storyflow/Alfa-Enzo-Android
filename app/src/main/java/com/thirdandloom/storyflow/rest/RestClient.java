@@ -167,7 +167,7 @@ public class RestClient implements IRestClient {
         }
 
         public interface IFailure {
-            void failure(String errorMessage);
+            void failure(String errorMessage, ErrorHandler.Type errorType);
         }
 
         private ISuccess successAction;
@@ -186,7 +186,7 @@ public class RestClient implements IRestClient {
                 successAction.success(response.body());
             } else {
                 if (failureAction != null) {
-                    failureAction.failure(ErrorHandler.getMessage(response));
+                    ErrorHandler.getMessage(response, failureAction::failure);
                 }
             }
         }
@@ -195,7 +195,7 @@ public class RestClient implements IRestClient {
         public void onFailure(Call call, Throwable t) {
             Timber.e(t, t.getMessage());
             if (failureAction != null) {
-                failureAction.failure(ErrorHandler.getMessage(t));
+                ErrorHandler.getMessage(t, failureAction::failure);
             }
         }
     }

@@ -3,10 +3,8 @@ package com.thirdandloom.storyflow.preferences;
 import com.thirdandloom.storyflow.preferences.sharedpreference.BaseSharedPreferences;
 import com.thirdandloom.storyflow.preferences.sharedpreference.Property;
 
-import android.text.TextUtils;
-
 @SuppressWarnings({"PublicField", "InstanceVariableNamingConvention"})
-public class CommonPreferences extends BaseSharedPreferences<CommonPreferences.Key> {
+public class userDataPreferences extends BaseSharedPreferences<userDataPreferences.Key> {
 
     enum Key {
         USER_PROFILE,

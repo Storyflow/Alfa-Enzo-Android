@@ -61,7 +61,9 @@ public class SignInActivity extends BaseActivity {
 
     private void signIn(String userNameOrEmail, String password) {
         showProgress(Gravity.RIGHT);
-        StoryflowApplication.restClient().signIn(userNameOrEmail, password, this::loginSuccess, this::showError);
+        StoryflowApplication.restClient().signIn(userNameOrEmail, password, this::loginSuccess, (errorMessage, type) -> {
+            showError(errorMessage);
+        });
     }
 
     private void resetPassword(String email) {
@@ -69,7 +71,9 @@ public class SignInActivity extends BaseActivity {
         StoryflowApplication.restClient().checkEmail(email, (user) -> {
             hideProgress();
             showWarning(R.string.email_was_successfully_sent);
-        }, this::showError);
+        }, (errorMessage, type) -> {
+            showError(errorMessage);
+        });
     }
 
     private void loginSuccess(User user) {
