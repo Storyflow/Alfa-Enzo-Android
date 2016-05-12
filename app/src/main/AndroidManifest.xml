@@ -73,6 +73,13 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="007706a287637bde5afb1b4391bf89a8b946cf5f"/>
+
+        <receiver android:name=".utils.connectivity.ConnectivityReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
     <uses-feature
@@ -84,6 +91,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"
         />
 
 </manifest>

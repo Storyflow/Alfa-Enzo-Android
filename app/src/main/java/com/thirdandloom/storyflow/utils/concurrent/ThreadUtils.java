@@ -13,9 +13,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ThreadUtils {
-    public static void runOnUiThread(Runnable runnable) {
-        new Handler(Looper.getMainLooper()).post(runnable);
-    }
 
     public static ThreadFactory createThreadFactory(@NonNull String name) {
         return new ThreadFactoryBuilder()

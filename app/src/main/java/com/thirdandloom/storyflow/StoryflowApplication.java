@@ -8,6 +8,7 @@ import com.thirdandloom.storyflow.rest.IRestClient;
 import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.SimpleExecutor;
+import com.thirdandloom.storyflow.utils.connectivity.ConnectivityObserver;
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
@@ -22,6 +23,7 @@ public class StoryflowApplication extends Application {
     private IRestClient restClient;
     private CommonPreferences preferences;
     private AccountManager accountManager;
+    private ConnectivityObserver connectivityObserver;
     private SimpleExecutor<Runnable> backgroundThreadExecutor = new SimpleExecutor<>("backgroundThreadExecutor");
 
     public static StoryflowApplication getInstance() {
@@ -42,6 +44,10 @@ public class StoryflowApplication extends Application {
 
     public static Resources resources() {
         return instance.getResources();
+    }
+
+    public static ConnectivityObserver connectivityObserver() {
+        return instance.connectivityObserver;
     }
 
     public static void runBackground(Runnable runnable) {
@@ -85,6 +91,7 @@ public class StoryflowApplication extends Application {
         this.restClient = new RestClient(this);
         this.preferences = new CommonPreferences();
         this.accountManager = new AccountManager();
+        this.connectivityObserver = new ConnectivityObserver();
     }
 
     private void initTimber() {
