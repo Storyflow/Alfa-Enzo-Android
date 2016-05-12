@@ -3,6 +3,8 @@ package com.thirdandloom.storyflow.activities;
 import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.models.PendingStory;
+import com.thirdandloom.storyflow.service.UploadStoriesService;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -188,6 +190,10 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         @Override
         public void onPostStoryClicked() {
             Timber.d("PostStoryBar Actions onPostStoryClicked");
+            PendingStory story = new PendingStory();
+            story.setData("test story Android", null);
+
+            UploadStoriesService.addStory(story);
         }
 
         @Override

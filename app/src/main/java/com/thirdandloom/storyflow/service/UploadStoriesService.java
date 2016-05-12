@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.service;
 
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.PendingStory;
+import rx.functions.Action0;
 import rx.functions.Action1;
 
 import android.app.Service;
@@ -11,9 +12,14 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class UploadStoriesService extends Service {
     private static final String PENDING_STORY = "pending_story";
+
+    private Future computation;
+    private boolean running;
+    private boolean needRefresh;
 
     private static Intent createIntent() {
         return new Intent(StoryflowApplication.getInstance(), UploadStoriesService.class);
@@ -24,7 +30,7 @@ public class UploadStoriesService extends Service {
     }
 
     private static void notifyService(Intent intent) {
-        StoryflowApplication.getInstance().startService(createIntent());
+        StoryflowApplication.getInstance().startService(intent);
     }
 
     public static void addStory(PendingStory story) {
@@ -45,17 +51,33 @@ public class UploadStoriesService extends Service {
         if (story != null) {
             pendingStoriesList.add(story);
         }
-        refreshStories();
-        return START_NOT_STICKY;
-    }
 
-    private void refreshStories() {
-        refreshPendingStories(this::prepareForUpload, this::failedStories, this::impossibleStories);
+        if (!running) {
+            running = true;
+            StoryflowApplication.runBackground(new Runnable() {
+                @Override
+                public void run() {
+                    while (running) {
+                        if (needRefresh) {
+                            needRefresh = false;
+                            refreshPendingStories(UploadStoriesService.this::prepareForUpload,
+                                    UploadStoriesService.this::failedStories,
+                                    UploadStoriesService.this::impossibleStories,
+                                    UploadStoriesService.this::uploadFinished);
+                        }
+                    }
+                }
+            }, future -> computation = future);
+        }
+
+        needRefresh = true;
+        return START_NOT_STICKY;
     }
 
     private void refreshPendingStories(Action1<PendingStory> uploadStory,
             Action1<List<PendingStory>> failedDetected,
-            Action1<List<PendingStory>> impossibleDetected) {
+            Action1<List<PendingStory>> impossibleDetected,
+            Action0 uploadFinished) {
         List<PendingStory> waitingForSendStories = new ArrayList<>();
         List<PendingStory> succeedStories = new ArrayList<>();
         List<PendingStory> inProgressStories = new ArrayList<>();
@@ -100,6 +122,16 @@ public class UploadStoriesService extends Service {
         if (!impossibleUploadStories.isEmpty()) {
             impossibleDetected.call(impossibleUploadStories);
         }
+        if (waitingForSendStories.isEmpty() && inProgressStories.isEmpty()) {
+            uploadFinished.call();
+        }
+
+        //just for testing
+        //if (pendingStoriesList.size() >= 2) {
+        //    pendingStoriesList.clear();
+        //    uploadFinished.call();
+        //}
+
     }
 
     private void impossibleStories(List<PendingStory> stories) {
@@ -108,6 +140,11 @@ public class UploadStoriesService extends Service {
 
     private void failedStories(List<PendingStory> stories) {
         // notify failed stories for user
+    }
+
+    private void uploadFinished() {
+        computation.cancel(true);
+        running = false;
     }
 
     private void prepareForUpload(PendingStory story) {
@@ -126,7 +163,9 @@ public class UploadStoriesService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //save objects;
+        computation.cancel(true);
+        running = false;
+        needRefresh = false;
     }
 
     @Nullable

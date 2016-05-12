@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.utils.Timber;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +27,11 @@ public class ProfileActivity extends BaseActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
+
+        StoryflowApplication.runBackground(() -> {
+                    Timber.d("ProfileActivity runBackground !!!!!!!");
+                }
+        );
     }
 
     @Override

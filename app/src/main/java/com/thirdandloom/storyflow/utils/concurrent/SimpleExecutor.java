@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.utils.concurrent;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import com.thirdandloom.storyflow.utils.Timber;
+import rx.functions.Action1;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -15,7 +16,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class SimpleExecutor<Task extends Runnable> implements Executor, IExecutor<Task> {
+public class SimpleExecutor<Task extends Runnable> implements IExecutor<Task> {
     private static final int TERMINATION_TIMEOUT = 30_000; // milliseconds
 
     private final ExecutorService asyncExecutor;
@@ -73,14 +74,21 @@ public class SimpleExecutor<Task extends Runnable> implements Executor, IExecuto
         return syncExecutor.isShutdown() || asyncExecutor.isShutdown();
     }
 
+
     @Override
-    public void execute(@NonNull Runnable command) {
-        asyncSubmit(command);
+    public void execute(@NonNull Runnable command, Action1<Future<?>> computation) {
+        Future<?> submitFuture = asyncSubmit(command);
+        if (computation != null && submitFuture != null) {
+            computation.call(submitFuture);
+        }
     }
 
-    private void asyncSubmit(Runnable task) {
+    @Nullable
+    private Future<?> asyncSubmit(Runnable task) {
         if (!asyncExecutor.isShutdown()) {
-            asyncExecutor.submit(task);
+            return asyncExecutor.submit(task);
+        } else {
+            return null;
         }
     }
 

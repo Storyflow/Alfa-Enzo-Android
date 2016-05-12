@@ -1,5 +1,8 @@
 package com.thirdandloom.storyflow.models;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 public class PendingStory extends BaseModel {
     private static final long serialVersionUID = 856012311368902178L;
 
@@ -13,5 +16,10 @@ public class PendingStory extends BaseModel {
 
     public Status getStatus() {
         return status;
+    }
+
+    public void setData(@NonNull String description, @Nullable String imageUrl) {
+        this.description = description;
+        this.imageUrl = imageUrl;
     }
 }

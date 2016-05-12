@@ -11,11 +11,14 @@ import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.SimpleExecutor;
 import com.thirdandloom.storyflow.utils.connectivity.ConnectivityObserver;
 import io.fabric.sdk.android.Fabric;
+import rx.functions.Action1;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 import android.app.Application;
 import android.content.res.Resources;
 import android.os.Handler;
+
+import java.util.concurrent.Future;
 
 public class StoryflowApplication extends Application {
     private static StoryflowApplication instance;
@@ -52,7 +55,11 @@ public class StoryflowApplication extends Application {
     }
 
     public static void runBackground(Runnable runnable) {
-        instance.backgroundThreadExecutor.execute(runnable);
+        runBackground(runnable, null);
+    }
+
+    public static void runBackground(Runnable runnable, Action1<Future<?>> computation) {
+        instance.backgroundThreadExecutor.execute(runnable, computation);
     }
 
     public static void runOnUIThread(Runnable runnable) {
