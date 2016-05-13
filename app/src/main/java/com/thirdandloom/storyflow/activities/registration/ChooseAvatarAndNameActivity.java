@@ -40,7 +40,7 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
     private SavedState state;
 
     public static Intent newInstance(String userName, String email, String password) {
-        Intent intent = new Intent(StoryflowApplication.getInstance(), ChooseAvatarAndNameActivity.class);
+        Intent intent = new Intent(StoryflowApplication.applicationContext, ChooseAvatarAndNameActivity.class);
         SavedState state = new SavedState();
         state.userName = userName;
         state.email = email;

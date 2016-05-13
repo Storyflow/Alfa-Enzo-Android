@@ -40,7 +40,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private SavedState state = new SavedState();
 
     public static Intent newInstance() {
-        return new Intent(StoryflowApplication.getInstance(), PostStoryActivity.class);
+        return new Intent(StoryflowApplication.applicationContext, PostStoryActivity.class);
     }
 
     @Override

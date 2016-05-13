@@ -19,7 +19,7 @@ public class AccountManager {
     private String password;
 
     public AccountManager() {
-        userDataPreferences preferences = StoryflowApplication.userDataPreferences();
+        userDataPreferences preferences = StoryflowApplication.userDataPreferences;
         password = preferences.password.get();
         getUser(user -> {
         });
@@ -27,7 +27,7 @@ public class AccountManager {
 
     public void updateProfile(@NonNull User user) {
         currentUser = user;
-        userDataPreferences preferences = StoryflowApplication.userDataPreferences();
+        userDataPreferences preferences = StoryflowApplication.userDataPreferences;
         preferences.userProfile.set(currentUser);
     }
 
@@ -58,7 +58,7 @@ public class AccountManager {
             finished.call(currentUser);
         } else {
             StoryflowApplication.runBackground(() -> {
-                userDataPreferences preferences = StoryflowApplication.userDataPreferences();
+                userDataPreferences preferences = StoryflowApplication.userDataPreferences;
                 currentUser = preferences.userProfile.get();
                 if (currentUser == null) {
                     currentUser = new User();
@@ -78,17 +78,18 @@ public class AccountManager {
 
     public void setPassword(String password) {
         this.password = password;
-        userDataPreferences preferences = StoryflowApplication.userDataPreferences();
+        userDataPreferences preferences = StoryflowApplication.userDataPreferences;
         preferences.password.set(this.password);
     }
 
     public void resetAccount() {
         currentUser = null;
         password = StringUtils.EMPTY;
-        StoryflowApplication.userDataPreferences().clear();
+        StoryflowApplication.userDataPreferences.clear();
     }
 
     public boolean isCurrentUser(String userUid){
         return currentUser != null && currentUser.getUid().equals(userUid);
     }
+
 }

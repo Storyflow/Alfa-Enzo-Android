@@ -49,7 +49,7 @@ public class QuickAlertController {
     }
 
     private void showQuickAlert(String message, QuickAlertView.Type type) {
-        quickAlertView = new QuickAlertView(StoryflowApplication.getInstance());
+        quickAlertView = new QuickAlertView(StoryflowApplication.applicationContext);
         quickAlertView.setText(message, type);
         window.addContentView(quickAlertView, createLayoutParams());
         quickAlertView.measure(0, 0);

@@ -17,7 +17,7 @@ public class RegistrationActivity extends BaseActivity {
     private EditText passwordEditText;
 
     public static Intent newInstance() {
-        return new Intent(StoryflowApplication.getInstance(), RegistrationActivity.class);
+        return new Intent(StoryflowApplication.applicationContext, RegistrationActivity.class);
     }
 
     @Override

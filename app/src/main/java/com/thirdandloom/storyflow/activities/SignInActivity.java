@@ -20,7 +20,7 @@ public class SignInActivity extends BaseActivity {
     private View continueButton;
 
     public static Intent newInstance() {
-        return new Intent(StoryflowApplication.getInstance(), SignInActivity.class);
+        return new Intent(StoryflowApplication.applicationContext, SignInActivity.class);
     }
 
     @Override

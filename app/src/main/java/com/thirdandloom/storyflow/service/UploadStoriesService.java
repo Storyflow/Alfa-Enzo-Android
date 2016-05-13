@@ -2,12 +2,14 @@ package com.thirdandloom.storyflow.service;
 
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.PendingStory;
+import com.thirdandloom.storyflow.utils.Timber;
+import com.thirdandloom.storyflow.utils.concurrent.BackgroundRunnable;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.IBinder;
+import android.os.*;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class UploadStoriesService extends Service {
     private boolean needRefresh;
 
     private static Intent createIntent() {
-        return new Intent(StoryflowApplication.getInstance(), UploadStoriesService.class);
+        return new Intent(StoryflowApplication.applicationContext, UploadStoriesService.class);
     }
 
     public static void notifyService() {
@@ -30,7 +32,7 @@ public class UploadStoriesService extends Service {
     }
 
     private static void notifyService(Intent intent) {
-        StoryflowApplication.getInstance().startService(intent);
+        StoryflowApplication.applicationContext.startService(intent);
     }
 
     public static void addStory(PendingStory story) {
@@ -54,9 +56,10 @@ public class UploadStoriesService extends Service {
 
         if (!running) {
             running = true;
-            StoryflowApplication.runBackground(new Runnable() {
+            StoryflowApplication.runBackground(new BackgroundRunnable() {
                 @Override
                 public void run() {
+                    super.run();
                     while (running) {
                         if (needRefresh) {
                             needRefresh = false;
@@ -64,6 +67,11 @@ public class UploadStoriesService extends Service {
                                     UploadStoriesService.this::failedStories,
                                     UploadStoriesService.this::impossibleStories,
                                     UploadStoriesService.this::uploadFinished);
+                        }
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            Timber.e(e.getMessage());
                         }
                     }
                 }
@@ -125,13 +133,11 @@ public class UploadStoriesService extends Service {
         if (waitingForSendStories.isEmpty() && inProgressStories.isEmpty()) {
             uploadFinished.call();
         }
-
-        //just for testing
-        //if (pendingStoriesList.size() >= 2) {
+        ////just for testing
+        //if (pendingStoriesList.size() >= 4) {
         //    pendingStoriesList.clear();
         //    uploadFinished.call();
         //}
-
     }
 
     private void impossibleStories(List<PendingStory> stories) {
@@ -148,7 +154,7 @@ public class UploadStoriesService extends Service {
     }
 
     private void prepareForUpload(PendingStory story) {
-
+        Timber.d("prepareForUpload");
     }
 
     // Requests:

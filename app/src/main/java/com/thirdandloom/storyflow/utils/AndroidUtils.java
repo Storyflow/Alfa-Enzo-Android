@@ -18,7 +18,7 @@ public class AndroidUtils extends BaseUtils {
 
     static {
         density = getResources().getDisplayMetrics().density;
-        viewConfiguration = ViewConfiguration.get(getContext());
+        viewConfiguration = ViewConfiguration.get(getApplicationContext());
         checkDisplaySize();
     }
 

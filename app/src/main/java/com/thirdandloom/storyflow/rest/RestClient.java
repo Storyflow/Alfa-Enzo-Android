@@ -137,7 +137,7 @@ public class RestClient implements IRestClient {
                                           ResponseCallback.ISuccess success,
                                           ResponseCallback.IFailure failure) {
         glideRequest.asBitmap().override(imageSize.width(), imageSize.height())
-                .transform(new CropRectTransformation(StoryflowApplication.getInstance(), croppedRect))
+                .transform(new CropRectTransformation(StoryflowApplication.applicationContext, croppedRect))
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {

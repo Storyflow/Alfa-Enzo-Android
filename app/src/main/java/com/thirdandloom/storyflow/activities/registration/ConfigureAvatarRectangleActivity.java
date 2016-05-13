@@ -32,7 +32,7 @@ public class ConfigureAvatarRectangleActivity extends BaseActivity {
     private SavedState state;
 
     public static Intent newInstance(String imageData, int takenAction) {
-        Intent intent = new Intent(StoryflowApplication.getInstance(), ConfigureAvatarRectangleActivity.class);
+        Intent intent = new Intent(StoryflowApplication.applicationContext, ConfigureAvatarRectangleActivity.class);
         SavedState state = new SavedState();
         state.takenAction = takenAction;
         state.imageData = imageData;

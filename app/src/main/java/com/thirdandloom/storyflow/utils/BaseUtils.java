@@ -20,12 +20,8 @@ import android.view.inputmethod.InputMethodManager;
 
 public abstract class BaseUtils  {
 
-    protected static Context getContext() {
-        return StoryflowApplication.getInstance();
-    }
-
     protected static Resources getResources() {
-        return getContext().getResources();
+        return getApplicationContext().getResources();
     }
 
     protected static void exception(Throwable throwable) {
@@ -33,51 +29,51 @@ public abstract class BaseUtils  {
     }
 
     protected static Context getApplicationContext() {
-        return StoryflowApplication.getInstance().getApplicationContext();
+        return StoryflowApplication.applicationContext;
     }
 
     public static TelephonyManager telephonyManager() {
-        return (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
+        return (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
     }
 
     public static NotificationManager notificationManager() {
-        return (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        return (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     public static ConnectivityManager connectivityManager() {
-        return  (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        return  (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     public static InputMethodManager inputMethodManager() {
-        return (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        return (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     public static ClipboardManager clipboardManager() {
-        return (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        return (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
     }
 
     public static ActivityManager activityManager() {
-        return (ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        return (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
     }
 
     public static PowerManager powerManager() {
-        return (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
+        return (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
     }
 
     public static AlarmManager alarmManager() {
-        return (AlarmManager) StoryflowApplication.getInstance().getBaseContext().getSystemService(Context.ALARM_SERVICE);
+        return (AlarmManager) StoryflowApplication.applicationContext.getSystemService(Context.ALARM_SERVICE);
     }
 
     public static DownloadManager downloadManager() {
-        return (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+        return (DownloadManager) getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
     }
 
     public static AudioManager audioManager() {
-        return (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+        return (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
     }
 
     public static Vibrator vibrator() {
-        return (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        return (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public static WindowManager windowManager(Activity activity) {

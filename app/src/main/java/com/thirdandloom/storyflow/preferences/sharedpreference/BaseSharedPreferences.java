@@ -13,7 +13,7 @@ public abstract class BaseSharedPreferences<Key extends Enum> {
 
     protected SharedPreferences getPreferences() {
         String name = getId().name();
-        return StoryflowApplication.getInstance().getSharedPreferences(name, Context.MODE_PRIVATE);
+        return StoryflowApplication.applicationContext.getSharedPreferences(name, Context.MODE_PRIVATE);
     }
 
     protected SharedPreferences.Editor getEditor() {

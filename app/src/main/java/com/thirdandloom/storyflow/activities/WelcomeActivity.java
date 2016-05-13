@@ -23,7 +23,7 @@ public class WelcomeActivity extends BaseActivity {
     private TextView privacyTextView;
 
     public static Intent newInstance() {
-        return new Intent(StoryflowApplication.getInstance(), WelcomeActivity.class);
+        return new Intent(StoryflowApplication.applicationContext, WelcomeActivity.class);
     }
 
     @Override

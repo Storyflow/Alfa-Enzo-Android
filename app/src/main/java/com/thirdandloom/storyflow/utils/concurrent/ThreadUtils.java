@@ -14,6 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 public class ThreadUtils {
 
+    public enum Priority {
+        Lowest, Default, Background, Foreground
+    }
+
     public static ThreadFactory createThreadFactory(@NonNull String name) {
         return new ThreadFactoryBuilder()
                 .setNameFormat(name + " #%d")

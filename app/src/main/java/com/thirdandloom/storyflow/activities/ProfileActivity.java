@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 public class ProfileActivity extends BaseActivity {
 
     public static Intent newInstance() {
-        return new Intent(StoryflowApplication.getInstance(), ProfileActivity.class);
+        return new Intent(StoryflowApplication.applicationContext, ProfileActivity.class);
     }
 
     @Override
@@ -22,7 +22,6 @@ public class ProfileActivity extends BaseActivity {
         findViewById(R.id.activity_logout_continue).setOnClickListener(v -> {
             StoryflowApplication.restClient().clearCookies();
             StoryflowApplication.account().resetAccount();
-            StoryflowApplication.userDataPreferences().clear();
             Intent intent = WelcomeActivity.newInstance();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

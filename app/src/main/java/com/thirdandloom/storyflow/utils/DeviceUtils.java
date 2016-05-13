@@ -1,11 +1,7 @@
 package com.thirdandloom.storyflow.utils;
 
-import com.thirdandloom.storyflow.StoryflowApplication;
-
-import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.annotation.ColorRes;
 import android.util.DisplayMetrics;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -39,9 +35,9 @@ public class DeviceUtils extends BaseUtils {
 
     public static int getStatusBarHeight() {
         int result = 0;
-        int resourceId = StoryflowApplication.getInstance().getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
-            result =  StoryflowApplication.getInstance().getResources().getDimensionPixelSize(resourceId);
+            result =  getResources().getDimensionPixelSize(resourceId);
         }
         return result;
     }
@@ -59,7 +55,7 @@ public class DeviceUtils extends BaseUtils {
     }
 
     public static boolean hasMenuKey() {
-        return ViewConfiguration.get(getContext()).hasPermanentMenuKey();
+        return ViewConfiguration.get(getApplicationContext()).hasPermanentMenuKey();
     }
 
     public static boolean hasHardwareBackKey() {

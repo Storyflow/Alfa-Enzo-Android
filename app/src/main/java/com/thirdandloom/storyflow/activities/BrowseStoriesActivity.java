@@ -47,7 +47,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     private int recyclerViewScrollState = RecyclerView.SCROLL_STATE_IDLE;
 
     public static Intent newInstance(boolean continueAnimation) {
-        Intent intent = new Intent(StoryflowApplication.getInstance(), BrowseStoriesActivity.class);
+        Intent intent = new Intent(StoryflowApplication.applicationContext, BrowseStoriesActivity.class);
         SavedState state = new SavedState();
         state.continueAnimation = continueAnimation;
         putExtra(intent, state);

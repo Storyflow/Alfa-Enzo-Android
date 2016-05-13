@@ -15,43 +15,39 @@ import rx.functions.Action1;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
 
 import java.util.concurrent.Future;
 
 public class StoryflowApplication extends Application {
-    private static StoryflowApplication instance;
-    public static volatile Handler applicationHandler;
+    private static volatile Handler applicationHandler;
+    private static volatile SimpleExecutor<Runnable> backgroundThreadExecutor;
 
+    public static volatile userDataPreferences userDataPreferences;
+    public static volatile Context applicationContext;
+
+    private static StoryflowApplication instance;
     private IRestClient restClient;
-    private userDataPreferences userDataPreferences;
     private AccountManager accountManager;
     private ConnectivityObserver connectivityObserver;
-    private SimpleExecutor<Runnable> backgroundThreadExecutor = new SimpleExecutor<>("backgroundThreadExecutor");
-
-    public static StoryflowApplication getInstance() {
-        return instance;
-    }
-
-    public static userDataPreferences userDataPreferences() {
-        return instance.userDataPreferences;
-    }
 
     public static AccountManager account() {
         return instance.accountManager;
     }
+
+    public static ConnectivityObserver connectivityObserver() {
+        return instance.connectivityObserver;
+    }
+
 
     public static IRestClient restClient() {
         return instance.restClient;
     }
 
     public static Resources resources() {
-        return instance.getResources();
-    }
-
-    public static ConnectivityObserver connectivityObserver() {
-        return instance.connectivityObserver;
+        return applicationContext.getResources();
     }
 
     public static void runBackground(Runnable runnable) {
@@ -59,7 +55,7 @@ public class StoryflowApplication extends Application {
     }
 
     public static void runBackground(Runnable runnable, Action1<Future<?>> computation) {
-        instance.backgroundThreadExecutor.execute(runnable, computation);
+        backgroundThreadExecutor.execute(runnable, computation);
     }
 
     public static void runOnUIThread(Runnable runnable) {
@@ -82,7 +78,10 @@ public class StoryflowApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        applicationHandler = new Handler(getApplicationContext().getMainLooper());
+        applicationContext = getApplicationContext();
+        applicationHandler = new Handler(applicationContext.getMainLooper());
+        backgroundThreadExecutor = new SimpleExecutor<>("backgroundThreadExecutor");
+        userDataPreferences = new userDataPreferences();
 
         initTimber();
         final Fabric fabric = new Fabric.Builder(this)
@@ -96,7 +95,6 @@ public class StoryflowApplication extends Application {
                         .build()
         );
         this.restClient = new RestClient(this);
-        this.userDataPreferences = new userDataPreferences();
         this.accountManager = new AccountManager();
         this.connectivityObserver = new ConnectivityObserver();
         UploadStoriesService.notifyService();
