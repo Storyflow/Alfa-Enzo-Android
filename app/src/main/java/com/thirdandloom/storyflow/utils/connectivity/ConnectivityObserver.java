@@ -1,7 +1,6 @@
 package com.thirdandloom.storyflow.utils.connectivity;
 
 import com.thirdandloom.storyflow.utils.BaseUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.event.NetworkChangedEvent;
 import org.greenrobot.eventbus.EventBus;
 

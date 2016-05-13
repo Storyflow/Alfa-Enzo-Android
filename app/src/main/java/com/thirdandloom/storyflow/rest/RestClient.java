@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.rest;
 
 import com.bumptech.glide.DrawableTypeRequest;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
@@ -8,15 +9,21 @@ import com.google.gson.GsonBuilder;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.managers.StoriesManager;
+import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.models.StoryId;
 import com.thirdandloom.storyflow.rest.cookies.JavaNetCookieJar;
 import com.thirdandloom.storyflow.rest.cookies.PersistentCookieStore;
 import com.thirdandloom.storyflow.rest.gson.GsonConverterFactory;
 import com.thirdandloom.storyflow.rest.requestmodels.CheckEmailRequestModel;
+import com.thirdandloom.storyflow.rest.requestmodels.PostImageStoryRequestModel;
+import com.thirdandloom.storyflow.rest.requestmodels.PostTextStoryRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.ProfileImageRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.SignInRequestMode;
 import com.thirdandloom.storyflow.rest.requestmodels.SignUpRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.UpdateProfileImageRequestModel;
+import com.thirdandloom.storyflow.rest.requestmodels.UploadImageRequestModel;
+import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.glide.CropRectTransformation;
 import com.thirdandloom.storyflow.utils.image.Size;
@@ -28,6 +35,7 @@ import retrofit2.Callback;
 import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import rx.functions.Action0;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -37,9 +45,11 @@ import android.support.annotation.Nullable;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class RestClient implements IRestClient {
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss Z";
 
     private final IRestClient.ApiService apiService;
     private CookieManager cookieManager;
@@ -55,7 +65,7 @@ public class RestClient implements IRestClient {
 
     private Converter.Factory gsonFactory() {
         Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss Z")
+                .setDateFormat(DATE_FORMAT)
                 .create();
         return GsonConverterFactory.create(gson);
     }
@@ -159,6 +169,42 @@ public class RestClient implements IRestClient {
         int limit = requestData.getLimit();
 
         apiService.loadStories(period, limit, null, direction, filters).enqueue(new ResponseCallback<>(success, failure));
+    }
+
+    @Override
+    public void createTextStory(PendingStory pendingStory, ResponseCallback.ISuccess<Story> success, ResponseCallback.IFailure failure) {
+        PostTextStoryRequestModel requestModel = new PostTextStoryRequestModel(pendingStory);
+        apiService.createTextStory(requestModel).enqueue(new ResponseCallback<>(success, failure));
+    }
+
+    @Override
+    public void createImageStory(PendingStory pendingStory, ResponseCallback.ISuccess<Story> success, ResponseCallback.IFailure failure) {
+        PostImageStoryRequestModel requestModel = new PostImageStoryRequestModel(pendingStory);
+        apiService.createImageStory(requestModel).enqueue(new ResponseCallback<>(success, failure));
+    }
+
+    @Override
+    public void uploadImage(PendingStory pendingStory, Action0 uploadImpossible, ResponseCallback.ISuccess<StoryId> success, ResponseCallback.IFailure failure) {
+        Bitmap imageBitmap;
+        try {
+            imageBitmap =  Glide
+                    .with(StoryflowApplication.applicationContext)
+                    .load(pendingStory.getImageUrl())
+                    .asBitmap()
+                    .centerCrop()
+                    .into(DeviceUtils.getDisplayWidth(), DeviceUtils.getDisplayHeight())
+                    .get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            failure.failure("fail bitmap", ErrorHandler.Type.Unknown);
+            return;
+        }
+        if (imageBitmap == null) {
+            uploadImpossible.call();
+            return;
+        }
+        UploadImageRequestModel model = new UploadImageRequestModel(imageBitmap);
+        apiService.uploadImage(model.wrap()).enqueue(new ResponseCallback<>(success, failure));
     }
 
     public static class ResponseCallback<T> implements Callback<T> {

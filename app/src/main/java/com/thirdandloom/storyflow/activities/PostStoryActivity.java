@@ -6,7 +6,6 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.service.UploadStoriesService;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
 import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
@@ -19,11 +18,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class PostStoryActivity extends EmojiKeyboardActivity {
     private static final int CAPTURE_PHOTO = 1;
@@ -189,11 +190,12 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private final PostStoryBar.Actions postStoryActions = new PostStoryBar.Actions() {
         @Override
         public void onPostStoryClicked() {
-            Timber.d("PostStoryBar Actions onPostStoryClicked");
-            PendingStory story = new PendingStory();
-            story.setData("test story Android", null);
-
-            UploadStoriesService.addStory(story);
+            if (!TextUtils.isEmpty(editText.getText().toString().trim())
+                    || !TextUtils.isEmpty(state.capturedAbsolutePhotoPath)) {
+                PendingStory story = new PendingStory();
+                story.setData(editText.getText().toString(), state.capturedAbsolutePhotoPath, new Date());
+                UploadStoriesService.addStory(story);
+            }
         }
 
         @Override
@@ -235,6 +237,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                     selectedPhoto = data.getData().toString();
                     break;
             }
+            state.capturedAbsolutePhotoPath = selectedPhoto;
             Glide
                     .with(this)
                     .load(selectedPhoto)

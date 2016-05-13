@@ -49,7 +49,6 @@ public class LaunchActivity extends BaseActivity {
     }
 
     private void signInWithSavedAccount() {
-        signInInProgress = true;
         StoryflowApplication.account().getUser(user -> {
             String password = StoryflowApplication.account().getPassword();
             if (!TextUtils.isEmpty(password)) {
@@ -62,6 +61,7 @@ public class LaunchActivity extends BaseActivity {
     }
 
     private void signIn(String email, String password) {
+        signInInProgress = true;
         StoryflowApplication.restClient().signIn(email, password, user -> {
             StoryflowApplication.account().updateProfile(user);
             launchedIntent = BrowseStoriesActivity.newInstance(true);
@@ -120,7 +120,7 @@ public class LaunchActivity extends BaseActivity {
         @Override
         public void onAnimationRepeat(Animator animation) {
             repeatCount++;
-            if (terminateAnimation || repeatCount >= FLIP_REPEAT_COUNT_MIN) {
+            if (terminateAnimation || (repeatCount >= FLIP_REPEAT_COUNT_MIN && launchedIntent != null)) {
                 animation.end();
                 circleView.setLayerType(View.LAYER_TYPE_NONE, null);
                 if (launchedIntent != null) {

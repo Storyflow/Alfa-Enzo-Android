@@ -4,8 +4,6 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.BackgroundRunnable;
-import rx.functions.Action0;
-import rx.functions.Action1;
 
 import android.app.Service;
 import android.content.Intent;
@@ -21,7 +19,7 @@ public class UploadStoriesService extends Service {
 
     private Future computation;
     private boolean running;
-    private boolean needRefresh;
+    private volatile boolean needRefresh;
 
     private static Intent createIntent() {
         return new Intent(StoryflowApplication.applicationContext, UploadStoriesService.class);
@@ -53,7 +51,6 @@ public class UploadStoriesService extends Service {
         if (story != null) {
             pendingStoriesList.add(story);
         }
-
         if (!running) {
             running = true;
             StoryflowApplication.runBackground(new BackgroundRunnable() {
@@ -63,10 +60,7 @@ public class UploadStoriesService extends Service {
                     while (running) {
                         if (needRefresh) {
                             needRefresh = false;
-                            refreshPendingStories(UploadStoriesService.this::prepareForUpload,
-                                    UploadStoriesService.this::failedStories,
-                                    UploadStoriesService.this::impossibleStories,
-                                    UploadStoriesService.this::uploadFinished);
+                            refreshPendingStories();
                         }
                         try {
                             Thread.sleep(500);
@@ -82,10 +76,7 @@ public class UploadStoriesService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void refreshPendingStories(Action1<PendingStory> uploadStory,
-            Action1<List<PendingStory>> failedDetected,
-            Action1<List<PendingStory>> impossibleDetected,
-            Action0 uploadFinished) {
+    private void refreshPendingStories() {
         List<PendingStory> waitingForSendStories = new ArrayList<>();
         List<PendingStory> succeedStories = new ArrayList<>();
         List<PendingStory> inProgressStories = new ArrayList<>();
@@ -122,21 +113,21 @@ public class UploadStoriesService extends Service {
         }
         pendingStoriesList.removeAll(succeedStories);
         if (inProgressStories.isEmpty() && !waitingForSendStories.isEmpty()) {
-            uploadStory.call(waitingForSendStories.get(0));
+            prepareForUpload(waitingForSendStories.get(0));
         }
         if (!failedStories.isEmpty()) {
-            failedDetected.call(failedStories);
+            failedStories(failedStories);
         }
         if (!impossibleUploadStories.isEmpty()) {
-            impossibleDetected.call(impossibleUploadStories);
+            impossibleStories(impossibleUploadStories);
         }
         if (waitingForSendStories.isEmpty() && inProgressStories.isEmpty()) {
-            uploadFinished.call();
+            uploadFinished();
         }
-        ////just for testing
+        //just for testing
         //if (pendingStoriesList.size() >= 4) {
         //    pendingStoriesList.clear();
-        //    uploadFinished.call();
+        //    uploadFinished();
         //}
     }
 
@@ -154,16 +145,52 @@ public class UploadStoriesService extends Service {
     }
 
     private void prepareForUpload(PendingStory story) {
-        Timber.d("prepareForUpload");
+        switch (story.getType()) {
+            case Image:
+                story.setStatus(PendingStory.Status.ImageUploading);
+                sendUploadImageRequest(story);
+                break;
+            case Text:
+                story.setStatus(PendingStory.Status.CreatingStory);
+                sendCreateTextStoryRequest(story);
+                break;
+            default:
+                story.setStatus(PendingStory.Status.CreateImpossible);
+                throw new UnsupportedOperationException("try to upload Unsupported pending story type");
+        }
     }
 
-    // Requests:
-    private void uploadImage(PendingStory story) {
-
+    private void sendUploadImageRequest(PendingStory story) {
+        StoryflowApplication.restClient().uploadImage(story, () -> {
+            story.setStatus(PendingStory.Status.CreateImpossible);
+            needRefresh = true;
+        }, storyId -> {
+            story.setStoryId(storyId.getId());
+            sendCreateImageStoryRequest(story);
+        }, (errorMessage, errorType) -> {
+            story.setStatus(PendingStory.Status.CreateFailed);
+            needRefresh = true;
+        });
     }
 
-    private void createStory(PendingStory story) {
+    private void sendCreateTextStoryRequest(PendingStory story) {
+        StoryflowApplication.restClient().createTextStory(story, responseBody -> {
+            story.setStatus(PendingStory.Status.CreateSucceed);
+            needRefresh = true;
+        }, (errorMessage, errorType) -> {
+            story.setStatus(PendingStory.Status.CreateFailed);
+            needRefresh = true;
+        });
+    }
 
+    private void sendCreateImageStoryRequest(PendingStory story) {
+        StoryflowApplication.restClient().createImageStory(story, responseBody -> {
+            story.setStatus(PendingStory.Status.CreateSucceed);
+            needRefresh = true;
+        }, (errorMessage, errorType) -> {
+            story.setStatus(PendingStory.Status.CreateFailed);
+            needRefresh = true;
+        });
     }
 
     @Override

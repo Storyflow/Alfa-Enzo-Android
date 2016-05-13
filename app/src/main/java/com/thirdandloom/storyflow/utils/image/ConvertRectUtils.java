@@ -1,8 +1,8 @@
 package com.thirdandloom.storyflow.utils.image;
 
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -16,10 +16,23 @@ import com.thirdandloom.storyflow.utils.Timber;
 public class ConvertRectUtils extends BaseUtils {
     private static final String DELIMITER = "x";
 
+    public static String getRectString(Bitmap bitmap) {
+        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        return getRectString(rect);
+    }
+
     public static String getRectString(RectF rectF) {
         Rect roundRect = new Rect();
         rectF.round(roundRect);
         return getRectString(roundRect);
+    }
+
+    public static String getRectString(Rect roundRect) {
+        int x = roundRect.left;
+        int y = roundRect.top;
+        int width = roundRect.width();
+        int height = roundRect.height();
+        return x + DELIMITER + y + DELIMITER + width + DELIMITER + height;
     }
 
     @Nullable
@@ -41,13 +54,4 @@ public class ConvertRectUtils extends BaseUtils {
 
         return null;
     }
-
-    private static String getRectString(Rect roundRect) {
-        int x = roundRect.left;
-        int y = roundRect.top;
-        int width = roundRect.width();
-        int height = roundRect.height();
-        return x + DELIMITER + y + DELIMITER + width + DELIMITER + height;
-    }
-
 }
