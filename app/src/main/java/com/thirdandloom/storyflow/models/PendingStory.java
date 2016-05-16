@@ -84,6 +84,18 @@ public class PendingStory extends BaseModel {
         return localUid;
     }
 
+    public String getStringType() {
+        switch (type) {
+            case Image:
+                return "Image";
+            case Text:
+                return "Text";
+
+            default:
+                throw new UnsupportedOperationException("Invalid story type");
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -109,6 +121,7 @@ public class PendingStory extends BaseModel {
         imageModel.setNormalSizedImage(sizedImage);
 
         story.setImageData(imageModel);
+        story.setType(getStringType());
 
         return story;
     }

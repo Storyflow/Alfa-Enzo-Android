@@ -203,7 +203,7 @@ public class RestClient implements IRestClient {
         }
         UploadImageRequestModel model = new UploadImageRequestModel(imageBitmap);
 
-        sendSync(apiService.uploadImage(model.wrap()), new ResponseCallback<>(success, failure));
+        sendSync(apiService.uploadImage(model), new ResponseCallback<>(success, failure));
     }
 
     public static <T> void sendAsync(Call<T> call, Callback<T> responseCallback) {

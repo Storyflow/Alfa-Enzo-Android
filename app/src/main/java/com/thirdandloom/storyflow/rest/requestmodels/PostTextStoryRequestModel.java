@@ -6,28 +6,20 @@ import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.utils.DateUtils;
 
 public class PostTextStoryRequestModel extends BaseRequestModel {
-    @SerializedName("story")
-    public Description description;
-    @SerializedName("customStory")
-    public Type storyType;
+    @SerializedName("description")
+    public String description;
+    @SerializedName("storyType")
+    public String storyType;
+    @SerializedName("privacyId")
+    public String privacyId;
+    @SerializedName("storyDate")
+    public String storyDate;
 
     public PostTextStoryRequestModel(PendingStory pendingStory) {
-        this.description = new Description();
-        this.description.text = pendingStory.getDescription();
-        this.description.date = DateUtils.getDateString(RestClient.DATE_FORMAT, pendingStory.getDate());
-        this.storyType = new Type();
-        this.storyType.type = "text";
+        this.description = pendingStory.getDescription();
+        this.storyType = "Text";
+        this.privacyId = "3";
+        this.storyDate = DateUtils.getDateString("yyyy/MM/dd", pendingStory.getDate());
     }
 
-    private static class Description {
-        @SerializedName("description")
-        public String text;
-        @SerializedName("storyDate")
-        public String date;
-    }
-
-    private static class Type {
-        @SerializedName("storyType")
-        public String type;
-    }
 }

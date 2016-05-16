@@ -131,6 +131,6 @@ public interface IRestClient {
                 "Accept: */*",
         })
         @POST("/swan/stories/upload")
-        Call<StoryId> uploadImage(@Body UploadImageRequestModel.Wrapper uploadImageWrapper);
+        Call<StoryId> uploadImage(@Body UploadImageRequestModel uploadImageWrapper);
     }
 }

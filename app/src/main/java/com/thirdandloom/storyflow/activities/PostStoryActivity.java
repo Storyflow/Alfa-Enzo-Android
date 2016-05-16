@@ -195,7 +195,9 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
             } else {
                 PendingStory story = new PendingStory();
                 story.setData(editText.getText().toString(), state.capturedAbsolutePhotoPath, new Date());
-                UploadStoriesService.addStory(story);
+                StoryflowApplication.getPendingStoriesManager().add(story);
+                UploadStoriesService.notifyService();
+                setResult(RESULT_OK);
                 finish();
             }
         }

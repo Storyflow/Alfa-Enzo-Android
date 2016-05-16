@@ -16,10 +16,8 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 public class UploadStoriesService extends Service {
-    private static final String ADD_PENDING_STORY = "pending_story_add";
-
     private Future computation;
-    private boolean running;
+    private volatile boolean running;
     private volatile boolean needRefresh;
 
     private static Intent createIntent() {
@@ -34,20 +32,8 @@ public class UploadStoriesService extends Service {
         StoryflowApplication.applicationContext.startService(intent);
     }
 
-    public static void addStory(PendingStory story) {
-        Intent intent = createIntent();
-        intent.putExtra(ADD_PENDING_STORY, story);
-        notifyService(intent);
-    }
-
-    public static void retryStory(PendingStory story) {
-        notifyService();
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        PendingStory addedStory = (PendingStory)intent.getSerializableExtra(ADD_PENDING_STORY);
-
         if (!running) {
             running = true;
             StoryflowApplication.runBackground(new BackgroundRunnable() {
@@ -57,7 +43,6 @@ public class UploadStoriesService extends Service {
                     while (running) {
                         if (needRefresh) {
                             needRefresh = false;
-                            getPendingStoriesManager().add(addedStory);
                             refreshPendingStories();
                         }
                         try {

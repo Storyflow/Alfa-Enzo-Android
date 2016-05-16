@@ -3,6 +3,7 @@ package com.thirdandloom.storyflow.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -103,15 +104,15 @@ public class Story extends BaseModel {
     static final Map<String, Type> types;
     static {
         Map<String, Type> map = new HashMap<>();
-        map.put("image", Type.Image);
-        map.put("text", Type.Text);
+        map.put("Image", Type.Image);
+        map.put("Text", Type.Text);
         types = Collections.unmodifiableMap(map);
     }
 
     public static class WrapList implements Serializable {
         private static final long serialVersionUID = 2232982624031951655L;
         @SerializedName("stories")
-        private List<Story> stories;
+        private List<Story> stories = new ArrayList<>();
         @SerializedName("nextId")
         private String nextStoryId;
         @SerializedName("prevId")

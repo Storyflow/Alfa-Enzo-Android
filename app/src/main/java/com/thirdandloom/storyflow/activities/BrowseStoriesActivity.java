@@ -37,7 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsFragment.IStoryDetailFragmentDataSource {
-    private SavedState state;
+    private static final int CREATE_NEW_STORY = 1;
 
     private SnappyRecyclerView horizontalRecyclerView;
     private View periodChooserView;
@@ -354,7 +354,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         @Override
         public void postClicked() {
             Intent intent = PostStoryActivity.newInstance();
-            startActivity(intent);
+            startActivityForResult(intent, CREATE_NEW_STORY);
         }
 
         @Override
@@ -363,6 +363,20 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
             startActivity(intent);
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CREATE_NEW_STORY:
+                    getPeriodsAdapter().notifyDataSetChanged();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     @Nullable
     @Override
@@ -377,6 +391,7 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         return state;
     }
 
+    private SavedState state;
     private static class SavedState implements Serializable {
         private static final long serialVersionUID = 5045141075880217652L;
 

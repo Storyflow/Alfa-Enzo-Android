@@ -70,12 +70,12 @@ public class StoriesManager {
 
         for (PendingStory story : pendingStories) {
             switch (getRequestData().getPeriodInt()) {
-                case RequestData.Period.Day:
+                case RequestData.Period.Year| RequestData.Period.Month| RequestData.Period.Day:
                     if (DateUtils.isSameDay(calendar.getTime(), story.getDate())) {
                         storiesForDate.add(story.convertToStory());
                     }
                     break;
-                case RequestData.Period.Month:
+                case RequestData.Period.Year|RequestData.Period.Month:
                     if (DateUtils.isSameMonth(calendar.getTime(), story.getDate())) {
                         storiesForDate.add(story.convertToStory());
                     }
@@ -88,19 +88,24 @@ public class StoriesManager {
             }
         }
 
-        Story.WrapList storiesWrapList = new Story.WrapList();
-        storiesWrapList.addStories(storiesForDate);
-
         if (store.containsKey(calendar)) {
-            Story.WrapList storedStories = store.get(calendar);
-            storiesWrapList.addStories(storedStories.getStories());
-            storiesWrapList.setNextStoryId(storedStories.getNextStoryId());
-            storiesWrapList.setPreviousStoryId(storedStories.getPreviousStoryId());
+            return store.get(calendar);
+        } else {
+            return null;
         }
 
-        return storiesWrapList.getStories().isEmpty()
-                ? null
-                : storiesWrapList;
+//        Story.WrapList storiesWrapList = new Story.WrapList();
+//        storiesWrapList.addStories(storiesForDate);
+//
+//        if (!store.containsKey(calendar) && storiesWrapList.getStories().isEmpty()) {
+//            return null;
+//        } else if (store.containsKey(calendar)) {
+//            Story.WrapList storedStories = store.get(calendar);
+//            storiesWrapList.addStories(storedStories.getStories());
+//            storiesWrapList.setNextStoryId(storedStories.getNextStoryId());
+//            storiesWrapList.setPreviousStoryId(storedStories.getPreviousStoryId());
+//        }
+//        return storiesWrapList;
     }
 
     public void storeData(Calendar calendar, Story.WrapList list) {
