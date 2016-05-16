@@ -18,4 +18,8 @@ public class SizedImage extends BaseModel {
     public SizeModel size() {
         return size;
     }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }

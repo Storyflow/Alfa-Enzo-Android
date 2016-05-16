@@ -185,4 +185,25 @@ public class DateUtils extends BaseUtils {
         SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
         return dateFormatter.format(date);
     }
+
+    public static boolean isSameDay(Date date1, Date date2) {
+        Time time1 = new Time(date1);
+        Time time2 = new Time(date2);
+
+        return time1.getDayStart().equals(time2.getDayStart());
+    }
+
+    public static boolean isSameMonth(Date date1, Date date2) {
+        Time time1 = new Time(date1);
+        Time time2 = new Time(date2);
+
+        return time1.getMonthStart().equals(time2.getMonthStart());
+    }
+
+    public static boolean isSameYear(Date date1, Date date2) {
+        Time time1 = new Time(date1);
+        Time time2 = new Time(date2);
+
+        return time1.getYearStart().equals(time2.getYearStart());
+    }
 }

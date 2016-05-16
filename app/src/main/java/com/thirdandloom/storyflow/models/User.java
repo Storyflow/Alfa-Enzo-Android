@@ -177,4 +177,16 @@ public class User extends BaseModel {
     public String getFullUserName() {
         return firstName + " " + lastName;
     }
+
+    public Author convertToAuthor() {
+        Author author = new Author();
+        author.setAvatarUrl(profileImage.getImageUrl());
+        author.setCroppedImageCover(coverImage);
+        author.setCroppedImageProfile(profileImage);
+        author.setFirstName(firstName);
+        author.setLastName(lastName);
+        author.setUserName(username);
+
+        return author;
+    }
 }

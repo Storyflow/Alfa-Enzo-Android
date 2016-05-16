@@ -21,8 +21,7 @@ public class AccountManager {
     public AccountManager() {
         UserDataPreferences preferences = StoryflowApplication.userDataPreferences;
         password = preferences.password.get();
-        getUser(user -> {
-        });
+        getUser();
     }
 
     public void updateProfile(@NonNull User user) {
@@ -32,44 +31,35 @@ public class AccountManager {
     }
 
     public void updateProfile(@NonNull Avatar avatar) {
-        getUser(user -> {
-            if (user.getProfileImages() == null)
-                user.setProfileImages(new ArrayList<>());
-            if (user.getProfileImages().contains(avatar)) {
-                int index = user.getProfileImages().indexOf(avatar);
-                user.getProfileImages().set(index, avatar);
-            } else {
-                user.getProfileImages().add(avatar);
-            }
+        User user = getUser();
 
-            if (!TextUtils.isEmpty(avatar.getCroppedImage().url())) {
-                CroppedImage profileImage = new CroppedImage();
-                profileImage.setRect(avatar.getCroppedRect());
-                profileImage.setImageUrl(avatar.getCroppedImage().url());
-                user.setProfileImage(profileImage);
-            }
-            updateProfile(user);
-        });
+        if (user.getProfileImages() == null)
+            user.setProfileImages(new ArrayList<>());
+        if (user.getProfileImages().contains(avatar)) {
+            int index = user.getProfileImages().indexOf(avatar);
+            user.getProfileImages().set(index, avatar);
+        } else {
+            user.getProfileImages().add(avatar);
+        }
+
+        if (!TextUtils.isEmpty(avatar.getCroppedImage().url())) {
+            CroppedImage profileImage = new CroppedImage();
+            profileImage.setRect(avatar.getCroppedRect());
+            profileImage.setImageUrl(avatar.getCroppedImage().url());
+            user.setProfileImage(profileImage);
+        }
+        updateProfile(user);
     }
 
-    public void getUser(@NonNull Action1<User> finished) {
-        final boolean isMainThread = Thread.currentThread() == Looper.getMainLooper().getThread();
-        if (currentUser != null) {
-            finished.call(currentUser);
-        } else {
-            StoryflowApplication.runBackground(() -> {
-                UserDataPreferences preferences = StoryflowApplication.userDataPreferences;
-                currentUser = preferences.userProfile.get();
-                if (currentUser == null) {
-                    currentUser = new User();
-                }
-                if (isMainThread) {
-                    StoryflowApplication.runOnUIThread(() -> finished.call(currentUser));
-                } else {
-                    finished.call(currentUser);
-                }
-            });
+    public User getUser() {
+        if (currentUser == null) {
+            UserDataPreferences preferences = StoryflowApplication.userDataPreferences;
+            currentUser = preferences.userProfile.get();
+            if (currentUser == null) {
+                currentUser = new User();
+            }
         }
+        return currentUser;
     }
 
     public String getPassword() {

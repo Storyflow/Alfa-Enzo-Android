@@ -1,6 +1,9 @@
 package com.thirdandloom.storyflow.managers;
 
+import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.utils.DateUtils;
 import rx.functions.Action3;
 
 import android.support.annotation.NonNull;
@@ -9,6 +12,7 @@ import android.support.annotation.Nullable;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -61,9 +65,42 @@ public class StoriesManager {
 
     @Nullable
     public Story.WrapList getStories(@NonNull Calendar calendar) {
-        return store.containsKey(calendar)
-                ? store.get(calendar)
-                : null;
+        List<PendingStory> pendingStories = StoryflowApplication.getPendingStoriesManager().getPendingStories();
+        List<Story> storiesForDate = new ArrayList<>();
+
+        for (PendingStory story : pendingStories) {
+            switch (getRequestData().getPeriodInt()) {
+                case RequestData.Period.Day:
+                    if (DateUtils.isSameDay(calendar.getTime(), story.getDate())) {
+                        storiesForDate.add(story.convertToStory());
+                    }
+                    break;
+                case RequestData.Period.Month:
+                    if (DateUtils.isSameMonth(calendar.getTime(), story.getDate())) {
+                        storiesForDate.add(story.convertToStory());
+                    }
+                    break;
+                case RequestData.Period.Year:
+                    if (DateUtils.isSameYear(calendar.getTime(), story.getDate())) {
+                        storiesForDate.add(story.convertToStory());
+                    }
+                    break;
+            }
+        }
+
+        Story.WrapList storiesWrapList = new Story.WrapList();
+        storiesWrapList.addStories(storiesForDate);
+
+        if (store.containsKey(calendar)) {
+            Story.WrapList storedStories = store.get(calendar);
+            storiesWrapList.addStories(storedStories.getStories());
+            storiesWrapList.setNextStoryId(storedStories.getNextStoryId());
+            storiesWrapList.setPreviousStoryId(storedStories.getPreviousStoryId());
+        }
+
+        return storiesWrapList.getStories().isEmpty()
+                ? null
+                : storiesWrapList;
     }
 
     public void storeData(Calendar calendar, Story.WrapList list) {

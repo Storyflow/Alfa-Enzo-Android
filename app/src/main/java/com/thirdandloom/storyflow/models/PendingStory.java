@@ -1,6 +1,9 @@
 package com.thirdandloom.storyflow.models;
 
 import com.google.gson.annotations.SerializedName;
+import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.managers.AccountManager;
+import com.thirdandloom.storyflow.models.image.SizedImage;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -91,5 +94,22 @@ public class PendingStory extends BaseModel {
         }
         PendingStory that = (PendingStory) o;
         return this.localUid.equals(that.localUid);
+    }
+
+    public Story convertToStory() {
+        Story story = new Story();
+        User user = StoryflowApplication.account().getUser();
+        story.setAuthor(user.convertToAuthor());
+        story.setDate(date);
+        story.setDescription(description);
+
+        SizedImage sizedImage = new SizedImage();
+        sizedImage.setUrl(imageUrl);
+        StoryImageModel imageModel = new StoryImageModel();
+        imageModel.setNormalSizedImage(sizedImage);
+
+        story.setImageData(imageModel);
+
+        return story;
     }
 }

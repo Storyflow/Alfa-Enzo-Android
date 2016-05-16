@@ -52,18 +52,17 @@ public class BrowseStoriesToolBar extends BaseToolBar {
         changeSizeImageView = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_increase_size);
         changePeriodImageView = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_change_period);
 
-        StoryflowApplication.account().getUser(user -> {
-            userNameTextView.setText(user.getUsername());
-            fullUserNameTextView.setText(user.getFullUserName());
-            Glide
-                    .with(getContext())
-                    .load(user.getProfileImage().getImageUrl())
-                    .bitmapTransform(new CropCircleTransformation(getContext()))
-                    .dontAnimate()
-                    .into(avatarImageView);
-            changePeriodImageView.setOnClickListener(this::onChangePeriodClicked);
-            changeSizeImageView.setOnClickListener(this::onChangeSizeClicked);
-        });
+        User user = StoryflowApplication.account().getUser();
+        userNameTextView.setText(user.getUsername());
+        fullUserNameTextView.setText(user.getFullUserName());
+        Glide
+                .with(getContext())
+                .load(user.getProfileImage().getImageUrl())
+                .bitmapTransform(new CropCircleTransformation(getContext()))
+                .dontAnimate()
+                .into(avatarImageView);
+        changePeriodImageView.setOnClickListener(this::onChangePeriodClicked);
+        changeSizeImageView.setOnClickListener(this::onChangeSizeClicked);
     }
 
     private void onChangePeriodClicked(View view) {

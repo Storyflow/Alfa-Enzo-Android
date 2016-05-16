@@ -39,6 +39,10 @@ public class Time implements Serializable {
         this(calendar.getTimeInMillis());
     }
 
+    public Time(Date date) {
+        this(date.getTime());
+    }
+
     public double getPrecise() {
         return value;
     }

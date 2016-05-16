@@ -23,4 +23,16 @@ public class StoryImageModel extends BaseModel {
     public SizedImage getExpandedSizedImage() {
         return expandedSizedImage;
     }
+
+    public void setNormalSizedImage(SizedImage normalSizedImage) {
+        this.normalSizedImage = normalSizedImage;
+    }
+
+    public void setCollapsedSizedImage(SizedImage collapsedSizedImage) {
+        this.collapsedSizedImage = collapsedSizedImage;
+    }
+
+    public void setExpandedSizedImage(SizedImage expandedSizedImage) {
+        this.expandedSizedImage = expandedSizedImage;
+    }
 }

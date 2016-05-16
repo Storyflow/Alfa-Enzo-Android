@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.rest.ErrorHandler;
 import com.thirdandloom.storyflow.utils.animations.AnimatorListener;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -49,15 +50,15 @@ public class LaunchActivity extends BaseActivity {
     }
 
     private void signInWithSavedAccount() {
-        StoryflowApplication.account().getUser(user -> {
-            String password = StoryflowApplication.account().getPassword();
-            if (!TextUtils.isEmpty(password)) {
-                signIn(user.getEmail(), password);
-            } else {
-                launchedIntent = WelcomeActivity.newInstance();
-                terminateAnimation = true;
-            }
-        });
+        User user = StoryflowApplication.account().getUser();
+
+        String password = StoryflowApplication.account().getPassword();
+        if (!TextUtils.isEmpty(password)) {
+            signIn(user.getEmail(), password);
+        } else {
+            launchedIntent = WelcomeActivity.newInstance();
+            terminateAnimation = true;
+        }
     }
 
     private void signIn(String email, String password) {
@@ -73,6 +74,7 @@ public class LaunchActivity extends BaseActivity {
                 terminateAnimation = true;
             } else {
                 StoryflowApplication.account().resetAccount();
+                StoryflowApplication.appDataPreferences.clear();
                 launchedIntent = WelcomeActivity.newInstance();
             }
         });

@@ -3,6 +3,7 @@ package com.thirdandloom.storyflow;
 import com.crashlytics.android.Crashlytics;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.managers.AccountManager;
+import com.thirdandloom.storyflow.managers.PendingStoriesManager;
 import com.thirdandloom.storyflow.preferences.AppDataPreferences;
 import com.thirdandloom.storyflow.preferences.PendingStoriesPreference;
 import com.thirdandloom.storyflow.preferences.UserDataPreferences;
@@ -35,6 +36,7 @@ public class StoryflowApplication extends Application {
     private IRestClient restClient;
     private AccountManager accountManager;
     private ConnectivityObserver connectivityObserver;
+    private PendingStoriesManager pendingStoriesManager;
 
     public static AccountManager account() {
         return instance.accountManager;
@@ -51,6 +53,10 @@ public class StoryflowApplication extends Application {
 
     public static Resources resources() {
         return applicationContext.getResources();
+    }
+
+    public static PendingStoriesManager getPendingStoriesManager() {
+        return instance.pendingStoriesManager;
     }
 
     public static void runBackground(Runnable runnable) {
@@ -101,6 +107,7 @@ public class StoryflowApplication extends Application {
         this.restClient = new RestClient(this);
         this.accountManager = new AccountManager();
         this.connectivityObserver = new ConnectivityObserver();
+        this.pendingStoriesManager = new PendingStoriesManager();
         UploadStoriesService.notifyService();
     }
 

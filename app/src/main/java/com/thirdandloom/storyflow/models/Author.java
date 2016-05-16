@@ -53,4 +53,32 @@ public class Author extends BaseModel {
     public CroppedImage getCroppedImageCover() {
         return croppedImageCover;
     }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setCroppedImageProfile(CroppedImage croppedImageProfile) {
+        this.croppedImageProfile = croppedImageProfile;
+    }
+
+    public void setCroppedImageCover(CroppedImage croppedImageCover) {
+        this.croppedImageCover = croppedImageCover;
+    }
 }

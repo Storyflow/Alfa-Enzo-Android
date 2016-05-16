@@ -78,6 +78,26 @@ public class Story extends BaseModel {
         return types.get(type);
     }
 
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setImageData(StoryImageModel imageData) {
+        this.imageData = imageData;
+    }
+
     public enum Type { Text, Image }
 
     static final Map<String, Type> types;
@@ -111,6 +131,22 @@ public class Story extends BaseModel {
 
         public String getPreviousStoryId() {
             return previousStoryId;
+        }
+
+        public void setStories(List<Story> stories) {
+            this.stories = stories;
+        }
+
+        public void addStories(List<Story> stories) {
+            this.stories.addAll(stories);
+        }
+
+        public void setNextStoryId(String nextStoryId) {
+            this.nextStoryId = nextStoryId;
+        }
+
+        public void setPreviousStoryId(String previousStoryId) {
+            this.previousStoryId = previousStoryId;
         }
     }
 }

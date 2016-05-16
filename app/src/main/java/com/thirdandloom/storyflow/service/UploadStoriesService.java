@@ -21,7 +21,6 @@ public class UploadStoriesService extends Service {
     private Future computation;
     private boolean running;
     private volatile boolean needRefresh;
-    private PendingStoriesManager pendingStoriesManager;
 
     private static Intent createIntent() {
         return new Intent(StoryflowApplication.applicationContext, UploadStoriesService.class);
@@ -183,10 +182,7 @@ public class UploadStoriesService extends Service {
     }
 
     private PendingStoriesManager getPendingStoriesManager() {
-        if (pendingStoriesManager == null) {
-            pendingStoriesManager = new PendingStoriesManager();
-        }
-        return pendingStoriesManager;
+        return StoryflowApplication.getPendingStoriesManager();
     }
 
     @Override
