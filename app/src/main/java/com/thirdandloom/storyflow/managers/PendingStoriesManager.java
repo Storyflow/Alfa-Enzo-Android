@@ -29,12 +29,12 @@ public class PendingStoriesManager {
     }
 
     private void saveData() {
-        StoryflowApplication.appDataPreferences.pendingStoriesPreference.set(getPendingStoriesContainer());
+        StoryflowApplication.applicationPreferences.pendingStoriesPreference.set(getPendingStoriesContainer());
     }
 
     private PendingStoriesContainer getPendingStoriesContainer() {
         if (pendingStoriesContainer == null) {
-            pendingStoriesContainer = StoryflowApplication.appDataPreferences.pendingStoriesPreference.get();
+            pendingStoriesContainer = StoryflowApplication.applicationPreferences.pendingStoriesPreference.get();
             if (pendingStoriesContainer == null) {
                 pendingStoriesContainer = new PendingStoriesContainer();
             }

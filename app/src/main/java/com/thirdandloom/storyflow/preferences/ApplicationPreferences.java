@@ -2,7 +2,7 @@ package com.thirdandloom.storyflow.preferences;
 
 import com.thirdandloom.storyflow.preferences.sharedpreference.BaseSharedPreferences;
 
-public class AppDataPreferences extends BaseSharedPreferences<AppDataPreferences.Key> {
+public class ApplicationPreferences extends BaseSharedPreferences<ApplicationPreferences.Key> {
 
     enum Key {
         PENDING_STORIES_CONTAINER

@@ -4,11 +4,9 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.Avatar;
 import com.thirdandloom.storyflow.models.image.CroppedImage;
 import com.thirdandloom.storyflow.models.User;
-import com.thirdandloom.storyflow.preferences.UserDataPreferences;
+import com.thirdandloom.storyflow.preferences.UserPreferences;
 import com.thirdandloom.storyflow.utils.StringUtils;
-import rx.functions.Action1;
 
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -19,14 +17,14 @@ public class AccountManager {
     private String password;
 
     public AccountManager() {
-        UserDataPreferences preferences = StoryflowApplication.userDataPreferences;
+        UserPreferences preferences = StoryflowApplication.userPreferences;
         password = preferences.password.get();
         getUser();
     }
 
     public void updateProfile(@NonNull User user) {
         currentUser = user;
-        UserDataPreferences preferences = StoryflowApplication.userDataPreferences;
+        UserPreferences preferences = StoryflowApplication.userPreferences;
         preferences.userProfile.set(currentUser);
     }
 
@@ -53,7 +51,7 @@ public class AccountManager {
 
     public User getUser() {
         if (currentUser == null) {
-            UserDataPreferences preferences = StoryflowApplication.userDataPreferences;
+            UserPreferences preferences = StoryflowApplication.userPreferences;
             currentUser = preferences.userProfile.get();
             if (currentUser == null) {
                 currentUser = new User();
@@ -68,14 +66,14 @@ public class AccountManager {
 
     public void setPassword(String password) {
         this.password = password;
-        UserDataPreferences preferences = StoryflowApplication.userDataPreferences;
+        UserPreferences preferences = StoryflowApplication.userPreferences;
         preferences.password.set(this.password);
     }
 
     public void resetAccount() {
         currentUser = null;
         password = StringUtils.EMPTY;
-        StoryflowApplication.userDataPreferences.clear();
+        StoryflowApplication.userPreferences.clear();
     }
 
     public boolean isCurrentUser(String userUid){

@@ -22,7 +22,7 @@ public class ProfileActivity extends BaseActivity {
         findViewById(R.id.activity_logout_continue).setOnClickListener(v -> {
             StoryflowApplication.restClient().clearCookies();
             StoryflowApplication.account().resetAccount();
-            StoryflowApplication.appDataPreferences.clear();
+            StoryflowApplication.applicationPreferences.clear();
             Intent intent = WelcomeActivity.newInstance();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

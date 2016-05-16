@@ -74,7 +74,7 @@ public class LaunchActivity extends BaseActivity {
                 terminateAnimation = true;
             } else {
                 StoryflowApplication.account().resetAccount();
-                StoryflowApplication.appDataPreferences.clear();
+                StoryflowApplication.applicationPreferences.clear();
                 launchedIntent = WelcomeActivity.newInstance();
             }
         });

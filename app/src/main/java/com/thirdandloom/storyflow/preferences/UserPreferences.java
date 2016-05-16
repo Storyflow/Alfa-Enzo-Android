@@ -4,7 +4,7 @@ import com.thirdandloom.storyflow.preferences.sharedpreference.BaseSharedPrefere
 import com.thirdandloom.storyflow.preferences.sharedpreference.Property;
 
 @SuppressWarnings({"PublicField", "InstanceVariableNamingConvention"})
-public class UserDataPreferences extends BaseSharedPreferences<UserDataPreferences.Key> {
+public class UserPreferences extends BaseSharedPreferences<UserPreferences.Key> {
 
     enum Key {
         USER_PROFILE,
