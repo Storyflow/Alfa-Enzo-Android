@@ -25,6 +25,7 @@ import com.thirdandloom.storyflow.rest.requestmodels.UpdateProfileImageRequestMo
 import com.thirdandloom.storyflow.rest.requestmodels.UploadImageRequestModel;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.Timber;
+import com.thirdandloom.storyflow.utils.concurrent.ThreadUtils;
 import com.thirdandloom.storyflow.utils.glide.CropRectTransformation;
 import com.thirdandloom.storyflow.utils.image.Size;
 
@@ -42,6 +43,7 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 
+import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.Map;
@@ -99,16 +101,14 @@ public class RestClient implements IRestClient {
         SignInRequestMode model = new SignInRequestMode();
         model.login = login;
         model.password = password;
-
-        apiService.signIn(model.wrap()).enqueue(new ResponseCallback<>(success, failure));
+        sendAsync(apiService.signIn(model.wrap()), new ResponseCallback<>(success, failure));
     }
 
     @Override
     public void checkEmail(String email, ResponseCallback.ISuccess success, ResponseCallback.IFailure failure) {
         CheckEmailRequestModel model = new CheckEmailRequestModel();
         model.email = email;
-
-        apiService.checkEmail(model).enqueue(new ResponseCallback<>(success, failure));
+        sendAsync(apiService.checkEmail(model), new ResponseCallback<>(success, failure));
     }
 
     @Override
@@ -121,8 +121,7 @@ public class RestClient implements IRestClient {
         model.passwordConfirmation = password;
         model.firstName = firstName;
         model.lastName = lastName;
-
-        apiService.signUp(model.wrap()).enqueue(new ResponseCallback<>(success, failure));
+        sendAsync(apiService.signUp(model.wrap()), new ResponseCallback<>(success, failure));
     }
 
     @Override
@@ -136,7 +135,7 @@ public class RestClient implements IRestClient {
                         StoryflowApplication.runBackground(() -> {
                             ProfileImageRequestModel model = new ProfileImageRequestModel();
                             model.setImageData(bitmap);
-                            apiService.createProfileImage(model).enqueue(new ResponseCallback<>(success, failure));
+                            sendAsync(apiService.createProfileImage(model), new ResponseCallback<>(success, failure));
                         });
                     }
                 });
@@ -155,7 +154,7 @@ public class RestClient implements IRestClient {
                             UpdateProfileImageRequestModel model = new UpdateProfileImageRequestModel();
                             model.setCroppedRect(croppedRect);
                             model.setImageData(bitmap);
-                            apiService.updateProfileImage(id, model).enqueue(new ResponseCallback<>(success, failure));
+                            sendAsync(apiService.updateProfileImage(id, model), new ResponseCallback<>(success, failure));
                         });
                     }
                 });
@@ -168,24 +167,25 @@ public class RestClient implements IRestClient {
         Map filters = requestData.getFilters();
         int limit = requestData.getLimit();
 
-        apiService.loadStories(period, limit, null, direction, filters).enqueue(new ResponseCallback<>(success, failure));
+        sendAsync(apiService.loadStories(period, limit, null, direction, filters), new ResponseCallback<>(success, failure));
     }
 
     @Override
     public void createTextStory(PendingStory pendingStory, ResponseCallback.ISuccess<Story> success, ResponseCallback.IFailure failure) {
         PostTextStoryRequestModel requestModel = new PostTextStoryRequestModel(pendingStory);
-        apiService.createTextStory(requestModel).enqueue(new ResponseCallback<>(success, failure));
+        sendSync(apiService.createTextStory(requestModel), new ResponseCallback<>(success, failure));
     }
 
     @Override
     public void createImageStory(PendingStory pendingStory, ResponseCallback.ISuccess<Story> success, ResponseCallback.IFailure failure) {
         PostImageStoryRequestModel requestModel = new PostImageStoryRequestModel(pendingStory);
-        apiService.createImageStory(requestModel).enqueue(new ResponseCallback<>(success, failure));
+        sendSync(apiService.createImageStory(requestModel), new ResponseCallback<>(success, failure));
     }
 
     @Override
     public void uploadImage(PendingStory pendingStory, Action0 uploadImpossible, ResponseCallback.ISuccess<StoryId> success, ResponseCallback.IFailure failure) {
-        Bitmap imageBitmap;
+        ThreadUtils.assertBackgroundThread();
+        Bitmap imageBitmap = null;
         try {
             imageBitmap =  Glide
                     .with(StoryflowApplication.applicationContext)
@@ -195,16 +195,27 @@ public class RestClient implements IRestClient {
                     .into(DeviceUtils.getDisplayWidth(), DeviceUtils.getDisplayHeight())
                     .get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            failure.failure("fail bitmap", ErrorHandler.Type.Unknown);
-            return;
+            ErrorHandler.getMessage(e, failure::failure);
         }
         if (imageBitmap == null) {
             uploadImpossible.call();
             return;
         }
         UploadImageRequestModel model = new UploadImageRequestModel(imageBitmap);
-        apiService.uploadImage(model.wrap()).enqueue(new ResponseCallback<>(success, failure));
+
+        sendSync(apiService.uploadImage(model.wrap()), new ResponseCallback<>(success, failure));
+    }
+
+    public static <T> void sendAsync(Call<T> call, Callback<T> responseCallback) {
+        call.enqueue(responseCallback);
+    }
+
+    public static <T> void sendSync(Call<T> call, Callback<T> responseCallback) {
+        try {
+            responseCallback.onResponse(call, call.execute());
+        } catch (IOException e) {
+            responseCallback.onFailure(call, e);
+        }
     }
 
     public static class ResponseCallback<T> implements Callback<T> {

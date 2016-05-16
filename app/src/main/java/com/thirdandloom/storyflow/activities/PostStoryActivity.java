@@ -190,8 +190,9 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private final PostStoryBar.Actions postStoryActions = new PostStoryBar.Actions() {
         @Override
         public void onPostStoryClicked() {
-            if (!TextUtils.isEmpty(editText.getText().toString().trim())
-                    || !TextUtils.isEmpty(state.capturedAbsolutePhotoPath)) {
+            if (TextUtils.isEmpty(editText.getText().toString().trim())) {
+                showWarning(R.string.story_should_contains_at_least_one_character);
+            } else {
                 PendingStory story = new PendingStory();
                 story.setData(editText.getText().toString(), state.capturedAbsolutePhotoPath, new Date());
                 UploadStoriesService.addStory(story);
@@ -227,20 +228,17 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String selectedPhoto = "";
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CAPTURE_PHOTO:
-                    selectedPhoto = state.capturedAbsolutePhotoPath;
                     break;
                 case SELECT_PHOTO:
-                    selectedPhoto = data.getData().toString();
+                    state.capturedAbsolutePhotoPath = data.getData().toString();
                     break;
             }
-            state.capturedAbsolutePhotoPath = selectedPhoto;
             Glide
                     .with(this)
-                    .load(selectedPhoto)
+                    .load(state.capturedAbsolutePhotoPath)
                     .into(postStoryImageView);
         }
     }

@@ -1,10 +1,13 @@
 package com.thirdandloom.storyflow.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class PendingStory extends BaseModel {
     private static final long serialVersionUID = 856012311368902178L;
@@ -16,13 +19,20 @@ public class PendingStory extends BaseModel {
     public enum Type {
         Text, Image
     }
-
+    @SerializedName("status")
     private Status status = Status.WaitingForSend;
+    @SerializedName("description")
     private String description;
+    @SerializedName("imageUrl")
     private String imageUrl;
+    @SerializedName("storyId")
     private String storyId;
+    @SerializedName("date")
     private Date date;
+    @SerializedName("type")
     private Type type;
+    @SerializedName("localUid")
+    private final String localUid = UUID.randomUUID().toString();
 
     public Status getStatus() {
         return status;
@@ -65,5 +75,21 @@ public class PendingStory extends BaseModel {
 
     public String getStoryId() {
         return storyId;
+    }
+
+    public String getLocalUid() {
+        return localUid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PendingStory)) {
+            return false;
+        }
+        PendingStory that = (PendingStory) o;
+        return this.localUid.equals(that.localUid);
     }
 }

@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 
 public abstract class BaseSharedPreferences<Key extends Enum> {
     public enum PreferenceId {
-        COMMON
+        COMMON, DATA
     }
 
     protected SharedPreferences getPreferences() {

@@ -3,7 +3,9 @@ package com.thirdandloom.storyflow;
 import com.crashlytics.android.Crashlytics;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.managers.AccountManager;
-import com.thirdandloom.storyflow.preferences.userDataPreferences;
+import com.thirdandloom.storyflow.preferences.AppDataPreferences;
+import com.thirdandloom.storyflow.preferences.PendingStoriesPreference;
+import com.thirdandloom.storyflow.preferences.UserDataPreferences;
 import com.thirdandloom.storyflow.rest.IRestClient;
 import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.service.UploadStoriesService;
@@ -25,7 +27,8 @@ public class StoryflowApplication extends Application {
     private static volatile Handler applicationHandler;
     private static volatile SimpleExecutor<Runnable> backgroundThreadExecutor;
 
-    public static volatile userDataPreferences userDataPreferences;
+    public static volatile UserDataPreferences userDataPreferences;
+    public static volatile AppDataPreferences appDataPreferences;
     public static volatile Context applicationContext;
 
     private static StoryflowApplication instance;
@@ -81,7 +84,8 @@ public class StoryflowApplication extends Application {
         applicationContext = getApplicationContext();
         applicationHandler = new Handler(applicationContext.getMainLooper());
         backgroundThreadExecutor = new SimpleExecutor<>("backgroundThreadExecutor");
-        userDataPreferences = new userDataPreferences();
+        userDataPreferences = new UserDataPreferences();
+        appDataPreferences = new AppDataPreferences();
 
         initTimber();
         final Fabric fabric = new Fabric.Builder(this)

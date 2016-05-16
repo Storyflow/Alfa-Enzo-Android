@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.service;
 
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.managers.PendingStoriesManager;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.BackgroundRunnable;
@@ -15,11 +16,12 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 public class UploadStoriesService extends Service {
-    private static final String PENDING_STORY = "pending_story";
+    private static final String ADD_PENDING_STORY = "pending_story_add";
 
     private Future computation;
     private boolean running;
     private volatile boolean needRefresh;
+    private PendingStoriesManager pendingStoriesManager;
 
     private static Intent createIntent() {
         return new Intent(StoryflowApplication.applicationContext, UploadStoriesService.class);
@@ -35,22 +37,18 @@ public class UploadStoriesService extends Service {
 
     public static void addStory(PendingStory story) {
         Intent intent = createIntent();
-        intent.putExtra(PENDING_STORY, story);
+        intent.putExtra(ADD_PENDING_STORY, story);
         notifyService(intent);
     }
 
-    public static void removeStory(PendingStory story) {
-
+    public static void retryStory(PendingStory story) {
+        notifyService();
     }
-
-    private List<PendingStory> pendingStoriesList = new ArrayList<>();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        PendingStory story = (PendingStory)intent.getSerializableExtra(PENDING_STORY);
-        if (story != null) {
-            pendingStoriesList.add(story);
-        }
+        PendingStory addedStory = (PendingStory)intent.getSerializableExtra(ADD_PENDING_STORY);
+
         if (!running) {
             running = true;
             StoryflowApplication.runBackground(new BackgroundRunnable() {
@@ -60,6 +58,7 @@ public class UploadStoriesService extends Service {
                     while (running) {
                         if (needRefresh) {
                             needRefresh = false;
+                            getPendingStoriesManager().add(addedStory);
                             refreshPendingStories();
                         }
                         try {
@@ -71,7 +70,6 @@ public class UploadStoriesService extends Service {
                 }
             }, future -> computation = future);
         }
-
         needRefresh = true;
         return START_NOT_STICKY;
     }
@@ -83,26 +81,22 @@ public class UploadStoriesService extends Service {
         List<PendingStory> failedStories = new ArrayList<>();
         List<PendingStory> impossibleUploadStories = new ArrayList<>();
 
-        for (PendingStory story : pendingStoriesList) {
+        for (PendingStory story : getPendingStoriesManager().getPendingStories()) {
             PendingStory.Status storyStatus = story.getStatus();
             switch (storyStatus) {
                 case WaitingForSend:
                     waitingForSendStories.add(story);
                     break;
-
                 case ImageUploading:
                 case CreatingStory:
                     inProgressStories.add(story);
                     break;
-
                 case CreateFailed:
                     failedStories.add(story);
                     break;
-
                 case CreateImpossible:
                     impossibleUploadStories.add(story);
                     break;
-
                 case CreateSucceed:
                     succeedStories.add(story);
                     break;
@@ -111,7 +105,7 @@ public class UploadStoriesService extends Service {
                     throw new UnsupportedOperationException("You are using unsupported pending story status");
             }
         }
-        pendingStoriesList.removeAll(succeedStories);
+        getPendingStoriesManager().removeAll(succeedStories);
         if (inProgressStories.isEmpty() && !waitingForSendStories.isEmpty()) {
             prepareForUpload(waitingForSendStories.get(0));
         }
@@ -124,11 +118,6 @@ public class UploadStoriesService extends Service {
         if (waitingForSendStories.isEmpty() && inProgressStories.isEmpty()) {
             uploadFinished();
         }
-        //just for testing
-        //if (pendingStoriesList.size() >= 4) {
-        //    pendingStoriesList.clear();
-        //    uploadFinished();
-        //}
     }
 
     private void impossibleStories(List<PendingStory> stories) {
@@ -147,50 +136,57 @@ public class UploadStoriesService extends Service {
     private void prepareForUpload(PendingStory story) {
         switch (story.getType()) {
             case Image:
-                story.setStatus(PendingStory.Status.ImageUploading);
+                getPendingStoriesManager().updateStoryStatus(PendingStory.Status.ImageUploading, story);
                 sendUploadImageRequest(story);
                 break;
             case Text:
-                story.setStatus(PendingStory.Status.CreatingStory);
+                getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreatingStory, story);
                 sendCreateTextStoryRequest(story);
                 break;
             default:
-                story.setStatus(PendingStory.Status.CreateImpossible);
+                getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateImpossible, story);
                 throw new UnsupportedOperationException("try to upload Unsupported pending story type");
         }
     }
 
     private void sendUploadImageRequest(PendingStory story) {
         StoryflowApplication.restClient().uploadImage(story, () -> {
-            story.setStatus(PendingStory.Status.CreateImpossible);
+            getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateImpossible, story);
             needRefresh = true;
         }, storyId -> {
-            story.setStoryId(storyId.getId());
+            getPendingStoriesManager().setStoryId(storyId.getId(), story);
             sendCreateImageStoryRequest(story);
         }, (errorMessage, errorType) -> {
-            story.setStatus(PendingStory.Status.CreateFailed);
+            getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateFailed, story);
             needRefresh = true;
         });
     }
 
     private void sendCreateTextStoryRequest(PendingStory story) {
         StoryflowApplication.restClient().createTextStory(story, responseBody -> {
-            story.setStatus(PendingStory.Status.CreateSucceed);
+            getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateSucceed, story);
             needRefresh = true;
         }, (errorMessage, errorType) -> {
-            story.setStatus(PendingStory.Status.CreateFailed);
+            getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateFailed, story);
             needRefresh = true;
         });
     }
 
     private void sendCreateImageStoryRequest(PendingStory story) {
         StoryflowApplication.restClient().createImageStory(story, responseBody -> {
-            story.setStatus(PendingStory.Status.CreateSucceed);
+            getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateSucceed, story);
             needRefresh = true;
         }, (errorMessage, errorType) -> {
-            story.setStatus(PendingStory.Status.CreateFailed);
+            getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateFailed, story);
             needRefresh = true;
         });
+    }
+
+    private PendingStoriesManager getPendingStoriesManager() {
+        if (pendingStoriesManager == null) {
+            pendingStoriesManager = new PendingStoriesManager();
+        }
+        return pendingStoriesManager;
     }
 
     @Override
@@ -199,6 +195,16 @@ public class UploadStoriesService extends Service {
         computation.cancel(true);
         running = false;
         needRefresh = false;
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
     }
 
     @Nullable
