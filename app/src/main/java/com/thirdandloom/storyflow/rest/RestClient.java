@@ -4,6 +4,7 @@ import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thirdandloom.storyflow.StoryflowApplication;
@@ -196,6 +197,7 @@ public class RestClient implements IRestClient {
                     .get();
         } catch (InterruptedException | ExecutionException e) {
             ErrorHandler.getMessage(e, failure::failure);
+            return;
         }
         if (imageBitmap == null) {
             uploadImpossible.call();

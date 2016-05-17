@@ -8,10 +8,10 @@ import com.thirdandloom.storyflow.utils.concurrent.BackgroundRunnable;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.*;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -190,7 +190,7 @@ public class UploadStoriesService extends Service {
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
+    public android.os.IBinder onBind(Intent intent) {
         return null;
     }
 }

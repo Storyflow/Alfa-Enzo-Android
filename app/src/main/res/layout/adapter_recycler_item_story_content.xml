@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             xmlns:tools="http://schemas.android.com/tools"
              android:layout_marginBottom="@dimen/sizeSmall">
 
     <ImageView
@@ -22,5 +22,58 @@
         android:padding="@dimen/sizeNormal"
         tools:text="Test text recycler view"
         />
+
+    <LinearLayout
+        android:id="@+id/adapter_recycler_item_horizontal_story_pending_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="@dimen/sizeNormal"
+        android:alpha="0.8"
+        tools:visibility="visible"
+        android:orientation="horizontal">
+
+        <View android:layout_width="0dp"
+              android:layout_height="0dp"
+              android:layout_weight="1"
+            />
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:gravity="top"
+                      android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/adapter_recycler_item_horizontal_story_pending_retry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Retry"
+                android:gravity="center"
+                android:paddingBottom="@dimen/sizeNormal"
+                style="@style/DarkGreyButton"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginBottom="@dimen/sizeNormal"
+                android:visibility="gone"
+                tools:visibility="visible"
+                />
+
+            <TextView
+                android:id="@+id/adapter_recycler_item_horizontal_story_pending_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:gravity="center"
+                style="@style/DarkGreyButton"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

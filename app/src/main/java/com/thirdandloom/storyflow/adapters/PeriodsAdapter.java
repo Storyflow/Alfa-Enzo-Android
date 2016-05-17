@@ -85,17 +85,14 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     public void updatePeriodType() {
-        switch (storiesManager.getRequestData().getPeriodInt()) {
-            case StoriesManager.RequestData.Period.Year:
+        switch (storiesManager.getRequestData().getPeriodType()) {
+            case Yearly:
                 periodType = PeriodType.Yearly;
                 break;
-            case StoriesManager.RequestData.Period.Year
-                    |StoriesManager.RequestData.Period.Month:
+            case Monthly:
                 periodType = PeriodType.Monthly;
                 break;
-            case StoriesManager.RequestData.Period.Year
-                    |StoriesManager.RequestData.Period.Month
-                    |StoriesManager.RequestData.Period.Day:
+            case Daily:
                 periodType = PeriodType.Daily;
                 break;
         }

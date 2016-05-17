@@ -22,4 +22,8 @@ public class SizedImage extends BaseModel {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public void setSize(SizeModel size) {
+        this.size = size;
+    }
 }

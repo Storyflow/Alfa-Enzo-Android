@@ -2,7 +2,6 @@ package com.thirdandloom.storyflow.models;
 
 import com.google.gson.annotations.SerializedName;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.managers.AccountManager;
 import com.thirdandloom.storyflow.models.image.SizedImage;
 
 import android.support.annotation.NonNull;
@@ -16,12 +15,9 @@ public class PendingStory extends BaseModel {
     private static final long serialVersionUID = 856012311368902178L;
 
     public enum Status {
-        WaitingForSend, ImageUploading, CreatingStory, CreateSucceed, CreateFailed, CreateImpossible
+        WaitingForSend, ImageUploading, CreatingStory, CreateSucceed, CreateFailed, CreateImpossible, OnServer
     }
 
-    public enum Type {
-        Text, Image
-    }
     @SerializedName("status")
     private Status status = Status.WaitingForSend;
     @SerializedName("description")
@@ -33,7 +29,7 @@ public class PendingStory extends BaseModel {
     @SerializedName("date")
     private Date date;
     @SerializedName("type")
-    private Type type;
+    private Story.Type type;
     @SerializedName("localUid")
     private final String localUid = UUID.randomUUID().toString();
 
@@ -41,14 +37,14 @@ public class PendingStory extends BaseModel {
         return status;
     }
 
-    public void setData(@NonNull String description, @Nullable String imageUrl, @NonNull Date date) {
+    public void setData(@Nullable String description, @Nullable String imageUrl, @NonNull Date date) {
         this.description = description;
         this.imageUrl = imageUrl;
         this.date = date;
         if (TextUtils.isEmpty(imageUrl)) {
-            this.type = Type.Text;
+            this.type = Story.Type.Text;
         } else {
-            this.type = Type.Image;
+            this.type = Story.Type.Image;
         }
     }
 
@@ -60,7 +56,7 @@ public class PendingStory extends BaseModel {
         return description;
     }
 
-    public Type getType() {
+    public Story.Type getType() {
         return type;
     }
 
@@ -85,15 +81,7 @@ public class PendingStory extends BaseModel {
     }
 
     public String getStringType() {
-        switch (type) {
-            case Image:
-                return "Image";
-            case Text:
-                return "Text";
-
-            default:
-                throw new UnsupportedOperationException("Invalid story type");
-        }
+        return  Story.stringFromType.get(type);
     }
 
     @Override
@@ -115,13 +103,21 @@ public class PendingStory extends BaseModel {
         story.setDate(date);
         story.setDescription(description);
 
+        SizeModel sizeModel = new SizeModel();
+        sizeModel.setHeight(0);
+        sizeModel.setWidth(0);
         SizedImage sizedImage = new SizedImage();
         sizedImage.setUrl(imageUrl);
+        sizedImage.setSize(sizeModel);
         StoryImageModel imageModel = new StoryImageModel();
         imageModel.setNormalSizedImage(sizedImage);
+        imageModel.setCollapsedSizedImage(sizedImage);
+        imageModel.setExpandedSizedImage(sizedImage);
 
         story.setImageData(imageModel);
         story.setType(getStringType());
+        story.setPendingStatus(status);
+        story.setLocalUid(localUid);
 
         return story;
     }

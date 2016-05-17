@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.models;
 
 import com.google.gson.annotations.SerializedName;
+import com.thirdandloom.storyflow.utils.models.Time;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,23 +18,26 @@ public class Story extends BaseModel {
     @SerializedName("author")
     private Author author;
     @SerializedName("storyDate")
-    private Date date;
+    private double date;
+    @SerializedName("creationDate")
+    private double createdAt;
     @SerializedName("description")
     private String description;
-    @SerializedName("likesCount")
-    private int likesCount;
-    @SerializedName("userLikes")
-    private boolean userLikes;
+    @SerializedName("commentsCount")
+    private int commentsCount;
     @SerializedName("type")
     private String type;
     @SerializedName("privacyId")
     private int privacyId;
-    @SerializedName("createdAt")
-    private Date createdAt;
     @SerializedName("image")
     private StoryImageModel imageData;
-    @SerializedName("commentsCount")
-    private int commentsCount;
+    //@SerializedName("mentions")
+    //private mentions mentions;
+    //@SerializedName("likes")
+    //private likes likes;
+
+    private PendingStory.Status pendingStatus = PendingStory.Status.OnServer;
+    private String localUid = "";
 
     public int getCommentsCount() {
         return commentsCount;
@@ -44,19 +48,11 @@ public class Story extends BaseModel {
     }
 
     public Date getCreatedAt() {
-        return createdAt;
+        return new Time(createdAt).convertToDate();
     }
 
     public int getPrivacyId() {
         return privacyId;
-    }
-
-    public boolean isUserLikes() {
-        return userLikes;
-    }
-
-    public int getLikesCount() {
-        return likesCount;
     }
 
     public String getDescription() {
@@ -64,7 +60,7 @@ public class Story extends BaseModel {
     }
 
     public Date getDate() {
-        return date;
+        return new Time(date).convertToDate();
     }
 
     public Author getAuthor() {
@@ -76,7 +72,7 @@ public class Story extends BaseModel {
     }
 
     public Type getType() {
-        return types.get(type);
+        return typeFromString.get(type);
     }
 
     public void setAuthor(Author author) {
@@ -88,7 +84,7 @@ public class Story extends BaseModel {
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.date = new Time(date).roundToMillis();
     }
 
     public void setType(String type) {
@@ -99,24 +95,48 @@ public class Story extends BaseModel {
         this.imageData = imageData;
     }
 
+    public void setPendingStatus(PendingStory.Status pendingStatus) {
+        this.pendingStatus = pendingStatus;
+    }
+
+    public PendingStory.Status getPendingStatus() {
+        return pendingStatus;
+    }
+
+    public String getLocalUid() {
+        return localUid;
+    }
+
+    public void setLocalUid(String localUid) {
+        this.localUid = localUid;
+    }
+
     public enum Type { Text, Image }
 
-    static final Map<String, Type> types;
+    public static final Map<String, Type> typeFromString;
     static {
         Map<String, Type> map = new HashMap<>();
         map.put("Image", Type.Image);
         map.put("Text", Type.Text);
-        types = Collections.unmodifiableMap(map);
+        typeFromString = Collections.unmodifiableMap(map);
+    }
+
+    public static final Map<Type, String> stringFromType;
+    static {
+        Map<Type, String> map = new HashMap<>();
+        map.put(Type.Image, "Image");
+        map.put(Type.Text, "Text");
+        stringFromType = Collections.unmodifiableMap(map);
     }
 
     public static class WrapList implements Serializable {
         private static final long serialVersionUID = 2232982624031951655L;
         @SerializedName("stories")
         private List<Story> stories = new ArrayList<>();
-        @SerializedName("nextId")
-        private String nextStoryId;
-        @SerializedName("prevId")
-        private String previousStoryId;
+        @SerializedName("nextRequestStartDate")
+        private double nextStoryStartDate;
+        @SerializedName("prevRequestStartDate")
+        private double previousStoryStartDate;
 
         public Story getStory(int position) {
             return getStories().get(position);
@@ -126,12 +146,12 @@ public class Story extends BaseModel {
             return stories;
         }
 
-        public String getNextStoryId() {
-            return nextStoryId;
+        public double getNextStoryStartDate() {
+            return nextStoryStartDate;
         }
 
-        public String getPreviousStoryId() {
-            return previousStoryId;
+        public double getPreviousStoryStartDate() {
+            return previousStoryStartDate;
         }
 
         public void setStories(List<Story> stories) {
@@ -142,12 +162,12 @@ public class Story extends BaseModel {
             this.stories.addAll(stories);
         }
 
-        public void setNextStoryId(String nextStoryId) {
-            this.nextStoryId = nextStoryId;
+        public void setNextStoryStartDate(double nextStoryStartDate) {
+            this.nextStoryStartDate = nextStoryStartDate;
         }
 
-        public void setPreviousStoryId(String previousStoryId) {
-            this.previousStoryId = previousStoryId;
+        public void setPreviousStoryStartDate(double previousStoryStartDate) {
+            this.previousStoryStartDate = previousStoryStartDate;
         }
     }
 }

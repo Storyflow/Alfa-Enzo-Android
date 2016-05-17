@@ -65,47 +65,19 @@ public class StoriesManager {
 
     @Nullable
     public Story.WrapList getStories(@NonNull Calendar calendar) {
-        List<PendingStory> pendingStories = StoryflowApplication.getPendingStoriesManager().getPendingStories();
-        List<Story> storiesForDate = new ArrayList<>();
+        List<Story> storiesForDate = StoryflowApplication.getPendingStoriesManager().getStories(calendar, getRequestData().getPeriodType());
+        Story.WrapList storiesWrapList = new Story.WrapList();
+        storiesWrapList.addStories(storiesForDate);
 
-        for (PendingStory story : pendingStories) {
-            switch (getRequestData().getPeriodInt()) {
-                case RequestData.Period.Year| RequestData.Period.Month| RequestData.Period.Day:
-                    if (DateUtils.isSameDay(calendar.getTime(), story.getDate())) {
-                        storiesForDate.add(story.convertToStory());
-                    }
-                    break;
-                case RequestData.Period.Year|RequestData.Period.Month:
-                    if (DateUtils.isSameMonth(calendar.getTime(), story.getDate())) {
-                        storiesForDate.add(story.convertToStory());
-                    }
-                    break;
-                case RequestData.Period.Year:
-                    if (DateUtils.isSameYear(calendar.getTime(), story.getDate())) {
-                        storiesForDate.add(story.convertToStory());
-                    }
-                    break;
-            }
-        }
-
-        if (store.containsKey(calendar)) {
-            return store.get(calendar);
-        } else {
+        if (!store.containsKey(calendar) && storiesWrapList.getStories().isEmpty()) {
             return null;
+        } else if (store.containsKey(calendar)) {
+            Story.WrapList storedStories = store.get(calendar);
+            storiesWrapList.addStories(storedStories.getStories());
+            storiesWrapList.setNextStoryStartDate(storedStories.getNextStoryStartDate());
+            storiesWrapList.setPreviousStoryStartDate(storedStories.getPreviousStoryStartDate());
         }
-
-//        Story.WrapList storiesWrapList = new Story.WrapList();
-//        storiesWrapList.addStories(storiesForDate);
-//
-//        if (!store.containsKey(calendar) && storiesWrapList.getStories().isEmpty()) {
-//            return null;
-//        } else if (store.containsKey(calendar)) {
-//            Story.WrapList storedStories = store.get(calendar);
-//            storiesWrapList.addStories(storedStories.getStories());
-//            storiesWrapList.setNextStoryId(storedStories.getNextStoryId());
-//            storiesWrapList.setPreviousStoryId(storedStories.getPreviousStoryId());
-//        }
-//        return storiesWrapList;
+        return storiesWrapList;
     }
 
     public void storeData(Calendar calendar, Story.WrapList list) {
@@ -121,29 +93,25 @@ public class StoriesManager {
         private static final long serialVersionUID = 292337049982264779L;
 
         private int limit = 20;
-        private int period = Period.Year|Period.Month|Period.Day;
+        private Period.Type period = Period.Type.Daily;
         private int owners = Owners.Me|Owners.Followings|Owners.Friends;
-        private int direction = Direction.None;
+        private Direction.Type direction = Direction.Type.None;
         private Date date = new Date();
 
         public void selectPeriodYearly() {
-            period = Period.Year;
+            period = Period.Type.Yearly;
         }
 
         public void selectPeriodDaily() {
-            period = Period.Year|Period.Month|Period.Day;
+            period = Period.Type.Daily;
         }
 
         public void selectPeriodMonthly() {
-            period = Period.Year|Period.Month;
+            period = Period.Type.Monthly;
         }
 
         public void setDate(Date date) {
             this.date = date;
-        }
-
-        public void setDirection(int direction) {
-            this.direction = direction;
         }
 
         public int getLimit() {
@@ -154,7 +122,7 @@ public class StoriesManager {
             return Direction.directionMap.get(direction);
         }
 
-        public int getPeriodInt() {
+        public Period.Type getPeriodType() {
             return period;
         }
 
@@ -177,15 +145,15 @@ public class StoriesManager {
         }
 
         public static class Period {
-            public static final int Year = 0x0001;
-            public static final int Month = Year << 1;
-            public static final int Day = Month << 1;
-            static final Map<Integer, String> dateFormats;
+            public enum Type {
+                Yearly, Monthly, Daily
+            }
+            static final Map<Type, String> dateFormats;
             static {
-                Map<Integer, String> map = new HashMap<>();
-                map.put(Year, "yyyy");
-                map.put(Month|Year, "yyyy/MM");
-                map.put(Day|Month|Year, "yyyy/MM/dd");
+                Map<Type, String> map = new HashMap<>();
+                map.put(Type.Yearly, "yyyy");
+                map.put(Type.Monthly, "yyyy/MM");
+                map.put(Type.Daily, "yyyy/MM/dd");
                 dateFormats = Collections.unmodifiableMap(map);
             }
         }
@@ -206,14 +174,14 @@ public class StoriesManager {
         }
 
         public static class Direction {
-            public static final int None =  0x0001;
-            public static final int Forward =  None << 1;
-            public static final int Backward = Forward << 1;
-            static final Map<Integer, String> directionMap;
+            public enum Type {
+                None, Forward, Backward
+            }
+            static final Map<Type, String> directionMap;
             static {
-                Map<Integer, String> map = new HashMap<>();
-                map.put(Forward, "forward");
-                map.put(Backward, "backward");
+                Map<Type, String> map = new HashMap<>();
+                map.put(Type.Forward, "forward");
+                map.put(Type.Backward, "backward");
                 directionMap = Collections.unmodifiableMap(map);
             }
         }

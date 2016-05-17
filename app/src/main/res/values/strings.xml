@@ -60,8 +60,6 @@
     <string name="keyboard">Keyboard</string>
     <string name="cats">Cats</string>
     <string name="retry">Retry</string>
-    <string name="story_should_contains_at_least_one_character">Story should contains at least one character.</string>
-
 
     <string name="daily">DAILY</string>
     <string name="monthly">MONTHLY</string>

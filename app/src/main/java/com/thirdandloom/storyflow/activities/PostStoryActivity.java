@@ -190,16 +190,15 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private final PostStoryBar.Actions postStoryActions = new PostStoryBar.Actions() {
         @Override
         public void onPostStoryClicked() {
-            if (TextUtils.isEmpty(editText.getText().toString().trim())) {
-                showWarning(R.string.story_should_contains_at_least_one_character);
-            } else {
-                PendingStory story = new PendingStory();
-                story.setData(editText.getText().toString(), state.capturedAbsolutePhotoPath, new Date());
-                StoryflowApplication.getPendingStoriesManager().add(story);
-                UploadStoriesService.notifyService();
-                setResult(RESULT_OK);
-                finish();
-            }
+            PendingStory story = new PendingStory();
+            String description = TextUtils.isEmpty(editText.getText().toString())
+                    ? null
+                    : editText.getText().toString();
+            story.setData(description, state.capturedAbsolutePhotoPath, new Date());
+            StoryflowApplication.getPendingStoriesManager().add(story);
+            UploadStoriesService.notifyService();
+            setResult(RESULT_OK);
+            finish();
         }
 
         @Override
