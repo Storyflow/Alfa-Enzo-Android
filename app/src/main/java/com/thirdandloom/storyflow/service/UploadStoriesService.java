@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -140,7 +139,7 @@ public class UploadStoriesService extends Service {
     }
 
     private void sendUploadImageRequest(PendingStory story) {
-        StoryflowApplication.restClient().uploadImage(story, () -> {
+        StoryflowApplication.restClient().uploadImageSync(story, () -> {
             getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateImpossible, story);
             needRefresh = true;
         }, storyId -> {
@@ -153,7 +152,7 @@ public class UploadStoriesService extends Service {
     }
 
     private void sendCreateTextStoryRequest(PendingStory story) {
-        StoryflowApplication.restClient().createTextStory(story, responseBody -> {
+        StoryflowApplication.restClient().createTextStorySync(story, responseBody -> {
             getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateSucceed, story);
             needRefresh = true;
         }, (errorMessage, errorType) -> {
@@ -163,7 +162,7 @@ public class UploadStoriesService extends Service {
     }
 
     private void sendCreateImageStoryRequest(PendingStory story) {
-        StoryflowApplication.restClient().createImageStory(story, responseBody -> {
+        StoryflowApplication.restClient().createImageStorySync(story, responseBody -> {
             getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateSucceed, story);
             needRefresh = true;
         }, (errorMessage, errorType) -> {

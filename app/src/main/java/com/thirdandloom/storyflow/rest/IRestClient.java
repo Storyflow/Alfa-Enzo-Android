@@ -60,17 +60,17 @@ public interface IRestClient {
             RestClient.ResponseCallback.ISuccess<Story.WrapList> success,
             RestClient.ResponseCallback.IFailure failure);
 
-    void createTextStory(PendingStory pendingStory,
-            RestClient.ResponseCallback.ISuccess<Story> success,
-            RestClient.ResponseCallback.IFailure failure);
+    void createTextStorySync(PendingStory pendingStory,
+                             RestClient.ResponseCallback.ISuccess<Story> success,
+                             RestClient.ResponseCallback.IFailure failure);
 
-    void createImageStory(PendingStory pendingStory,
-            RestClient.ResponseCallback.ISuccess<Story> success,
-            RestClient.ResponseCallback.IFailure failure);
+    void createImageStorySync(PendingStory pendingStory,
+                              RestClient.ResponseCallback.ISuccess<Story> success,
+                              RestClient.ResponseCallback.IFailure failure);
 
-    void uploadImage(PendingStory pendingStory, Action0 uploadImpossible,
-            RestClient.ResponseCallback.ISuccess<StoryId> success,
-            RestClient.ResponseCallback.IFailure failure);
+    void uploadImageSync(PendingStory pendingStory, Action0 uploadImpossible,
+                         RestClient.ResponseCallback.ISuccess<StoryId> success,
+                         RestClient.ResponseCallback.IFailure failure);
 
     void clearCookies();
 

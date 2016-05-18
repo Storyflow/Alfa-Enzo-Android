@@ -195,7 +195,9 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
             String description = TextUtils.isEmpty(editText.getText().toString())
                     ? null
                     : editText.getText().toString();
-            story.setData(description, state.capturedAbsolutePhotoPath, new Date());
+
+            story.setData(description, new Date());
+            story.setImageData(state.capturedAbsolutePhotoPath, postStoryImageView.getWidth(), postStoryImageView.getHeight());
             StoryflowApplication.getPendingStoriesManager().add(story);
             UploadStoriesService.notifyService();
             setResult(RESULT_OK);

@@ -172,28 +172,27 @@ public class RestClient implements IRestClient {
     }
 
     @Override
-    public void createTextStory(PendingStory pendingStory, ResponseCallback.ISuccess<Story> success, ResponseCallback.IFailure failure) {
+    public void createTextStorySync(PendingStory pendingStory, ResponseCallback.ISuccess<Story> success, ResponseCallback.IFailure failure) {
         PostTextStoryRequestModel requestModel = new PostTextStoryRequestModel(pendingStory);
         sendSync(apiService.createTextStory(requestModel), new ResponseCallback<>(success, failure));
     }
 
     @Override
-    public void createImageStory(PendingStory pendingStory, ResponseCallback.ISuccess<Story> success, ResponseCallback.IFailure failure) {
+    public void createImageStorySync(PendingStory pendingStory, ResponseCallback.ISuccess<Story> success, ResponseCallback.IFailure failure) {
         PostImageStoryRequestModel requestModel = new PostImageStoryRequestModel(pendingStory);
         sendSync(apiService.createImageStory(requestModel), new ResponseCallback<>(success, failure));
     }
 
     @Override
-    public void uploadImage(PendingStory pendingStory, Action0 uploadImpossible, ResponseCallback.ISuccess<StoryId> success, ResponseCallback.IFailure failure) {
-        ThreadUtils.assertBackgroundThread();
-        Bitmap imageBitmap = null;
+    public void uploadImageSync(PendingStory pendingStory, Action0 uploadImpossible, ResponseCallback.ISuccess<StoryId> success, ResponseCallback.IFailure failure) {
+        Bitmap imageBitmap;
         try {
             imageBitmap =  Glide
                     .with(StoryflowApplication.applicationContext)
                     .load(pendingStory.getImageUrl())
                     .asBitmap()
                     .centerCrop()
-                    .into(DeviceUtils.getDisplayWidth(), DeviceUtils.getDisplayHeight())
+                    .into(pendingStory.getImageWidth(), pendingStory.getImageHeight())
                     .get();
         } catch (InterruptedException | ExecutionException e) {
             ErrorHandler.getMessage(e, failure::failure);
@@ -213,6 +212,7 @@ public class RestClient implements IRestClient {
     }
 
     public static <T> void sendSync(Call<T> call, Callback<T> responseCallback) {
+        ThreadUtils.assertBackgroundThread();
         try {
             responseCallback.onResponse(call, call.execute());
         } catch (IOException e) {

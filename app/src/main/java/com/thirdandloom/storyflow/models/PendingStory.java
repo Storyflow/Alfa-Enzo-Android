@@ -32,19 +32,27 @@ public class PendingStory extends BaseModel {
     private Story.Type type;
     @SerializedName("localUid")
     private final String localUid = UUID.randomUUID().toString();
+    @SerializedName("imageWidth")
+    private int imageWidth;
+    @SerializedName("imageHeight")
+    private int imageHeight;
 
     public Status getStatus() {
         return status;
     }
 
-    public void setData(@Nullable String description, @Nullable String imageUrl, @NonNull Date date) {
+    public void setData(@Nullable String description, @NonNull Date date) {
         this.description = description;
-        this.imageUrl = imageUrl;
         this.date = date;
-        if (TextUtils.isEmpty(imageUrl)) {
-            this.type = Story.Type.Text;
-        } else {
+        this.type = Story.Type.Text;
+    }
+
+    public void setImageData(@Nullable String imageUrl, int width, int height) {
+        if (!TextUtils.isEmpty(imageUrl)) {
+            this.imageUrl = imageUrl;
             this.type = Story.Type.Image;
+            this.imageHeight = height;
+            this.imageWidth = width;
         }
     }
 
@@ -84,6 +92,14 @@ public class PendingStory extends BaseModel {
         return  Story.stringFromType.get(type);
     }
 
+    public int getImageHeight() {
+        return imageHeight;
+    }
+
+    public int getImageWidth() {
+        return imageWidth;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -104,8 +120,8 @@ public class PendingStory extends BaseModel {
         story.setDescription(description);
 
         SizeModel sizeModel = new SizeModel();
-        sizeModel.setHeight(0);
-        sizeModel.setWidth(0);
+        sizeModel.setHeight(imageHeight);
+        sizeModel.setWidth(imageWidth);
         SizedImage sizedImage = new SizedImage();
         sizedImage.setUrl(imageUrl);
         sizedImage.setSize(sizeModel);
