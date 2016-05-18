@@ -7,6 +7,8 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.service.UploadStoriesService;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
+import com.thirdandloom.storyflow.utils.Timber;
+import com.thirdandloom.storyflow.utils.UriUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
 import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
@@ -17,6 +19,7 @@ import com.thirdandloom.storyflow.views.emoji.KeyboardController;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -238,7 +241,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                 case CAPTURE_PHOTO:
                     break;
                 case SELECT_PHOTO:
-                    state.capturedAbsolutePhotoPath = data.getData().toString();
+                    state.capturedAbsolutePhotoPath = UriUtils.getPath(this, Uri.parse(data.getData().toString()));
                     break;
             }
             Glide
