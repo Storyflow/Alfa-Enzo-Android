@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.activities;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.PendingStory;
@@ -241,6 +242,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
             Glide
                     .with(this)
                     .load(state.capturedAbsolutePhotoPath)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(postStoryImageView);
         }
     }

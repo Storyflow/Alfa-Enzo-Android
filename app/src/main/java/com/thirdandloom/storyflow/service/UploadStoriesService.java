@@ -9,6 +9,7 @@ import com.thirdandloom.storyflow.utils.concurrent.BackgroundRunnable;
 import android.app.Service;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -120,8 +121,13 @@ public class UploadStoriesService extends Service {
     private void prepareForUpload(PendingStory story) {
         switch (story.getType()) {
             case Image:
-                getPendingStoriesManager().updateStoryStatus(PendingStory.Status.ImageUploading, story);
-                sendUploadImageRequest(story);
+                if (TextUtils.isEmpty(story.getStoryId())) {
+                    getPendingStoriesManager().updateStoryStatus(PendingStory.Status.ImageUploading, story);
+                    sendUploadImageRequest(story);
+                } else {
+                    getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreatingStory, story);
+                    sendCreateImageStoryRequest(story);
+                }
                 break;
             case Text:
                 getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreatingStory, story);

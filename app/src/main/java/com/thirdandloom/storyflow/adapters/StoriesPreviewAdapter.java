@@ -7,9 +7,7 @@ import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
-import rx.functions.Action4;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -96,11 +94,11 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
 
             retryButton.setOnClickListener(v -> {
                 StoryflowApplication.getPendingStoriesManager().retry(storyLocalUid);
-                ViewUtils.hide(v);
+                ViewUtils.hide(pendingActionsContainer);
             });
             deleteButton.setOnClickListener(v -> {
                 StoryflowApplication.getPendingStoriesManager().remove(storyLocalUid);
-                ViewUtils.hide(v);
+                ViewUtils.hide(pendingActionsContainer);
             });
         }
 
@@ -159,7 +157,6 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
             //scaleType be removed after story.getAuthor().getCroppedImageCover().getRect()
             //fixed: -180x106x735x391
             imageView.setScaleType(scaleType);
-
             ViewUtils.applyHeight(itemView, height);
             Glide
                     .with(context)
