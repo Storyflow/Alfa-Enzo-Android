@@ -7,10 +7,14 @@ import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.service.UploadStoriesService;
 import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.concurrent.BackgroundRunnable;
+import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
+
 import rx.functions.Action1;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,6 +54,7 @@ public class PendingStoriesManager {
             public void run() {
                 super.run();
                 getPendingStory(pendingStoryLocalUid, PendingStoriesManager.this::remove);
+                EventBus.getDefault().post(new StoryDeletePendingEvent());
             }
         });
     }

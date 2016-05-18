@@ -5,12 +5,17 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
 import com.thirdandloom.storyflow.fragments.StoryDetailsFragment;
 import com.thirdandloom.storyflow.managers.StoriesManager;
+import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
+import com.thirdandloom.storyflow.utils.event.StoryCreationSuccessEvent;
+import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.views.TabBar;
 import com.thirdandloom.storyflow.views.recyclerview.DisableScrollLinearLayoutManager;
 import com.thirdandloom.storyflow.views.recyclerview.SnappyLinearLayoutManager;
@@ -30,6 +35,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -70,6 +79,19 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
         findViews();
         initGui();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
 
     private void findViews() {
         horizontalRecyclerView = (SnappyRecyclerView) findViewById(R.id.activity_browse_stories_horizontal_recycler_view);
@@ -271,6 +293,26 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
                 getPeriodsAdapter().onNewStoriesFetchFailed(position);
             });
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(StoryCreationFailedEvent event) {
+        getPeriodsAdapter().notifyDataSetChanged();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(StoryCreationSuccessEvent event) {
+        PendingStory story = event.getStory();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(story.getDate());
+        StoryflowApplication.restClient().loadStories(getPeriodsAdapter().getStoriesManager().getRequestData(calendar), (Story.WrapList list) -> {
+            getPeriodsAdapter().onNewStoriesFetched(list, calendar);
+        }, null);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(StoryDeletePendingEvent event) {
+        getPeriodsAdapter().notifyDataSetChanged();
     }
 
     private boolean canUpdateData() {

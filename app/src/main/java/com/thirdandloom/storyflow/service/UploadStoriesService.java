@@ -5,11 +5,15 @@ import com.thirdandloom.storyflow.managers.PendingStoriesManager;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.BackgroundRunnable;
+import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
+import com.thirdandloom.storyflow.utils.event.StoryCreationSuccessEvent;
 
 import android.app.Service;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,7 +137,7 @@ public class UploadStoriesService extends Service {
 
     private void sendCreateTextStoryRequest(PendingStory story) {
         StoryflowApplication.restClient().createTextStorySync(story, responseBody -> {
-            storyCreationSucceseed(story);
+            storyCreationSucceed(story);
         }, (errorMessage, errorType) -> {
             storyCreationFailed(story);
         });
@@ -141,7 +145,7 @@ public class UploadStoriesService extends Service {
 
     private void sendCreateImageStoryRequest(PendingStory story) {
         StoryflowApplication.restClient().createImageStorySync(story, responseBody -> {
-            storyCreationSucceseed(story);
+            storyCreationSucceed(story);
         }, (errorMessage, errorType) -> {
             storyCreationFailed(story);
         });
@@ -151,21 +155,24 @@ public class UploadStoriesService extends Service {
         return StoryflowApplication.getPendingStoriesManager();
     }
 
-    private void storyCreationSucceseed(PendingStory story) {
+    private void storyCreationSucceed(PendingStory story) {
         getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateSucceed, story);
         needRefresh = true;
+        Timber.d("StoryCreationFailed onEvent post");
+
+        EventBus.getDefault().post(new StoryCreationSuccessEvent(story));
     }
 
     private void storyCreationFailed(PendingStory story) {
         getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateFailed, story);
         needRefresh = true;
-        //notify ui
+        EventBus.getDefault().post(new StoryCreationFailedEvent(story));
     }
 
     private void storyCreationImpossible(PendingStory story) {
         getPendingStoriesManager().updateStoryStatus(PendingStory.Status.CreateImpossible, story);
         needRefresh = true;
-        //notify ui
+        EventBus.getDefault().post(new StoryCreationFailedEvent(story));
     }
 
     @Override
