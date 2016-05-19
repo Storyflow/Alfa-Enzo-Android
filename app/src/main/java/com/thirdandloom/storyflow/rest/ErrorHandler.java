@@ -58,6 +58,14 @@ public class ErrorHandler {
                 // https://www.pivotaltracker.com/story/show/117060705
                 JsonPrimitive primitive = (JsonPrimitive) jsonElement.getAsJsonObject().get("errors");
                 error.call(primitive.getAsString(), Type.Backend);
+            } else if (jsonElement.getAsJsonObject().get("error") instanceof JsonArray) {
+                ApiError apiError = ApiError.newInstance(errorBodyString);
+                error.call(ApiError.getMessage(apiError), Type.Backend);
+            } else if (jsonElement.getAsJsonObject().get("error") instanceof JsonPrimitive) {
+                // TODO temp solution, should be removed after backend fixes:
+                // https://www.pivotaltracker.com/story/show/117060705
+                JsonPrimitive primitive = (JsonPrimitive) jsonElement.getAsJsonObject().get("error");
+                error.call(primitive.getAsString(), Type.Backend);
             }
 
         } catch (JsonSyntaxException e) {
@@ -116,6 +124,7 @@ public class ErrorHandler {
             map.put("EXISTING_USERNAME", R.string.user_name_exist);
             map.put("INVALID_EMAIL", R.string.email_is_invalid);
             map.put("THIS_EMAIL_IS_ALREADY_TAKEN", R.string.email_is_already_taken);
+            map.put("AUTHENTICATION ERROR", R.string.authentication_error);
 
             codes = Collections.unmodifiableMap(map);
         }

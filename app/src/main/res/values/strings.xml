@@ -33,6 +33,7 @@
     <string name="user_name_exist">User name already exist.</string>
     <string name="email_is_invalid">Email is invalid.</string>
     <string name="email_is_already_taken">Email is already taken.</string>
+    <string name="authentication_error">Unauthorized user. Please restart app.</string>
     <string name="email_was_successfully_sent">Email was successfully sent.</string>
     <string name="choose_user_name">Choose a user name</string>
     <string name="email">Email</string>
