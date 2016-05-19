@@ -3,7 +3,7 @@ package com.thirdandloom.storyflow.activities;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
-import com.thirdandloom.storyflow.fragments.StoryDetailsFragment;
+import com.thirdandloom.storyflow.fragments.ReadingStoriesFragment;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
@@ -11,7 +11,6 @@ import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.utils.event.StoryCreationSuccessEvent;
@@ -45,14 +44,14 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsFragment.IStoryDetailFragmentDataSource {
+public class BrowseStoriesActivity extends BaseActivity implements ReadingStoriesFragment.IStoryDetailFragmentDataSource {
     private static final int CREATE_NEW_STORY = 1;
 
     private SnappyRecyclerView horizontalRecyclerView;
     private View periodChooserView;
     private TabBar tabBar;
     private Action1<Float> takeScrollValue;
-    private StoryDetailsFragment storyDetailsFragment;
+    private ReadingStoriesFragment storyDetailsFragment;
     private int recyclerViewScrollState = RecyclerView.SCROLL_STATE_IDLE;
 
     public static Intent newInstance(boolean continueAnimation) {
@@ -237,8 +236,8 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
     }
 
     @Override
-    public List<Integer> getDataSource() {
-        return null;
+    public StoriesManager getStoriesManager() {
+        return getPeriodsAdapter().getStoriesManager();
     }
 
     @Override
@@ -343,10 +342,10 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
                 takeScrollValue.call(scrollDelta);
             if (scrollAbsolute > 0) {
                 if (storyDetailsFragment == null || !storyDetailsFragment.isAdded()) {
-                    storyDetailsFragment = StoryDetailsFragment.newInstance(scrollingView, false);
+                    storyDetailsFragment = ReadingStoriesFragment.newInstance(scrollingView, false);
                     FragmentManager fm = getSupportFragmentManager();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, StoryDetailsFragment.class.getSimpleName());
+                    ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, ReadingStoriesFragment.class.getSimpleName());
                     ft.commit();
                 }
             } else {
@@ -363,10 +362,10 @@ public class BrowseStoriesActivity extends BaseActivity implements StoryDetailsF
 
         @Override
         public void onClick(View view) {
-            storyDetailsFragment = StoryDetailsFragment.newInstance(view, true);
+            storyDetailsFragment = ReadingStoriesFragment.newInstance(view, true);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, StoryDetailsFragment.class.getSimpleName());
+            ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, ReadingStoriesFragment.class.getSimpleName());
             ft.commit();
         }
 

@@ -1,13 +1,18 @@
 package com.thirdandloom.storyflow.fragments;
 
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.adapters.InlineStickyTestAdapter;
+import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
+import com.thirdandloom.storyflow.views.recyclerview.decoration.StickyHeaderDecoration;
 import rx.functions.Action1;
 
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,9 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class StoryDetailsFragment extends BaseFragment {
+public class ReadingStoriesFragment extends BaseFragment {
     private static final int MAX_SCALE = 100;
     private static final int FINISH_POSITION = 0;
     private static final int FINISH_ALPHA = 1;
@@ -32,14 +36,14 @@ public class StoryDetailsFragment extends BaseFragment {
     private static final int PRESENT_ANIMATION_DURATION_MS = 300;
 
     public interface IStoryDetailFragmentDataSource {
-        List<Integer> getDataSource();
+        StoriesManager getStoriesManager();
         void setTakeScrollDelta(Action1<Float> takeScroll);
     }
 
+    private IStoryDetailFragmentDataSource dataSource;
     private RecyclerView recyclerView;
     private View viewContainer;
     private View backgroundView;
-    private List<Integer> recyclerViewDataSource;
 
     private boolean canResize;
     private boolean didDraw;
@@ -89,7 +93,23 @@ public class StoryDetailsFragment extends BaseFragment {
     }
 
     private void initRecyclerView() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        Timber.d("initRecyclerView");
+
+        final DividerDecoration divider = new DividerDecoration.Builder(this.getActivity())
+                .setHeight(R.dimen.sizeTiny)
+                .setPadding(R.dimen.sizeNormal)
+                .setColorResource(R.color.greyDark)
+                .build();
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        recyclerView.addItemDecoration(divider);
+
+        final InlineStickyTestAdapter adapter = new InlineStickyTestAdapter(this.getActivity());
+        StickyHeaderDecoration decor = new StickyHeaderDecoration(adapter, true);
+        setHasOptionsMenu(true);
+        recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(decor, 1);
 
         //HorizontalRecyclerViewAdapter adapter = new HorizontalRecyclerViewAdapter(getContext());
         //adapter.setItems(recyclerViewDataSource);
@@ -216,16 +236,16 @@ public class StoryDetailsFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (!(activity instanceof IStoryDetailFragmentDataSource)) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof IStoryDetailFragmentDataSource)) {
             throw new UnsupportedOperationException("activity should be instanceof IStoryDetailFragmentDataSource");
         }
-        recyclerViewDataSource = ((IStoryDetailFragmentDataSource)activity).getDataSource();
+        dataSource = ((IStoryDetailFragmentDataSource)context);
     }
 
-    public static StoryDetailsFragment newInstance(View fromView, boolean startPresentAnimation) {
-        StoryDetailsFragment fragment = new StoryDetailsFragment();
+    public static ReadingStoriesFragment newInstance(View fromView, boolean startPresentAnimation) {
+        ReadingStoriesFragment fragment = new ReadingStoriesFragment();
         Bundle args = new Bundle();
         State state = new State();
         ViewUtils.getLocationInWindow(fromView, (x, y) -> {

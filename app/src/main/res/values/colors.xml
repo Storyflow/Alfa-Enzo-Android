@@ -7,11 +7,11 @@
     <color name="greyDark">#111418</color>
     <color name="greyLightDark">#4D5053</color>
     <color name="greyLight">#999999</color>
-    <color name="greyLighter">#8B9197</color> // unselected
-    <color name="greyXLighter">#FFBDBDBD</color> //status bar color
-    <color name="greyLightest">#C5C8CB</color> //selected placeholder
-    <color name="greyMostLightest">#EBEBEB</color> // separator
-    <color name="greyWhite">#F7F8F8</color> //shape background
+    <color name="greyLighter">#8B9197</color>
+    <color name="greyXLighter">#FFBDBDBD</color>
+    <color name="greyLightest">#C5C8CB</color>
+    <color name="greyMostLightest">#EBEBEB</color>
+    <color name="greyWhite">#F7F8F8</color>
 
     <color name="white">#FFFFFF</color>
     <color name="whiteTransparent">#CCFFFFFF</color>

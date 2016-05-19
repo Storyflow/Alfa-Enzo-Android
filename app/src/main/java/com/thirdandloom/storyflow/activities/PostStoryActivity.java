@@ -16,6 +16,7 @@ import com.thirdandloom.storyflow.views.PostStoryBar;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
 import com.thirdandloom.storyflow.views.emoji.CatsStickersView;
 import com.thirdandloom.storyflow.views.emoji.KeyboardController;
+import org.w3c.dom.Text;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -195,16 +196,21 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         @Override
         public void onPostStoryClicked() {
             PendingStory story = new PendingStory();
-            String description = TextUtils.isEmpty(editText.getText().toString())
+            String description = editText.getText().toString().trim();
+            description = TextUtils.isEmpty(description)
                     ? null
-                    : editText.getText().toString();
+                    : description;
 
-            story.setData(description, new Date());
-            story.setImageData(state.capturedAbsolutePhotoPath, postStoryImageView.getWidth(), postStoryImageView.getHeight());
-            StoryflowApplication.getPendingStoriesManager().add(story);
-            UploadStoriesService.notifyService();
-            setResult(RESULT_OK);
-            finish();
+            if (description == null && TextUtils.isEmpty(state.capturedAbsolutePhotoPath)) {
+                showWarning(R.string.story_should_contain_at_least_one_character);
+            } else {
+                story.setData(description, new Date());
+                story.setImageData(state.capturedAbsolutePhotoPath, postStoryImageView.getWidth(), postStoryImageView.getHeight());
+                StoryflowApplication.getPendingStoriesManager().add(story);
+                UploadStoriesService.notifyService();
+                setResult(RESULT_OK);
+                finish();
+            }
         }
 
         @Override
