@@ -7,8 +7,8 @@ import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.GradientOnTopStickyHeaderDecoration;
 import rx.functions.Action1;
@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 public class ReadingStoriesFragment extends BaseFragment {
     private static final int MAX_SCALE = 100;
@@ -37,14 +38,9 @@ public class ReadingStoriesFragment extends BaseFragment {
     private static final int PRESENT_ANIMATION_DURATION_MS = 300;
 
     public interface IStoryDetailFragmentDataSource {
-        StoriesManager getStoriesManager();
         void setTakeScrollDelta(Action1<Float> takeScroll);
     }
 
-    //Story.WrapList
-    //StoriesManager.RequestData
-
-    private IStoryDetailFragmentDataSource dataSource;
     private RecyclerView recyclerView;
     private View viewContainer;
     private View backgroundView;
@@ -60,6 +56,10 @@ public class ReadingStoriesFragment extends BaseFragment {
     private int firstStartY;
     private int absoluteScroll;
 
+    private StoriesManager.RequestData requestData;
+    private Calendar dateCalendar;
+    private Story.WrapList stories;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +67,10 @@ public class ReadingStoriesFragment extends BaseFragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.fragment_story_details_recycler_view);
         viewContainer = view.findViewById(R.id.fragment_story_details_recycler_view_container);
         backgroundView = view.findViewById(R.id.fragment_story_details_background);
+
+        requestData = getState().requestData;
+        stories = getState().stories;
+        dateCalendar = getState().dateCalendar;
 
         initRecyclerView();
         takeScrollFromParent(this::onParentScroll);
@@ -96,26 +100,33 @@ public class ReadingStoriesFragment extends BaseFragment {
         return view;
     }
 
-    private void initRecyclerView() {
-        Timber.d("initRecyclerView");
+    private State getState() {
+        return (State) getArguments().getSerializable(State.KEY);
+    }
 
+    private ReadingStoriesAdapter readingStoriesAdapter;
+    private void initRecyclerView() {
         final DividerDecoration divider = new DividerDecoration.Builder(this.getActivity())
                 .setHeight(R.dimen.sizeNormal)
                 .setColorResource(R.color.greyMostLightest)
                 .build();
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(divider);
 
-        final ReadingStoriesAdapter adapter = new ReadingStoriesAdapter();
-        GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(adapter, true);
+        readingStoriesAdapter = new ReadingStoriesAdapter(stories, dateCalendar);
+        GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(readingStoriesAdapter, true);
         setHasOptionsMenu(true);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(readingStoriesAdapter);
         recyclerView.addItemDecoration(decor, 1);
-
-        //HorizontalRecyclerViewAdapter adapter = new HorizontalRecyclerViewAdapter(getContext());
-        //adapter.setItems(recyclerViewDataSource);
-        //recyclerView.setAdapter(adapter);
+        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore() {
+                //readingStoriesAdapter.getStories().
+                // do something...
+            }
+        });
     }
 
     public void onDragFinished(int velocity) {
@@ -243,10 +254,9 @@ public class ReadingStoriesFragment extends BaseFragment {
         if (!(context instanceof IStoryDetailFragmentDataSource)) {
             throw new UnsupportedOperationException("activity should be instanceof IStoryDetailFragmentDataSource");
         }
-        dataSource = ((IStoryDetailFragmentDataSource)context);
     }
 
-    public static ReadingStoriesFragment newInstance(View fromView, boolean startPresentAnimation) {
+    public static ReadingStoriesFragment newInstance(View fromView, boolean startPresentAnimation, StoriesManager storiesManager, Calendar calendar) {
         ReadingStoriesFragment fragment = new ReadingStoriesFragment();
         Bundle args = new Bundle();
         State state = new State();
@@ -257,6 +267,9 @@ public class ReadingStoriesFragment extends BaseFragment {
         state.width = fromView.getWidth();
         state.height = fromView.getHeight();
         state.startPresentAnimation = startPresentAnimation;
+        state.requestData = storiesManager.getRequestData();
+        state.stories = storiesManager.getDisplayingStories(calendar);
+        state.dateCalendar = calendar;
         args.putSerializable(State.KEY, state);
         fragment.setArguments(args);
         return fragment;
@@ -271,6 +284,10 @@ public class ReadingStoriesFragment extends BaseFragment {
         private float width;
         private float height;
 
-        boolean startPresentAnimation;
+        private boolean startPresentAnimation;
+
+        private StoriesManager.RequestData requestData;
+        private Story.WrapList stories;
+        private Calendar dateCalendar;
     }
 }

@@ -180,8 +180,8 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             void onDragStarted();
             void onDragFinished(int velocity);
             void pullToRefreshMotionNotifier(int motionEventAction);
-            void onDrag(float scrollAbsolute, float scrollDelta, View scrollingView);
-            void onClick(View view);
+            void onDrag(float scrollAbsolute, float scrollDelta, View scrollingView, Calendar calendar);
+            void onClick(View view, Calendar calendar);
             void onPullToRefreshStarted(SwipeRefreshLayout refreshLayout, Calendar calendar);
         }
 
@@ -215,10 +215,16 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             recyclerView.setLayoutManager(manager);
             recyclerView.setDragStarted(actions::onDragStarted);
             recyclerView.setDragFinished(actions::onDragFinished);
-            recyclerView.setOnDrag(actions::onDrag);
-            recyclerView.setOnClick(() -> actions.onClick(recyclerView));
+            recyclerView.setOnDrag((current, delta, view) -> {
+                actions.onDrag(current, delta, view, getDateCalendar());
+            });
+            recyclerView.setOnClick(() -> {
+                actions.onClick(recyclerView, getDateCalendar());
+            });
 
-            itemView.setOnClickListener(v -> actions.onClick(recyclerView));
+            itemView.setOnClickListener(v -> {
+                actions.onClick(recyclerView, getDateCalendar());
+            });
         }
 
         public void setDateCalendar(Calendar dateCalendar) {

@@ -2,9 +2,9 @@ package com.thirdandloom.storyflow.adapters;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.StickyHeaderAdapter;
 
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +12,24 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Calendar;
+import java.util.LinkedHashMap;
+
 public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
         StickyHeaderAdapter<ReadingStoriesAdapter.ReadingStoryHeaderHolder> {
 
     private static final int STORY = 0;
     private static final int LOADING = 1;
+
+    private LinkedHashMap<Calendar, Story.WrapList> store = new LinkedHashMap<>();
+
+    public ReadingStoriesAdapter(Story.WrapList stories, Calendar dateCalendar) {
+        store.put(dateCalendar, stories);
+    }
+
+    //public Story.WrapList getStories() {
+    //    return store.entrySet().size();
+    //}
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -87,7 +100,7 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public static class ReadingStoryHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
-        
+
         public ReadingStoryHolder(View itemView) {
             super(itemView);
             imageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_imageview);

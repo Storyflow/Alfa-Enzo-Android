@@ -236,11 +236,6 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     }
 
     @Override
-    public StoriesManager getStoriesManager() {
-        return getPeriodsAdapter().getStoriesManager();
-    }
-
-    @Override
     public void setTakeScrollDelta(Action1<Float> takeScroll) {
         this.takeScrollValue = takeScroll;
     }
@@ -337,12 +332,12 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         }
 
         @Override
-        public void onDrag(float scrollAbsolute, float scrollDelta, View scrollingView) {
+        public void onDrag(float scrollAbsolute, float scrollDelta, View scrollingView, Calendar calendar) {
             if (takeScrollValue != null)
                 takeScrollValue.call(scrollDelta);
             if (scrollAbsolute > 0) {
                 if (storyDetailsFragment == null || !storyDetailsFragment.isAdded()) {
-                    storyDetailsFragment = ReadingStoriesFragment.newInstance(scrollingView, false);
+                    storyDetailsFragment = ReadingStoriesFragment.newInstance(scrollingView, false,  getPeriodsAdapter().getStoriesManager(), calendar);
                     FragmentManager fm = getSupportFragmentManager();
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, ReadingStoriesFragment.class.getSimpleName());
@@ -361,8 +356,8 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         }
 
         @Override
-        public void onClick(View view) {
-            storyDetailsFragment = ReadingStoriesFragment.newInstance(view, true);
+        public void onClick(View view, Calendar calendar) {
+            storyDetailsFragment = ReadingStoriesFragment.newInstance(view, true,  getPeriodsAdapter().getStoriesManager(), calendar);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.activity_browse_stories_container, storyDetailsFragment, ReadingStoriesFragment.class.getSimpleName());
