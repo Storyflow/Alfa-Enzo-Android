@@ -106,4 +106,10 @@
     <string name="profile">Profile</string>
     <string name="no_stories">NO STORIES</string>
 
+    <string name="star">Star</string>
+    <string name="comment">Comment</string>
+    <string name="save">Save</string>
+    <string name="stars">0 Stars</string>
+    <string name="comments">0 Comments</string>
+
 </resources>

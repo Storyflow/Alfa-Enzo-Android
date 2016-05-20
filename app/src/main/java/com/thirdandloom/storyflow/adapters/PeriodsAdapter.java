@@ -150,11 +150,11 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         StoriesPreviewAdapter adapter;
         if (!storyDate.equals(storyHolder.getDateCalendar())) {
             storyHolder.setDateCalendar(storyDate);
-            adapter = new StoriesPreviewAdapter(context, storiesManager.getStories(storyDate), getItemWidthPixel());
+            adapter = new StoriesPreviewAdapter(context, storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
             storyHolder.recyclerView.setAdapter(adapter);
         } else {
             adapter = (StoriesPreviewAdapter)storyHolder.recyclerView.getAdapter();
-            adapter.setData(storiesManager.getStories(storyDate), getItemWidthPixel());
+            adapter.setData(storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
             adapter.notifyDataSetChanged();
         }
 

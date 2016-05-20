@@ -1,15 +1,16 @@
 package com.thirdandloom.storyflow.fragments;
 
 import com.thirdandloom.storyflow.R;
-import com.thirdandloom.storyflow.adapters.InlineStickyTestAdapter;
+import com.thirdandloom.storyflow.adapters.ReadingStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
+import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
-import com.thirdandloom.storyflow.views.recyclerview.decoration.StickyHeaderDecoration;
+import com.thirdandloom.storyflow.views.recyclerview.decoration.GradientOnTopStickyHeaderDecoration;
 import rx.functions.Action1;
 
 import android.content.Context;
@@ -39,6 +40,9 @@ public class ReadingStoriesFragment extends BaseFragment {
         StoriesManager getStoriesManager();
         void setTakeScrollDelta(Action1<Float> takeScroll);
     }
+
+    //Story.WrapList
+    //StoriesManager.RequestData
 
     private IStoryDetailFragmentDataSource dataSource;
     private RecyclerView recyclerView;
@@ -96,17 +100,15 @@ public class ReadingStoriesFragment extends BaseFragment {
         Timber.d("initRecyclerView");
 
         final DividerDecoration divider = new DividerDecoration.Builder(this.getActivity())
-                .setHeight(R.dimen.sizeTiny)
-                .setPadding(R.dimen.sizeNormal)
-                .setColorResource(R.color.greyDark)
+                .setHeight(R.dimen.sizeNormal)
+                .setColorResource(R.color.greyMostLightest)
                 .build();
 
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         recyclerView.addItemDecoration(divider);
 
-        final InlineStickyTestAdapter adapter = new InlineStickyTestAdapter(this.getActivity());
-        StickyHeaderDecoration decor = new StickyHeaderDecoration(adapter, true);
+        final ReadingStoriesAdapter adapter = new ReadingStoriesAdapter();
+        GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(adapter, true);
         setHasOptionsMenu(true);
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(decor, 1);

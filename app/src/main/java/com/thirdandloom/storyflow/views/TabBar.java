@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.views;
 
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 
@@ -11,8 +12,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 public class TabBar extends LinearLayout {
-    private static final int MIN_HEIGHT_DP = 68;
-
     public interface Actions {
         void updatesClicked();
         void messagesClicked();
@@ -42,7 +41,7 @@ public class TabBar extends LinearLayout {
     private void init() {
         inflate(getContext(), R.layout.view_tab_bar, this);
         setOrientation(HORIZONTAL);
-        setMinimumHeight(AndroidUtils.dp(MIN_HEIGHT_DP));
+        setMinimumHeight(StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.tabBarHeight));
         setBackground(getResources().getDrawable(R.drawable.shape_black_gradient));
         setPadding(0, 0, 0, getResources().getDimensionPixelOffset(R.dimen.sizeNormal));
 

@@ -16,14 +16,8 @@
 
 package com.thirdandloom.storyflow.views.recyclerview.decoration;
 
-import com.thirdandloom.storyflow.utils.AndroidUtils;
-
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Shader;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -147,11 +141,6 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
         final int count = parent.getChildCount();
 
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-        paint.setShader(new LinearGradient(0, 0, 0, AndroidUtils.dp(72), Color.BLACK, Color.TRANSPARENT, Shader.TileMode.MIRROR));
-        c.drawRect(parent.getLeft(), parent.getTop(), parent.getRight(), AndroidUtils.dp(72), paint);
-
         for (int layoutPos = 0; layoutPos < count; layoutPos++) {
             final View child = parent.getChildAt(layoutPos);
 
@@ -163,7 +152,6 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
                 final int left = child.getLeft();
                 final int top = getHeaderTop(parent, child, header, adapterPos, layoutPos);
                 c.translate(left, top);
-
 
                 header.setTranslationX(left);
                 header.setTranslationY(top);

@@ -22,5 +22,9 @@
     <dimen name="roundCorner">8dp</dimen>
     <dimen name="buttonMargin">24dp</dimen>
     <dimen name="buttonSizeNormal">48dp</dimen>
+    <dimen name="headerHeight">72dp</dimen>
+    <dimen name="progressHolderHeight">140dp</dimen> // tabBarHeight + headerHeight
+    <dimen name="tabBarHeight">68dp</dimen>
+
 
 </resources>
