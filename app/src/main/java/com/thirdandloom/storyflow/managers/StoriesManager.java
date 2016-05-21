@@ -134,7 +134,7 @@ public class StoriesManager {
         public String getNextStoryDateString() {
             if (nextStoryDate == null) return null;
 
-            String nextDate = new BigDecimal(nextStoryDate, MathContext.DECIMAL64).toString();
+            String nextDate = new BigDecimal(nextStoryDate).toString();
             return nextDate;
         }
 
