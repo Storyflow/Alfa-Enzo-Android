@@ -167,8 +167,9 @@ public class RestClient implements IRestClient {
         String period = requestData.getPeriod();
         Map filters = requestData.getFilters();
         int limit = requestData.getLimit();
+        String startDate = requestData.getNextStoryDateString();
 
-        sendAsync(apiService.loadStories(period, limit, null, direction, filters), new ResponseCallback<>(success, failure));
+        sendAsync(apiService.loadStories(period, limit, startDate, direction, filters), new ResponseCallback<>(success, failure));
     }
 
     @Override

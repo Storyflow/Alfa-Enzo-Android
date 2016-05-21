@@ -111,7 +111,7 @@ public interface IRestClient {
         @GET("/swan/stories/")
         Call<Story.WrapList> loadStories(@Query("period") String period,
                 @Query("limit") int storiesLimit,
-                @Query("startStoryId") String startStoryId,
+                @Query("startDate") String startDate,
                 @Query("direction") String direction,
                 @QueryMap Map<String, String> filters);
 

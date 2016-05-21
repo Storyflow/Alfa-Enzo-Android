@@ -1,12 +1,14 @@
 package com.thirdandloom.storyflow.fragments;
 
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.adapters.ReadingStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
@@ -115,7 +117,7 @@ public class ReadingStoriesFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(divider);
 
-        readingStoriesAdapter = new ReadingStoriesAdapter(stories, dateCalendar);
+        readingStoriesAdapter = new ReadingStoriesAdapter(stories, dateCalendar, requestData, getActivity());
         GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(readingStoriesAdapter, true);
         setHasOptionsMenu(true);
         recyclerView.setAdapter(readingStoriesAdapter);
@@ -123,10 +125,41 @@ public class ReadingStoriesFragment extends BaseFragment {
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
             @Override
             public void onLoadMore() {
-                //readingStoriesAdapter.getStories().
-                // do something...
+                Timber.d("onLoadMore");
+                loadMoreStories();
             }
         });
+    }
+
+    private void loadMoreStories() {
+        Double nextStoryDate = readingStoriesAdapter.getNextStoryDate();
+        if (nextStoryDate != null) {
+            requestData.setDirection(StoriesManager.RequestData.Direction.Type.Forward);
+            requestData.setNextStoryDate(nextStoryDate);
+            requestData.setDate(readingStoriesAdapter.getCurrentCalendarDate().getTime());
+            StoryflowApplication.restClient().loadStories(requestData, (Story.WrapList list) -> {
+                readingStoriesAdapter.addNewStories(list);
+                readingStoriesAdapter.notifyDataSetChanged();
+            }, (errorMessage, type) -> {
+                //need to check fail behaviour
+                readingStoriesAdapter.notifyDataSetChanged();
+                Timber.d("onLoadMore error: %s", errorMessage);
+            });
+
+        } else {
+            Calendar nextCalendar = readingStoriesAdapter.getPreviousCalendarDate();
+            requestData.setDate(nextCalendar.getTime());
+            requestData.setNextStoryDate(null);
+            requestData.setDirection(StoriesManager.RequestData.Direction.Type.None);
+            StoryflowApplication.restClient().loadStories(requestData, (Story.WrapList list) -> {
+                readingStoriesAdapter.addNewStories(list, nextCalendar);
+                readingStoriesAdapter.notifyDataSetChanged();
+            }, (errorMessage, type) -> {
+                //need to check fail behaviour
+                readingStoriesAdapter.notifyDataSetChanged();
+                Timber.d("onLoadMore error: %s", errorMessage);
+            });
+        }
     }
 
     public void onDragFinished(int velocity) {

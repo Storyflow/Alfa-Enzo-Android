@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.models;
 
 import com.google.gson.annotations.SerializedName;
+import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.models.Time;
 
 import java.io.Serializable;
@@ -36,8 +37,21 @@ public class Story extends BaseModel {
     //@SerializedName("likes")
     //private likes likes;
 
+    public enum FillType {
+        Filled, Empty
+    }
+
     private PendingStory.Status pendingStatus = PendingStory.Status.OnServer;
     private String localUid = "";
+    private FillType fillType = FillType.Filled;
+
+    public FillType getFillType() {
+        return fillType;
+    }
+
+    public void setFillType(FillType fillType) {
+        this.fillType = fillType;
+    }
 
     public int getCommentsCount() {
         return commentsCount;
@@ -84,7 +98,7 @@ public class Story extends BaseModel {
     }
 
     public void setDate(Date date) {
-        this.date = new Time(date).roundToMillis();
+        this.date = new Time(date).roundToMillis()/DateUtils.MS_IN_SEC;
     }
 
     public void setType(String type) {

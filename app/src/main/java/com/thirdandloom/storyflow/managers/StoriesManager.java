@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,6 +104,7 @@ public class StoriesManager {
         private int owners = Owners.Me|Owners.Followings|Owners.Friends;
         private Direction.Type direction = Direction.Type.None;
         private Date date = new Date();
+        private Double nextStoryDate;
 
         public void selectPeriodYearly() {
             period = Period.Type.Yearly;
@@ -123,8 +126,24 @@ public class StoriesManager {
             return limit;
         }
 
+        public void setNextStoryDate(Double nextStoryDate) {
+            this.nextStoryDate = nextStoryDate;
+        }
+
+        @Nullable
+        public String getNextStoryDateString() {
+            if (nextStoryDate == null) return null;
+
+            String nextDate = new BigDecimal(nextStoryDate, MathContext.DECIMAL64).toString();
+            return nextDate;
+        }
+
         public String getDirection() {
             return Direction.directionMap.get(direction);
+        }
+
+        public void setDirection(Direction.Type direction) {
+            this.direction = direction;
         }
 
         public Period.Type getPeriodType() {
