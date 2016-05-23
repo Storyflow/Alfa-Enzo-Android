@@ -7,6 +7,7 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.service.UploadStoriesService;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
+import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.UriUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -204,7 +205,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
             if (description == null && TextUtils.isEmpty(state.capturedAbsolutePhotoPath)) {
                 showWarning(R.string.story_should_contain_at_least_one_character);
             } else {
-                story.setData(description, new Date());
+                story.setData(description, DateUtils.todayCalendar().getTime());
                 story.setImageData(state.capturedAbsolutePhotoPath, postStoryImageView.getWidth(), postStoryImageView.getHeight());
                 StoryflowApplication.getPendingStoriesManager().add(story);
                 UploadStoriesService.notifyService();
