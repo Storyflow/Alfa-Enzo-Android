@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.LinkedList;
 
@@ -34,7 +35,7 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static final int LOADING = EMPTY_STORY + 1;
 
     private LinkedList<Story> storiesList = new LinkedList<>();
-    private Double nextStoryDate;
+    private String nextStoryDate;
     private final int limit;
     private final RequestData.Period.Type period;
     private final Context context;
@@ -75,7 +76,7 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     @Nullable
-    public Double getNextStoryDate() {
+    public String getNextStoryDate() {
         return nextStoryDate;
     }
 

@@ -50,6 +50,8 @@ public class StoriesManager {
 
     public RequestData getRequestData(Calendar calendar) {
         requestData.setDate(calendar.getTime());
+        requestData.setNextStoryDate(null);
+        requestData.setDirection(RequestData.Direction.Type.None);
         return requestData;
     }
 
@@ -104,7 +106,7 @@ public class StoriesManager {
         private int owners = Owners.Me|Owners.Followings|Owners.Friends;
         private Direction.Type direction = Direction.Type.None;
         private Date date = new Date();
-        private Double nextStoryDate;
+        private String nextStoryDate;
 
         public void selectPeriodYearly() {
             period = Period.Type.Yearly;
@@ -126,16 +128,13 @@ public class StoriesManager {
             return limit;
         }
 
-        public void setNextStoryDate(Double nextStoryDate) {
+        public void setNextStoryDate(String nextStoryDate) {
             this.nextStoryDate = nextStoryDate;
         }
 
         @Nullable
-        public String getNextStoryDateString() {
-            if (nextStoryDate == null) return null;
-
-            String nextDate = new BigDecimal(nextStoryDate).toString();
-            return nextDate;
+        public String getNextStoryDate() {
+            return nextStoryDate;
         }
 
         public String getDirection() {

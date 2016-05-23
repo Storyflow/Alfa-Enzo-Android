@@ -132,7 +132,7 @@ public class ReadingStoriesFragment extends BaseFragment {
     }
 
     private void loadMoreStories() {
-        Double nextStoryDate = readingStoriesAdapter.getNextStoryDate();
+        String nextStoryDate = readingStoriesAdapter.getNextStoryDate();
         if (nextStoryDate != null) {
             requestData.setDirection(StoriesManager.RequestData.Direction.Type.Forward);
             requestData.setNextStoryDate(nextStoryDate);

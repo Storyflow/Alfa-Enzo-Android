@@ -4,7 +4,6 @@ import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thirdandloom.storyflow.StoryflowApplication;
@@ -24,7 +23,6 @@ import com.thirdandloom.storyflow.rest.requestmodels.SignInRequestMode;
 import com.thirdandloom.storyflow.rest.requestmodels.SignUpRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.UpdateProfileImageRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.UploadImageRequestModel;
-import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.ThreadUtils;
 import com.thirdandloom.storyflow.utils.glide.CropRectTransformation;
@@ -167,7 +165,7 @@ public class RestClient implements IRestClient {
         String period = requestData.getPeriod();
         Map filters = requestData.getFilters();
         int limit = requestData.getLimit();
-        String startDate = requestData.getNextStoryDateString();
+        String startDate = requestData.getNextStoryDate();
 
         sendAsync(apiService.loadStories(period, limit, startDate, direction, filters), new ResponseCallback<>(success, failure));
     }

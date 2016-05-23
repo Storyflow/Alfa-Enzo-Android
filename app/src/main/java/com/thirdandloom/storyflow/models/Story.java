@@ -5,6 +5,7 @@ import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.models.Time;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -19,9 +20,9 @@ public class Story extends BaseModel {
     @SerializedName("author")
     private Author author;
     @SerializedName("storyDate")
-    private double date;
+    private long date;
     @SerializedName("creationDate")
-    private double createdAt;
+    private long createdAt;
     @SerializedName("description")
     private String description;
     @SerializedName("commentsCount")
@@ -74,7 +75,7 @@ public class Story extends BaseModel {
     }
 
     public Date getDate() {
-        return new Time(date).convertToDate();
+        return new Time(date*1000).convertToDate();
     }
 
     public Author getAuthor() {
@@ -148,9 +149,9 @@ public class Story extends BaseModel {
         @SerializedName("stories")
         private List<Story> stories = new ArrayList<>();
         @SerializedName("nextRequestStartDate")
-        private double nextStoryStartDate;
+        private String nextStoryStartDate;
         @SerializedName("prevRequestStartDate")
-        private double previousStoryStartDate;
+        private String previousStoryStartDate;
 
         public Story getStory(int position) {
             return getStories().get(position);
@@ -160,11 +161,11 @@ public class Story extends BaseModel {
             return stories;
         }
 
-        public double getNextStoryStartDate() {
+        public String getNextStoryStartDate() {
             return nextStoryStartDate;
         }
 
-        public double getPreviousStoryStartDate() {
+        public String getPreviousStoryStartDate() {
             return previousStoryStartDate;
         }
 
@@ -176,11 +177,11 @@ public class Story extends BaseModel {
             this.stories.addAll(stories);
         }
 
-        public void setNextStoryStartDate(double nextStoryStartDate) {
+        public void setNextStoryStartDate(String nextStoryStartDate) {
             this.nextStoryStartDate = nextStoryStartDate;
         }
 
-        public void setPreviousStoryStartDate(double previousStoryStartDate) {
+        public void setPreviousStoryStartDate(String previousStoryStartDate) {
             this.previousStoryStartDate = previousStoryStartDate;
         }
     }
