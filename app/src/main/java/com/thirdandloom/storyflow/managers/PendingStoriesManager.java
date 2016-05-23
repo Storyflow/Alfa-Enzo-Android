@@ -53,8 +53,10 @@ public class PendingStoriesManager {
             @Override
             public void run() {
                 super.run();
-                getPendingStory(pendingStoryLocalUid, PendingStoriesManager.this::remove);
-                EventBus.getDefault().post(new StoryDeletePendingEvent());
+                getPendingStory(pendingStoryLocalUid, story -> {
+                    PendingStoriesManager.this.remove(story);
+                    EventBus.getDefault().post(new StoryDeletePendingEvent(story));
+                });
             }
         });
     }

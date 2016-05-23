@@ -4,8 +4,10 @@ import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.managers.StoriesManager.RequestData;
+import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
+import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
@@ -17,15 +19,17 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
         StickyHeaderAdapter<ReadingStoriesAdapter.ReadingStoryHeaderHolder> {
@@ -35,6 +39,8 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static final int LOADING = EMPTY_STORY + 1;
 
     private LinkedList<Story> storiesList = new LinkedList<>();
+    private ArrayList<Story> displayedPendingStories = new ArrayList<>();
+
     private String nextStoryDate;
     private final int limit;
     private final RequestData.Period.Type period;
@@ -48,31 +54,44 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public void addNewStories(Story.WrapList stories, Calendar dateCalendar) {
-        if (!stories.getStories().isEmpty()) {
-            addNotEmptyStories(stories);
-        } else {
+        int storiesSize = stories.getStories().size();
+        List<Story> pendingStories = StoryflowApplication.getPendingStoriesManager().getStories(dateCalendar, period);
+        displayedPendingStories.addAll(pendingStories);
+        if (pendingStories.isEmpty() && stories.getStories().isEmpty()) {
             Story emptyStory = new Story();
             emptyStory.setFillType(Story.FillType.Empty);
             emptyStory.setDate(dateCalendar.getTime());
             storiesList.add(emptyStory);
             nextStoryDate = null;
+        } else {
+            Story.WrapList storiesWrapList = new Story.WrapList();
+            if (!pendingStories.isEmpty()) {
+                storiesWrapList.addStories(pendingStories);
+            }
+            if (!stories.getStories().isEmpty()) {
+                storiesWrapList.addStories(stories.getStories());
+                storiesWrapList.setNextStoryStartDate(stories.getNextStoryStartDate());
+                storiesWrapList.setPreviousStoryStartDate(stories.getPreviousStoryStartDate());
+            }
+            addNotEmptyStories(storiesWrapList, storiesSize);
         }
     }
 
-    public void addNewStories(Story.WrapList stories) {
+    public void addMoreStories(Story.WrapList stories) {
         if (!stories.getStories().isEmpty()) {
-            addNotEmptyStories(stories);
+            addNotEmptyStories(stories, stories.getStories().size());
         } else {
             nextStoryDate = null;
         }
     }
 
-    public void addNotEmptyStories(Story.WrapList stories) {
+    public void addNotEmptyStories(Story.WrapList stories, int size) {
         storiesList.addAll(stories.getStories());
-        int storiesLength = stories.getStories().size();
-        nextStoryDate = storiesLength%limit == 0
-                ? stories.getNextStoryStartDate()
-                : null;
+        if (size%limit == 0 && !TextUtils.isEmpty(stories.getNextStoryStartDate())) {
+            nextStoryDate = stories.getNextStoryStartDate();
+        } else {
+            nextStoryDate = null;
+        }
     }
 
     @Nullable
@@ -222,17 +241,61 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     }
 
+    public void onStoryCreationFailed(PendingStory pendingStory) {
+        for (Story story : displayedPendingStories) {
+            if (story.getLocalUid().equals(pendingStory.getLocalUid())) {
+                int itemPosition = storiesList.indexOf(story);
+                if (itemPosition != ArrayUtils.EMPTY_POSITION) {
+                    Story displayedStory = storiesList.get(itemPosition);
+                    displayedStory.setPendingStatus(PendingStory.Status.CreateFailed);
+                    notifyDataSetChanged();
+                }
+                break;
+            }
+        }
+    }
+
+    public void onPendingStoryDelete(PendingStory pendingStory) {
+        for (Story story : displayedPendingStories) {
+            if (story.getLocalUid().equals(pendingStory.getLocalUid())) {
+                int itemPosition = storiesList.indexOf(story);
+                if (itemPosition != ArrayUtils.EMPTY_POSITION) {
+                    storiesList.remove(itemPosition);
+                    notifyDataSetChanged();
+                }
+                break;
+            }
+        }
+    }
+
     public static class ReadingStoryHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
+        View pendingActionsContainer;
+        View retryButton;
+        View deleteButton;
+        String storyLocalUid;
 
         public ReadingStoryHolder(View itemView) {
             super(itemView);
             imageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_imageview);
+
+            pendingActionsContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_container);
+            retryButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_retry);
+            deleteButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_delete);
+
+            retryButton.setOnClickListener(v -> {
+                StoryflowApplication.getPendingStoriesManager().retry(storyLocalUid);
+                ViewUtils.hide(pendingActionsContainer);
+            });
+            deleteButton.setOnClickListener(v -> {
+                StoryflowApplication.getPendingStoriesManager().remove(storyLocalUid);
+                ViewUtils.hide(pendingActionsContainer);
+            });
         }
 
         public void configureUi(Story story, Context context) {
 //            textView.setText(story.getDescription());
-//            storyLocalUid = story.getLocalUid();
+            storyLocalUid = story.getLocalUid();
             String imageUrl;
             int height;
             int imageHeight;
@@ -276,7 +339,7 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             height = Math.round(coef * imageHeight);
 
             configureImage(context, imageUrl, height, scaleType);
-//            configurePendingActions(story.getPendingStatus());
+            configurePendingActions(story.getPendingStatus());
         }
 
         private void configureImage(Context context, String url, int height, ImageView.ScaleType scaleType) {
@@ -290,6 +353,30 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     .load(url)
                     .crossFade()
                     .into(imageView);
+        }
+
+        private void configurePendingActions(PendingStory.Status pendingStatus) {
+            switch (pendingStatus) {
+                case WaitingForSend:
+                case OnServer:
+                case CreateSucceed:
+                case CreatingStory:
+                case ImageUploading:
+                    ViewUtils.hide(pendingActionsContainer);
+                    break;
+                case CreateFailed:
+                    ViewUtils.show(pendingActionsContainer);
+                    ViewUtils.show(retryButton);
+                    ViewUtils.show(deleteButton);
+                    break;
+                case CreateImpossible:
+                    ViewUtils.show(pendingActionsContainer);
+                    ViewUtils.show(deleteButton);
+                    break;
+                default:
+                    break;
+
+            }
         }
     }
 

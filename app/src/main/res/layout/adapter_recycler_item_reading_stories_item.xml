@@ -23,6 +23,59 @@
             android:adjustViewBounds="true"
             />
 
+        <LinearLayout
+            android:id="@+id/adapter_recycler_item_reading_stories_item_pending_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_margin="@dimen/sizeNormal"
+            android:alpha="0.8"
+            tools:visibility="visible"
+            android:orientation="horizontal">
+
+            <View android:layout_width="0dp"
+                  android:layout_height="0dp"
+                  android:layout_weight="1"
+                />
+
+            <LinearLayout android:layout_width="0dp"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical"
+                          android:gravity="top"
+                          android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/adapter_recycler_item_reading_stories_item_pending_retry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Retry"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/sizeNormal"
+                    style="@style/DarkGreyButton"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_marginBottom="@dimen/sizeNormal"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    />
+
+                <TextView
+                    android:id="@+id/adapter_recycler_item_reading_stories_item_pending_delete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:gravity="center"
+                    style="@style/DarkGreyButton"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="0dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
     </FrameLayout>
 
     <LinearLayout android:layout_width="match_parent"

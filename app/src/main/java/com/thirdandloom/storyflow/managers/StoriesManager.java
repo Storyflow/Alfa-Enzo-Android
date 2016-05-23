@@ -69,19 +69,22 @@ public class StoriesManager {
 
     @Nullable
     public Story.WrapList getDisplayingStories(@NonNull Calendar calendar) {
-        List<Story> storiesForDate = StoryflowApplication.getPendingStoriesManager().getStories(calendar, getRequestData().getPeriodType());
-        Story.WrapList storiesWrapList = new Story.WrapList();
-        storiesWrapList.addStories(storiesForDate);
-
-        if (!store.containsKey(calendar) && storiesWrapList.getStories().isEmpty()) {
+        List<Story> pendingStories = StoryflowApplication.getPendingStoriesManager().getStories(calendar, getRequestData().getPeriodType());
+        if (!store.containsKey(calendar) && pendingStories.isEmpty()) {
             return null;
-        } else if (store.containsKey(calendar)) {
-            Story.WrapList storedStories = getStoreStories(calendar);
-            storiesWrapList.addStories(storedStories.getStories());
-            storiesWrapList.setNextStoryStartDate(storedStories.getNextStoryStartDate());
-            storiesWrapList.setPreviousStoryStartDate(storedStories.getPreviousStoryStartDate());
+        } else {
+            Story.WrapList storiesWrapList = new Story.WrapList();
+            if (!pendingStories.isEmpty()) {
+                storiesWrapList.addStories(pendingStories);
+            }
+            if (store.containsKey(calendar)) {
+                Story.WrapList storedStories = getStoreStories(calendar);
+                storiesWrapList.addStories(storedStories.getStories());
+                storiesWrapList.setNextStoryStartDate(storedStories.getNextStoryStartDate());
+                storiesWrapList.setPreviousStoryStartDate(storedStories.getPreviousStoryStartDate());
+            }
+            return storiesWrapList;
         }
-        return storiesWrapList;
     }
 
     @Nullable

@@ -4,15 +4,22 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.adapters.ReadingStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
+import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
+import com.thirdandloom.storyflow.utils.event.StoryCreationSuccessEvent;
+import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.GradientOnTopStickyHeaderDecoration;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import rx.functions.Action1;
 
 import android.content.Context;
@@ -131,6 +138,28 @@ public class ReadingStoriesFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(StoryCreationFailedEvent event) {
+        readingStoriesAdapter.onStoryCreationFailed(event.getStory());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(StoryDeletePendingEvent event) {
+        readingStoriesAdapter.onPendingStoryDelete(event.getStory());
+    }
+
     private void loadMoreStories() {
         String nextStoryDate = readingStoriesAdapter.getNextStoryDate();
         if (nextStoryDate != null) {
@@ -138,7 +167,7 @@ public class ReadingStoriesFragment extends BaseFragment {
             requestData.setNextStoryDate(nextStoryDate);
             requestData.setDate(readingStoriesAdapter.getCurrentCalendarDate().getTime());
             StoryflowApplication.restClient().loadStories(requestData, (Story.WrapList list) -> {
-                readingStoriesAdapter.addNewStories(list);
+                readingStoriesAdapter.addMoreStories(list);
                 readingStoriesAdapter.notifyDataSetChanged();
             }, (errorMessage, type) -> {
                 //need to check fail behaviour
@@ -301,7 +330,7 @@ public class ReadingStoriesFragment extends BaseFragment {
         state.height = fromView.getHeight();
         state.startPresentAnimation = startPresentAnimation;
         state.requestData = storiesManager.getRequestData();
-        state.stories = storiesManager.getDisplayingStories(calendar);
+        state.stories = storiesManager.getStoreStories(calendar);
         state.dateCalendar = calendar;
         args.putSerializable(State.KEY, state);
         fragment.setArguments(args);

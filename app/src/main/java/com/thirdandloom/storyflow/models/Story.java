@@ -177,6 +177,10 @@ public class Story extends BaseModel {
             this.stories.addAll(stories);
         }
 
+        public void addStories(int location, List<Story> stories) {
+            this.stories.addAll(location, stories);
+        }
+
         public void setNextStoryStartDate(String nextStoryStartDate) {
             this.nextStoryStartDate = nextStoryStartDate;
         }
