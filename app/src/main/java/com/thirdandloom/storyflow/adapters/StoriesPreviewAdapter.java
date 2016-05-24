@@ -6,6 +6,7 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
+import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 
@@ -18,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Date;
+
 public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAdapter.StoryContentHolder> {
 
     enum DataType {
@@ -28,6 +31,7 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
     private Story.WrapList wrapStoriesList;
     private int itemWidthPixels;
     private DataType dataType;
+    private Date currentDate;
 
     public StoriesPreviewAdapter(Context context, @Nullable Story.WrapList wrapStoriesList, int itemWidthPixels) {
         this.context = context;
@@ -58,6 +62,25 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
         return dataType != DataType.PopulatedStories
                 ? 0
                 : wrapStoriesList.getStories().size();
+    }
+
+    public void setCurrentDate(Date currentDate) {
+        this.currentDate = currentDate;
+    }
+
+    public Date getCurrentDate() {
+        return currentDate;
+    }
+
+    public void deleteStory(PendingStory pendingStory) {
+        ArrayUtils.forEach(wrapStoriesList.getStories(), (story, position) -> {
+            if (story.getLocalUid().equals(pendingStory.getLocalUid())) {
+                wrapStoriesList.removeStory(story);
+                notifyItemRemoved(position);
+                return false;
+            }
+            return true;
+        });
     }
 
     public DataType getDataType() {

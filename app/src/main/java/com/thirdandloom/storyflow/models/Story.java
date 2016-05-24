@@ -161,6 +161,10 @@ public class Story extends BaseModel {
             return stories;
         }
 
+        public void removeStory(Story story) {
+            stories.remove(story);
+        }
+
         public String getNextStoryStartDate() {
             return nextStoryStartDate;
         }

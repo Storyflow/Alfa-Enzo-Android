@@ -306,7 +306,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(StoryDeletePendingEvent event) {
-        getPeriodsAdapter().notifyDataSetChanged();
+        getPeriodsAdapter().deleteStory(event.getStory());
     }
 
     private boolean canUpdateData() {

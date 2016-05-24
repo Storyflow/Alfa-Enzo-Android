@@ -3,6 +3,7 @@ package com.thirdandloom.storyflow.adapters;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.managers.StoriesManager;
+import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
@@ -23,12 +24,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHolder> {
-
     public enum ItemType {
         Large, Small
     }
@@ -45,6 +47,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     private int centerPosition;
     private StoryHolder.Actions storyPreviewActions;
     private boolean fetchedStories;
+    private List<StoriesPreviewAdapter> displayingAdapters = new ArrayList<>();
 
     public PeriodsAdapter(Context context, @Nullable LinkedHashMap<Calendar, Story.WrapList> store,
             @Nullable List<Integer> fetchedPositions, @Nullable StoriesManager.RequestData requestData) {
@@ -135,6 +138,17 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         throw new UnsupportedOperationException("unsupported itemWidth is using");
     }
 
+    public void deleteStory(PendingStory story) {
+        for (StoriesPreviewAdapter adapter : displayingAdapters) {
+            Date adapterDate = adapter.getCurrentDate();
+            Date storyDate = story.getDate();
+            if (adapterDate.equals(storyDate)) {
+                adapter.deleteStory(story);
+                break;
+            }
+        }
+    }
+
     @Override
     public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_main_horizontal, parent, false);
@@ -147,6 +161,11 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         ViewUtils.applyWidth(storyHolder.itemView, getItemWidthPixel());
         Calendar storyDate = updateDate(storyHolder, position, centerPosition, periodType);
 
+        RecyclerView.Adapter previousAdapter = storyHolder.recyclerView.getAdapter();
+        if (previousAdapter != null) {
+            displayingAdapters.remove(previousAdapter);
+        }
+
         StoriesPreviewAdapter adapter;
         if (!storyDate.equals(storyHolder.getDateCalendar())) {
             storyHolder.setDateCalendar(storyDate);
@@ -157,6 +176,8 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             adapter.setData(storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
             adapter.notifyDataSetChanged();
         }
+        adapter.setCurrentDate(storyDate.getTime());
+        displayingAdapters.add(adapter);
 
         ViewUtils.setHidden(storyHolder.progressBar, adapter.getDataType() != StoriesPreviewAdapter.DataType.PendingStories);
         storyHolder.updateEmptyView(adapter.getDataType());
