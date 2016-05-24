@@ -108,7 +108,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     }
 
     @Override
-    protected int getStatusBarColorResourceId() {
+    public int getStatusBarColorResourceId() {
         return R.color.greyXLighter;
     }
 

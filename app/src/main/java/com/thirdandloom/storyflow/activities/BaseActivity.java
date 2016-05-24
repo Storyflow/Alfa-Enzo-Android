@@ -80,7 +80,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @ColorRes
-    protected abstract int getStatusBarColorResourceId();
+    public abstract int getStatusBarColorResourceId();
 
     @Override
     protected void onStop() {

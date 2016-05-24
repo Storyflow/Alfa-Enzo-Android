@@ -41,7 +41,7 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     @Override
-    protected int getStatusBarColorResourceId() {
+    public int getStatusBarColorResourceId() {
         return R.color.greyXLighter;
     }
 

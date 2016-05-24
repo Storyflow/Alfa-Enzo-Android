@@ -270,15 +270,16 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public static class ReadingStoryHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
+        private TextView descriptionTextView;
         View pendingActionsContainer;
         View retryButton;
         View deleteButton;
-        String storyLocalUid;
+        private String storyLocalUid;
 
         public ReadingStoryHolder(View itemView) {
             super(itemView);
             imageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_imageview);
-
+            descriptionTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_description);
             pendingActionsContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_container);
             retryButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_retry);
             deleteButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_delete);
@@ -294,7 +295,7 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         public void configureUi(Story story, Context context) {
-//            textView.setText(story.getDescription());
+            descriptionTextView.setText(story.getDescription());
             storyLocalUid = story.getLocalUid();
             String imageUrl;
             int height;

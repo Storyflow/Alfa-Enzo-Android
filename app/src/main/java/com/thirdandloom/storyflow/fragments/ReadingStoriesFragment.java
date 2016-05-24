@@ -332,6 +332,12 @@ public class ReadingStoriesFragment extends BaseFragment {
         }
     }
 
+    @Nullable
+    @Override
+    protected Integer getStatusBarColorResourceId() {
+        return R.color.black;
+    }
+
     public static ReadingStoriesFragment newInstance(View fromView, boolean startPresentAnimation, StoriesManager storiesManager, Calendar calendar) {
         ReadingStoriesFragment fragment = new ReadingStoriesFragment();
         Bundle args = new Bundle();
