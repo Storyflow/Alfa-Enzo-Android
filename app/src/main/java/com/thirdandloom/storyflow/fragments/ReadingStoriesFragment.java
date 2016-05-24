@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.fragments;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
 import com.thirdandloom.storyflow.adapters.ReadingStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Story;
@@ -66,6 +67,7 @@ public class ReadingStoriesFragment extends BaseFragment {
     private StoriesManager.RequestData requestData;
     private Calendar dateCalendar;
     private Story.WrapList stories;
+    private ReadingStoriesAdapter readingStoriesAdapter;
 
     @Nullable
     @Override
@@ -79,7 +81,11 @@ public class ReadingStoriesFragment extends BaseFragment {
         stories = getState().stories;
         dateCalendar = getState().dateCalendar;
 
-        initRecyclerView();
+        if (stories != null) {
+            initRecyclerView();
+        } else {
+            loadInitStories();
+        }
         takeScrollFromParent(this::onParentScroll);
         ViewUtils.callOnPreDraw(viewContainer, preDrawView -> {
 
@@ -111,7 +117,6 @@ public class ReadingStoriesFragment extends BaseFragment {
         return (State) getArguments().getSerializable(State.KEY);
     }
 
-    private ReadingStoriesAdapter readingStoriesAdapter;
     private void initRecyclerView() {
         final DividerDecoration divider = new DividerDecoration.Builder(this.getActivity())
                 .setHeight(R.dimen.sizeNormal)
@@ -132,6 +137,18 @@ public class ReadingStoriesFragment extends BaseFragment {
             public void onLoadMore() {
                 loadMoreStories();
             }
+        });
+    }
+
+    private void loadInitStories() {
+        showProgress();
+        requestData.setDate(dateCalendar.getTime());
+        StoryflowApplication.restClient().loadStories(requestData, (Story.WrapList list) -> {
+            hideProgress();
+            stories = list;
+            initRecyclerView();
+        }, (errorMessage, type) -> {
+            showError(errorMessage);
         });
     }
 

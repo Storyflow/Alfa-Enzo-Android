@@ -79,19 +79,6 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         initGui();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
-    }
-
-
     private void findViews() {
         horizontalRecyclerView = (SnappyRecyclerView) findViewById(R.id.activity_browse_stories_horizontal_recycler_view);
         periodChooserView = findViewById(R.id.activity_browse_stories_period_chooser);

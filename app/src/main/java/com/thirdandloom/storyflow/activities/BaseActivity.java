@@ -3,10 +3,16 @@ package com.thirdandloom.storyflow.activities;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.Theme;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.event.HideProgressEvent;
+import com.thirdandloom.storyflow.utils.event.ShowProgressEvent;
+import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.views.alert.QuickAlertController;
 import com.thirdandloom.storyflow.views.alert.QuickAlertView;
 import com.thirdandloom.storyflow.views.progress.ProgressBarController;
 import com.thirdandloom.storyflow.views.toolbar.BaseToolBar;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import rx.functions.Action1;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -80,6 +86,28 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         quickAlert.hide();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ShowProgressEvent event) {
+        showProgress();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(HideProgressEvent event) {
+        hideProgress();
     }
 
     protected void initQuickAlertController() {
