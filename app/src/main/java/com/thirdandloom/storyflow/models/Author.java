@@ -15,8 +15,6 @@ public class Author extends BaseModel {
     private String lastName;
     @SerializedName("location")
     private String location;
-    @SerializedName("profileUrl")
-    private String avatarUrl;
     @SerializedName("profileImage")
     private CroppedImage croppedImageProfile;
     @SerializedName("coverImage")
@@ -34,10 +32,6 @@ public class Author extends BaseModel {
         return location;
     }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -46,7 +40,7 @@ public class Author extends BaseModel {
         return lastName;
     }
 
-    public CroppedImage getCroppedImageProfile() {
+    public CroppedImage getCroppedAvatar() {
         return croppedImageProfile;
     }
 
@@ -64,10 +58,6 @@ public class Author extends BaseModel {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
     }
 
     public void setLocation(String location) {

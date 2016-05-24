@@ -4,6 +4,7 @@ import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.managers.StoriesManager.RequestData;
+import com.thirdandloom.storyflow.models.Author;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
@@ -12,6 +13,7 @@ import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
 import com.thirdandloom.storyflow.utils.models.Time;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.StickyHeaderAdapter;
 
@@ -276,6 +278,11 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         View deleteButton;
         private String storyLocalUid;
 
+        private ImageView authorAvatarImageView;
+        private TextView authorFullNameTextView;
+        private TextView authorUserNameTextView;
+        private View storyImageContainer;
+
         public ReadingStoryHolder(View itemView) {
             super(itemView);
             imageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_imageview);
@@ -283,6 +290,10 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             pendingActionsContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_container);
             retryButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_retry);
             deleteButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_delete);
+            authorAvatarImageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_avatar_imageview);
+            authorFullNameTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_full_name_textview);
+            authorUserNameTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_user_name_textview);
+            storyImageContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_story_image_container);
 
             retryButton.setOnClickListener(v -> {
                 StoryflowApplication.getPendingStoriesManager().retry(storyLocalUid);
@@ -295,6 +306,7 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         public void configureUi(Story story, Context context) {
+            configureAuthor(story.getAuthor(), context);
             descriptionTextView.setText(story.getDescription());
             storyLocalUid = story.getLocalUid();
             String imageUrl;
@@ -343,12 +355,26 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             configurePendingActions(story.getPendingStatus());
         }
 
+        private void configureAuthor(Author author, Context context) {
+            authorUserNameTextView.setText(author.getUserName());
+            authorFullNameTextView.setText(author.getFirstName() + " " + author.getLastName());
+            Glide
+                    .with(context)
+                    .load(author.getCroppedAvatar().getImageUrl())
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .dontAnimate()
+                    .into(authorAvatarImageView);
+        }
+
         private void configureImage(Context context, String url, int height, ImageView.ScaleType scaleType) {
             //TODO
             //scaleType be removed after story.getAuthor().getCroppedImageCover().getRect()
             //fixed: -180x106x735x391
             imageView.setScaleType(scaleType);
             ViewUtils.applyHeight(imageView, height);
+            int avatarHeight = context.getResources().getDimensionPixelOffset(R.dimen.avatarDiameterReadingStories);
+            ViewUtils.applyHeight(storyImageContainer, height + avatarHeight/2);
+
             Glide
                     .with(context)
                     .load(url)

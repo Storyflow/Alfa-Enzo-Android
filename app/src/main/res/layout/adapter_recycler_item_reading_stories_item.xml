@@ -10,6 +10,7 @@
     >
 
     <FrameLayout
+        android:id="@+id/adapter_recycler_item_reading_stories_item_story_image_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -22,6 +23,53 @@
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:layout_gravity="bottom"
+            android:paddingLeft="@dimen/sizeNormal"
+            android:paddingRight="@dimen/sizeNormal"
+            tools:background="@color/white">
+
+            <com.thirdandloom.storyflow.views.RoundSquareImageView
+                android:id="@+id/adapter_recycler_item_reading_stories_item_avatar_imageview"
+                android:layout_width="@dimen/avatarDiameterReadingStories"
+                android:layout_height="@dimen/avatarDiameterReadingStories"
+                android:paddingTop="@dimen/sizeSmall"
+                android:paddingRight="@dimen/sizeSmall"
+                android:paddingBottom="@dimen/sizeSmall"
+                />
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="match_parent"
+                          android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/adapter_recycler_item_reading_stories_item_full_name_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:textColor="@color/greyDark"
+                    android:textSize="@dimen/textSizeNormal"
+                    tools:text="Full name"
+                    />
+                <TextView
+                    android:id="@+id/adapter_recycler_item_reading_stories_item_user_name_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="top"
+                    android:textColor="@color/greyLight"
+                    android:textSize="@dimen/textSizeNormal"
+                    tools:text="User name"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/adapter_recycler_item_reading_stories_item_pending_container"

@@ -181,7 +181,6 @@ public class User extends BaseModel {
 
     public Author convertToAuthor() {
         Author author = new Author();
-        author.setAvatarUrl(profileImage.getImageUrl());
         author.setCroppedImageCover(coverImage);
         author.setCroppedImageProfile(profileImage);
         author.setFirstName(firstName);

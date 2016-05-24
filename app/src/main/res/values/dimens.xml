@@ -25,6 +25,7 @@
     <dimen name="headerHeight">72dp</dimen>
     <dimen name="progressHolderHeight">140dp</dimen> // tabBarHeight + headerHeight
     <dimen name="tabBarHeight">68dp</dimen>
+    <dimen name="avatarDiameterReadingStories">60dp</dimen>
 
 
 </resources>
