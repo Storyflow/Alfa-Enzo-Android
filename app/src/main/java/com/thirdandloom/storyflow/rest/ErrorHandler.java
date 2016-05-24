@@ -65,7 +65,13 @@ public class ErrorHandler {
                 // TODO temp solution, should be removed after backend fixes:
                 // https://www.pivotaltracker.com/story/show/117060705
                 JsonPrimitive primitive = (JsonPrimitive) jsonElement.getAsJsonObject().get("error");
-                error.call(primitive.getAsString(), Type.Backend);
+                String errorCodeString = primitive.getAsString();
+                if (!ApiErrors.codes.containsKey(errorCodeString)) {
+                    error.call(primitive.getAsString(), Type.Backend);
+                } else {
+                    int resId = ApiErrors.codes.get(errorCodeString);
+                    error.call(StoryflowApplication.resources().getString(resId), Type.Backend);
+                }
             }
 
         } catch (JsonSyntaxException e) {

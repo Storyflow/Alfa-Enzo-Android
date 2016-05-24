@@ -261,7 +261,7 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 int itemPosition = storiesList.indexOf(story);
                 if (itemPosition != ArrayUtils.EMPTY_POSITION) {
                     storiesList.remove(itemPosition);
-                    notifyDataSetChanged();
+                    notifyItemRemoved(itemPosition);
                 }
                 break;
             }

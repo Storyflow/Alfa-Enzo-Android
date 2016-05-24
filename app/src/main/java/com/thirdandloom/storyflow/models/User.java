@@ -3,6 +3,7 @@ package com.thirdandloom.storyflow.models;
 import com.google.gson.annotations.SerializedName;
 import com.thirdandloom.storyflow.models.image.CroppedImage;
 import com.thirdandloom.storyflow.models.image.WrappedImage;
+import com.thirdandloom.storyflow.utils.models.Time;
 
 import java.util.Date;
 import java.util.List;
@@ -22,9 +23,9 @@ public class User extends BaseModel {
     @SerializedName("billAddressId")
     private int billAddressId;
     @SerializedName("createdAt")
-    private Date createdAt;
+    private long createdAt;
     @SerializedName("updatedAt")
-    private Date updatedAt;
+    private long updatedAt;
     @SerializedName("firstName")
     private String firstName;
     @SerializedName("lastName")
@@ -87,11 +88,11 @@ public class User extends BaseModel {
     }
 
     public Date getCreatedAt() {
-        return createdAt;
+        return new Time(createdAt*1000).convertToDate();
     }
 
     public Date getUpdatedAt() {
-        return updatedAt;
+        return new Time(updatedAt*1000).convertToDate();
     }
 
     public String getFirstName() {

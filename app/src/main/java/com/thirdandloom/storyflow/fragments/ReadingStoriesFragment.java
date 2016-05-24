@@ -4,7 +4,6 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.adapters.ReadingStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
-import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
@@ -12,7 +11,6 @@ import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
-import com.thirdandloom.storyflow.utils.event.StoryCreationSuccessEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
@@ -132,7 +130,6 @@ public class ReadingStoriesFragment extends BaseFragment {
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
             @Override
             public void onLoadMore() {
-                Timber.d("onLoadMore");
                 loadMoreStories();
             }
         });
