@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -128,6 +129,7 @@ public class ReadingStoriesFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(divider);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         readStoriesAdapter = new ReadStoriesAdapter(stories, dateCalendar, requestData, getActivity());
         GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(readStoriesAdapter, true);
@@ -188,7 +190,6 @@ public class ReadingStoriesFragment extends BaseFragment {
             requestData.setDate(readStoriesAdapter.getCurrentCalendarDate().getTime());
             StoryflowApplication.restClient().loadStories(requestData, (Story.WrapList list) -> {
                 readStoriesAdapter.addMoreStories(list);
-                readStoriesAdapter.notifyDataSetChanged();
             }, (errorMessage, type) -> {
                 //need to check fail behaviour
                 readStoriesAdapter.notifyDataSetChanged();

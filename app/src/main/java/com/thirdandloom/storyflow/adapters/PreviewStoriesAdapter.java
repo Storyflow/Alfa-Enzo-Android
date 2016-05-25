@@ -27,7 +27,7 @@ public class PreviewStoriesAdapter extends RecyclerView.Adapter<PreviewStoriesAd
 
     public void addStories(List<Story> addedStories, int start) {
         stories.addAll(start, addedStories);
-        notifyItemInserted(start);
+        notifyItemRangeInserted(start, addedStories.size());
     }
 
     @Override

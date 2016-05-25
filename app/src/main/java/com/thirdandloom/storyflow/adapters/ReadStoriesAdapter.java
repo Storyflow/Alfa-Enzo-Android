@@ -76,6 +76,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             emptyStory.setDate(dateCalendar.getTime());
             storiesList.add(emptyStory);
             nextStoryDate = null;
+            notifyItemInserted(storiesList.size()-2);
         } else {
             Story.WrapList storiesWrapList = new Story.WrapList();
             if (!pendingStories.isEmpty()) {
@@ -105,6 +106,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else {
             nextStoryDate = null;
         }
+        notifyItemRangeInserted(getItemCount() - 1, stories.getStories().size());
     }
 
     @Nullable
