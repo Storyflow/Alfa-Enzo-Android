@@ -14,10 +14,8 @@ public class OneSnapLinearLayoutManager extends SnappyLinearLayoutManager {
         super(context, orientation, reverseLayout);
     }
 
-    private int velocityX;
     @Override
     public int getPositionForVelocity(int velocityX, int velocityY) {
-        this.velocityX = Math.abs(velocityX);
         if (getChildCount() == 0) {
             return 0;
         }
