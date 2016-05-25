@@ -5,7 +5,6 @@ import com.thirdandloom.storyflow.Theme;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.event.HideProgressEvent;
 import com.thirdandloom.storyflow.utils.event.ShowProgressEvent;
-import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.views.alert.QuickAlertController;
 import com.thirdandloom.storyflow.views.alert.QuickAlertView;
 import com.thirdandloom.storyflow.views.progress.ProgressBarController;
@@ -60,13 +59,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void restoreState(Bundle savedInstanceState, Action1<Serializable> onRestore) {
+    protected <T extends Serializable> void restoreState(Class<T> type, Bundle savedInstanceState, Action1<T> restore, Action1<T> init) {
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_INSTANCE_KEY) ) {
-            onRestore.call(savedInstanceState.getSerializable(SAVED_INSTANCE_KEY));
+            restore.call(type.cast(savedInstanceState.getSerializable(SAVED_INSTANCE_KEY)));
+        } else {
+            if (getInitState() == null) {
+                throw new UnsupportedOperationException("You are using intent with null Serializable Extra, "
+                        + "if you don't put SavedState, please override getInitState(){new SavedState();}");
+            }
+            init.call(type.cast(getInitState()));
         }
     }
 
-    protected Serializable getState() {
+    protected Serializable getInitState() {
         return getIntent().getSerializableExtra(SAVED_INSTANCE_KEY);
     }
 

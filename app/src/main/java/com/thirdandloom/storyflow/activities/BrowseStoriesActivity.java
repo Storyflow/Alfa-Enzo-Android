@@ -65,10 +65,10 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_stories);
-        state = (SavedState) getState();
-        restoreState(savedInstanceState, restoredState -> {
-            state = (SavedState) restoredState;
-        });
+        restoreState(SavedState.class, savedInstanceState,
+                restored -> state = restored,
+                inited -> state = inited);
+
         if (state.continueAnimation) {
             initLaunchAnimation(savedInstanceState);
         } else {

@@ -55,6 +55,10 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         addNewStories(stories, dateCalendar);
     }
 
+    public Story getStory(int position) {
+        return storiesList.get(position);
+    }
+
     public void addNewStories(Story.WrapList stories, Calendar dateCalendar) {
         int storiesSize = stories.getStories().size();
         List<Story> pendingStories = StoryflowApplication.getPendingStoriesManager().getStories(dateCalendar, period);

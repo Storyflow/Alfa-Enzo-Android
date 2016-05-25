@@ -143,7 +143,7 @@ public class ReadingStoriesFragment extends BaseFragment {
         });
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (view, position) -> {
             Timber.d("recyclerView on Item click position: %d", position);
-            Intent intent = PreviewStoriesActivity.newInstance();
+            Intent intent = PreviewStoriesActivity.newInstance(readingStoriesAdapter.getStory(position));
             startActivity(intent);
         }));
     }

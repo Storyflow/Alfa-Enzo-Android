@@ -45,8 +45,11 @@ public class ConfigureAvatarRectangleActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_profile_picture_rect);
-        state = (SavedState) getState();
-        restoreState(savedInstanceState, (restoredState) -> state = (SavedState) restoredState);
+        restoreState(SavedState.class, savedInstanceState, restored -> {
+            state = restored;
+        }, inited -> {
+            state = inited;
+        });
 
         profileImageView = (ImageView) findViewById(R.id.activity_set_profile_picture_avatar);
         initGui();

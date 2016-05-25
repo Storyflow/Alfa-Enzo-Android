@@ -55,12 +55,11 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
         setContentView(R.layout.activity_choose_avatar);
         findViews();
         initGui();
-        state = (SavedState) getState();
-        restoreState(savedInstanceState, restoredState -> {
-            state = (SavedState) restoredState;
-            if (state.imageTaken())
-                loadImage();
-        });
+        restoreState(SavedState.class, savedInstanceState,
+                restored -> state = restored,
+                inited -> state = inited);
+
+        if (state.imageTaken()) loadImage();
     }
 
     private void findViews() {

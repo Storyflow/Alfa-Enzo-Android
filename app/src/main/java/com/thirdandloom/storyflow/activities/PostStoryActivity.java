@@ -44,8 +44,6 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private int defaultScrollViewHeight;
     private ImageView postStoryImageView;
 
-    private SavedState state = new SavedState();
-
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.applicationContext, PostStoryActivity.class);
     }
@@ -57,9 +55,9 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         setTitle(R.string.post_story);
         findViews();
         initGui();
-        restoreState(savedInstanceState, restoredState -> {
-            state = (SavedState) restoredState;
-        });
+        restoreState(SavedState.class, savedInstanceState,
+                restored -> state = restored,
+                inited -> state = inited);
         ViewUtils.callOnPreDraw(scrollViewContainer, view -> {
             defaultScrollViewHeight = view.getHeight();
         });
@@ -264,6 +262,13 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     protected Serializable getSavedState() {
         return state;
     }
+
+    @Override
+    protected Serializable getInitState() {
+        return new SavedState();
+    }
+
+    private SavedState state;
 
     private static class SavedState implements Serializable {
         private static final long serialVersionUID = 8645864584763024484L;
