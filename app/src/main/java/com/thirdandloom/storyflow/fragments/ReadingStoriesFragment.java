@@ -3,8 +3,7 @@ package com.thirdandloom.storyflow.fragments;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.activities.PreviewStoriesActivity;
-import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
-import com.thirdandloom.storyflow.adapters.ReadingStoriesAdapter;
+import com.thirdandloom.storyflow.adapters.ReadStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
@@ -70,7 +69,7 @@ public class ReadingStoriesFragment extends BaseFragment {
     private StoriesManager.RequestData requestData;
     private Calendar dateCalendar;
     private Story.WrapList stories;
-    private ReadingStoriesAdapter readingStoriesAdapter;
+    private ReadStoriesAdapter readStoriesAdapter;
 
     @Nullable
     @Override
@@ -130,10 +129,10 @@ public class ReadingStoriesFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(divider);
 
-        readingStoriesAdapter = new ReadingStoriesAdapter(stories, dateCalendar, requestData, getActivity());
-        GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(readingStoriesAdapter, true);
+        readStoriesAdapter = new ReadStoriesAdapter(stories, dateCalendar, requestData, getActivity());
+        GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(readStoriesAdapter, true);
         setHasOptionsMenu(true);
-        recyclerView.setAdapter(readingStoriesAdapter);
+        recyclerView.setAdapter(readStoriesAdapter);
         recyclerView.addItemDecoration(decor, 1);
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
             @Override
@@ -142,8 +141,7 @@ public class ReadingStoriesFragment extends BaseFragment {
             }
         });
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (view, position) -> {
-            Timber.d("recyclerView on Item click position: %d", position);
-            Intent intent = PreviewStoriesActivity.newInstance(readingStoriesAdapter.getStory(position));
+            Intent intent = PreviewStoriesActivity.newInstance(readStoriesAdapter.getStory(position), position, readStoriesAdapter.getStories());
             startActivity(intent);
         }));
     }
@@ -174,40 +172,40 @@ public class ReadingStoriesFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(StoryCreationFailedEvent event) {
-        readingStoriesAdapter.onStoryCreationFailed(event.getStory());
+        readStoriesAdapter.onStoryCreationFailed(event.getStory());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(StoryDeletePendingEvent event) {
-        readingStoriesAdapter.onPendingStoryDelete(event.getStory());
+        readStoriesAdapter.onPendingStoryDelete(event.getStory());
     }
 
     private void loadMoreStories() {
-        String nextStoryDate = readingStoriesAdapter.getNextStoryDate();
+        String nextStoryDate = readStoriesAdapter.getNextStoryDate();
         if (nextStoryDate != null) {
             requestData.setDirection(StoriesManager.RequestData.Direction.Type.Forward);
             requestData.setNextStoryDate(nextStoryDate);
-            requestData.setDate(readingStoriesAdapter.getCurrentCalendarDate().getTime());
+            requestData.setDate(readStoriesAdapter.getCurrentCalendarDate().getTime());
             StoryflowApplication.restClient().loadStories(requestData, (Story.WrapList list) -> {
-                readingStoriesAdapter.addMoreStories(list);
-                readingStoriesAdapter.notifyDataSetChanged();
+                readStoriesAdapter.addMoreStories(list);
+                readStoriesAdapter.notifyDataSetChanged();
             }, (errorMessage, type) -> {
                 //need to check fail behaviour
-                readingStoriesAdapter.notifyDataSetChanged();
+                readStoriesAdapter.notifyDataSetChanged();
                 Timber.d("onLoadMore error: %s", errorMessage);
             });
 
         } else {
-            Calendar nextCalendar = readingStoriesAdapter.getPreviousCalendarDate();
+            Calendar nextCalendar = readStoriesAdapter.getPreviousCalendarDate();
             requestData.setDate(nextCalendar.getTime());
             requestData.setNextStoryDate(null);
             requestData.setDirection(StoriesManager.RequestData.Direction.Type.None);
             StoryflowApplication.restClient().loadStories(requestData, (Story.WrapList list) -> {
-                readingStoriesAdapter.addNewStories(list, nextCalendar);
-                readingStoriesAdapter.notifyDataSetChanged();
+                readStoriesAdapter.addNewStories(list, nextCalendar);
+                readStoriesAdapter.notifyDataSetChanged();
             }, (errorMessage, type) -> {
                 //need to check fail behaviour
-                readingStoriesAdapter.notifyDataSetChanged();
+                readStoriesAdapter.notifyDataSetChanged();
                 Timber.d("onLoadMore error: %s", errorMessage);
             });
         }

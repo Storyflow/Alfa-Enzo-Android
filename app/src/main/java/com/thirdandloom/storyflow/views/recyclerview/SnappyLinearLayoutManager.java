@@ -122,9 +122,13 @@ public class SnappyLinearLayoutManager extends DisableScrollLinearLayoutManager 
             distanceInPixels = (int) Math.abs(firstVisibleChild.getX());
         }
 
-        SmoothScroller smoothScroller = new SmoothScroller(recyclerView.getContext(), distanceInPixels, 1);
+        LinearSmoothScroller smoothScroller = getSmoothScroller(recyclerView, distanceInPixels);
         smoothScroller.setTargetPosition(position);
         startSmoothScroll(smoothScroller);
+    }
+
+    public LinearSmoothScroller getSmoothScroller(RecyclerView recyclerView, int distanceInPixels) {
+        return new SmoothScroller(recyclerView.getContext(), distanceInPixels, 1);
     }
 
     private double getSplineFlingDistance(double velocity) {

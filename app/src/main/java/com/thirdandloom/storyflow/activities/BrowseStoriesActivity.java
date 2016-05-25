@@ -46,7 +46,7 @@ import java.util.List;
 public class BrowseStoriesActivity extends BaseActivity implements ReadingStoriesFragment.IStoryDetailFragmentDataSource {
     private static final int CREATE_NEW_STORY = 1;
 
-    private SnappyRecyclerView horizontalRecyclerView;
+    private SnappyRecyclerView snappyRecyclerView;
     private View periodChooserView;
     private TabBar tabBar;
     private Action1<Float> takeScrollValue;
@@ -79,14 +79,14 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     }
 
     private void findViews() {
-        horizontalRecyclerView = (SnappyRecyclerView) findViewById(R.id.activity_browse_stories_horizontal_recycler_view);
+        snappyRecyclerView = (SnappyRecyclerView) findViewById(R.id.activity_browse_stories_horizontal_recycler_view);
         periodChooserView = findViewById(R.id.activity_browse_stories_period_chooser);
         tabBar = (TabBar) findViewById(R.id.activity_browse_stories_tab_bar);
     }
 
     private void initGui() {
         initToolBar();
-        initHorizontalRecyclerView();
+        initSnappyRecyclerView();
         initPeriodChooser();
     }
 
@@ -110,17 +110,17 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         });
     }
 
-    private void initHorizontalRecyclerView() {
+    private void initSnappyRecyclerView() {
         SnappyLinearLayoutManager layoutManager = new SnappyLinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        horizontalRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        horizontalRecyclerView.setHasFixedSize(true);
-        horizontalRecyclerView.setLayoutManager(layoutManager);
+        snappyRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        snappyRecyclerView.setHasFixedSize(true);
+        snappyRecyclerView.setLayoutManager(layoutManager);
 
         PeriodsAdapter adapter = new PeriodsAdapter(this, state.savedStore, state.savedFetchedPositions, state.savedRequestData);
         adapter.setStoryPreviewActions(storyPreviewActions);
         adapter.setItemType(state.savedItemType);
-        horizontalRecyclerView.setAdapter(adapter);
+        snappyRecyclerView.setAdapter(adapter);
         ((BrowseStoriesToolBar) getToolbar()).onNewItemWidthSelected(adapter.getItemType());
 
         int centerPosition = state.currentPosition != ArrayUtils.INDEX_NOT_FOUND
@@ -131,15 +131,15 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         adapter.updatePeriodType();
         loadStoriesBetweenPositions(centerPosition - 1, centerPosition + 1);
 
-        horizontalRecyclerView.addOnScrollListener(tabBar.getRecyclerViewScrollListener());
-        horizontalRecyclerView.addOnScrollListener(new OnScrollListener());
+        snappyRecyclerView.addOnScrollListener(tabBar.getRecyclerViewScrollListener());
+        snappyRecyclerView.addOnScrollListener(new OnScrollListener());
         tabBar.setItemWidth(adapter.getItemWidthPixel()+PeriodsAdapter.getItemMargin()*2);
         tabBar.setActions(tabBarActions);
     }
 
     private void onPeriodChanged(PeriodsAdapter.PeriodType periodType) {
         if (getPeriodsAdapter().getPeriodType() != periodType) {
-            int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
+            int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
             getPeriodsAdapter().setCenterPosition(position);
             getPeriodsAdapter().setPeriodType(periodType);
             getPeriodsAdapter().clearData();
@@ -169,14 +169,14 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         PeriodsAdapter adapter = getPeriodsAdapter();
         adapter.changeItemWidth();
         adapter.notifyDataSetChanged();
-        int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) horizontalRecyclerView.getLayoutManager());
+        int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
         updateOffset(position);
         tabBar.setItemWidth(adapter.getItemWidthPixel());
         ((BrowseStoriesToolBar) getToolbar()).onNewItemWidthSelected(adapter.getItemType());
     }
 
     private void updateOffset(int position) {
-        LinearLayoutManager layoutManager = (LinearLayoutManager) horizontalRecyclerView.getLayoutManager();
+        LinearLayoutManager layoutManager = (LinearLayoutManager) snappyRecyclerView.getLayoutManager();
         PeriodsAdapter adapter = getPeriodsAdapter();
 
         int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - PeriodsAdapter.getItemMargin() * 2;
@@ -184,11 +184,11 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     }
 
     private DisableScrollLinearLayoutManager getHorizontalRecyclerViewLayoutManager() {
-        return (DisableScrollLinearLayoutManager) horizontalRecyclerView.getLayoutManager();
+        return (DisableScrollLinearLayoutManager) snappyRecyclerView.getLayoutManager();
     }
 
     private PeriodsAdapter getPeriodsAdapter() {
-        return (PeriodsAdapter) horizontalRecyclerView.getAdapter();
+        return (PeriodsAdapter) snappyRecyclerView.getAdapter();
     }
 
     @Override

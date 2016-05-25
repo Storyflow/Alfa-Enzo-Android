@@ -47,7 +47,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     private int centerPosition;
     private StoryHolder.Actions storyPreviewActions;
     private boolean fetchedStories;
-    private List<StoriesPreviewAdapter> displayingAdapters = new ArrayList<>();
+    private List<BrowseStoriesAdapter> displayingAdapters = new ArrayList<>();
 
     public PeriodsAdapter(Context context, @Nullable LinkedHashMap<Calendar, Story.WrapList> store,
             @Nullable List<Integer> fetchedPositions, @Nullable StoriesManager.RequestData requestData) {
@@ -139,7 +139,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     public void deleteStory(PendingStory story) {
-        for (StoriesPreviewAdapter adapter : displayingAdapters) {
+        for (BrowseStoriesAdapter adapter : displayingAdapters) {
             Date adapterDate = adapter.getCurrentDate();
             Date storyDate = story.getDate();
             if (adapterDate.equals(storyDate)) {
@@ -166,20 +166,20 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             displayingAdapters.remove(previousAdapter);
         }
 
-        StoriesPreviewAdapter adapter;
+        BrowseStoriesAdapter adapter;
         if (!storyDate.equals(storyHolder.getDateCalendar())) {
             storyHolder.setDateCalendar(storyDate);
-            adapter = new StoriesPreviewAdapter(context, storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
+            adapter = new BrowseStoriesAdapter(context, storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
             storyHolder.recyclerView.setAdapter(adapter);
         } else {
-            adapter = (StoriesPreviewAdapter)storyHolder.recyclerView.getAdapter();
+            adapter = (BrowseStoriesAdapter)storyHolder.recyclerView.getAdapter();
             adapter.setData(storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
             adapter.notifyDataSetChanged();
         }
         adapter.setCurrentDate(storyDate.getTime());
         displayingAdapters.add(adapter);
 
-        ViewUtils.setHidden(storyHolder.progressBar, adapter.getDataType() != StoriesPreviewAdapter.DataType.PendingStories);
+        ViewUtils.setHidden(storyHolder.progressBar, adapter.getDataType() != BrowseStoriesAdapter.DataType.PendingStories);
         storyHolder.updateEmptyView(adapter.getDataType());
     }
 
@@ -256,9 +256,9 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             return dateCalendar;
         }
 
-        public void updateEmptyView(StoriesPreviewAdapter.DataType dataType) {
-            ViewUtils.setShown(noStoriesView, dataType == StoriesPreviewAdapter.DataType.EmptyStories);
-            int backgroundColorId = dataType == StoriesPreviewAdapter.DataType.EmptyStories
+        public void updateEmptyView(BrowseStoriesAdapter.DataType dataType) {
+            ViewUtils.setShown(noStoriesView, dataType == BrowseStoriesAdapter.DataType.EmptyStories);
+            int backgroundColorId = dataType == BrowseStoriesAdapter.DataType.EmptyStories
                     ? R.color.greyLightest
                     : R.color.transparent;
             recyclerView.setBackgroundColor(StoryflowApplication.resources().getColor(backgroundColorId));

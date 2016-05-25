@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.adapters;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.PendingStory;
@@ -21,7 +22,7 @@ import android.widget.TextView;
 
 import java.util.Date;
 
-public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAdapter.StoryContentHolder> {
+public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdapter.StoryContentHolder> {
 
     enum DataType {
         EmptyStories, PendingStories, PopulatedStories
@@ -33,7 +34,7 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
     private DataType dataType;
     private Date currentDate;
 
-    public StoriesPreviewAdapter(Context context, @Nullable Story.WrapList wrapStoriesList, int itemWidthPixels) {
+    public BrowseStoriesAdapter(Context context, @Nullable Story.WrapList wrapStoriesList, int itemWidthPixels) {
         this.context = context;
         setData(wrapStoriesList, itemWidthPixels);
     }
@@ -184,6 +185,7 @@ public class StoriesPreviewAdapter extends RecyclerView.Adapter<StoriesPreviewAd
             Glide
                     .with(context)
                     .load(url)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .crossFade()
                     .into(imageView);
         }

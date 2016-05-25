@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.adapters;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.managers.StoriesManager.RequestData;
@@ -33,8 +34,8 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
-        StickyHeaderAdapter<ReadingStoriesAdapter.ReadingStoryHeaderHolder> {
+public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
+        StickyHeaderAdapter<ReadStoriesAdapter.ReadingStoryHeaderHolder> {
 
     private static final int FILLED_STORY = 0;
     private static final int EMPTY_STORY = FILLED_STORY + 1;
@@ -48,15 +49,21 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private final RequestData.Period.Type period;
     private final Context context;
 
-    public ReadingStoriesAdapter(Story.WrapList stories, Calendar dateCalendar, RequestData requestData, Context context) {
+    public ReadStoriesAdapter(Story.WrapList stories, Calendar dateCalendar, RequestData requestData, Context context) {
         this.limit = requestData.getLimit();
         this.period = requestData.getPeriodType();
         this.context = context;
         addNewStories(stories, dateCalendar);
     }
 
+    @NonNull
     public Story getStory(int position) {
         return storiesList.get(position);
+    }
+
+    @NonNull
+    public List<Story> getStories() {
+        return storiesList;
     }
 
     public void addNewStories(Story.WrapList stories, Calendar dateCalendar) {
@@ -382,6 +389,7 @@ public class ReadingStoriesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             Glide
                     .with(context)
                     .load(url)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .crossFade()
                     .into(imageView);
         }
