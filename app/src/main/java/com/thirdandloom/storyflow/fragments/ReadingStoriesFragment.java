@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.fragments;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.activities.PreviewStoriesActivity;
 import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
 import com.thirdandloom.storyflow.adapters.ReadingStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
@@ -14,6 +15,7 @@ import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
+import com.thirdandloom.storyflow.views.recyclerview.RecyclerItemClickListener;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.GradientOnTopStickyHeaderDecoration;
 import org.greenrobot.eventbus.EventBus;
@@ -22,6 +24,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import rx.functions.Action1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -138,6 +141,11 @@ public class ReadingStoriesFragment extends BaseFragment {
                 loadMoreStories();
             }
         });
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (view, position) -> {
+            Timber.d("recyclerView on Item click position: %d", position);
+            Intent intent = PreviewStoriesActivity.newInstance();
+            startActivity(intent);
+        }));
     }
 
     private void loadInitStories() {
