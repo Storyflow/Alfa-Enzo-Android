@@ -66,6 +66,20 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return storiesList;
     }
 
+
+    public View getFromView(int position, RecyclerView.ViewHolder holder) {
+        switch (getItemViewType(position)) {
+            case FILLED_STORY:
+                return ((ReadingStoryHolder)holder).imageView;
+            case LOADING:
+                return holder.itemView;
+            case EMPTY_STORY:
+                return holder.itemView;
+            default:
+                throw new UnsupportedOperationException("You are using unsupported item view type");
+        }
+    }
+
     public void addNewStories(Story.WrapList stories, Calendar dateCalendar) {
         int storiesSize = stories.getStories().size();
         List<Story> pendingStories = StoryflowApplication.getPendingStoriesManager().getStories(dateCalendar, period);
@@ -101,7 +115,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void addNotEmptyStories(Story.WrapList stories, int size) {
         storiesList.addAll(stories.getStories());
-        if (size%limit == 0 && !TextUtils.isEmpty(stories.getNextStoryStartDate())) {
+        if (size % limit == 0 && !TextUtils.isEmpty(stories.getNextStoryStartDate())) {
             nextStoryDate = stories.getNextStoryStartDate();
         } else {
             nextStoryDate = null;

@@ -2,15 +2,22 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:background="@color/black">
+             android:background="@color/transparent">
+
+    <View
+        android:id="@+id/adapter_recycler_item_preview_story_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        />
 
     <ImageView
         android:id="@+id/adapter_recycler_item_preview_story_image_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         android:layout_gravity="center"
-        android:padding="@dimen/sizeNormal"
         />
 
 </FrameLayout>

@@ -2,7 +2,7 @@ package com.thirdandloom.storyflow.fragments;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.activities.PreviewStoriesActivity;
+import com.thirdandloom.storyflow.activities.MultiImageStoryPreviewActivity;
 import com.thirdandloom.storyflow.adapters.ReadStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Story;
@@ -142,9 +142,11 @@ public class ReadingStoriesFragment extends BaseFragment {
                 loadMoreStories();
             }
         });
-        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (view, position) -> {
-            Intent intent = PreviewStoriesActivity.newInstance(readStoriesAdapter.getStory(position), position, readStoriesAdapter.getStories());
-            startActivity(intent);
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (viewHolder, position) -> {
+            Intent intent = MultiImageStoryPreviewActivity.newInstance(readStoriesAdapter.getStory(position), position,
+                    readStoriesAdapter.getStories(), readStoriesAdapter.getFromView(position, viewHolder));
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(0, 0);
         }));
     }
 

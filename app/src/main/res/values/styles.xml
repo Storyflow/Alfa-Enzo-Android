@@ -40,6 +40,11 @@
         <item name="android:windowBackground">@color/white</item>
     </style>
 
+    <style name="NoTitleWhiteTransparent" parent="NoTitleWhite">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
+
     <style name="Button">
         <item name="android:gravity">center</item>
         <item name="android:minHeight">@dimen/buttonSizeNormal</item>
