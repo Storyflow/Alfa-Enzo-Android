@@ -3,6 +3,7 @@ package com.thirdandloom.storyflow.views.recyclerview;
 import android.content.Context;
 import android.graphics.PointF;
 import android.hardware.SensorManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 import com.thirdandloom.storyflow.utils.AndroidUtils;
+import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 
 public class SnappyLinearLayoutManager extends DisableScrollLinearLayoutManager implements ISnappyLayoutManager {
@@ -81,13 +83,13 @@ public class SnappyLinearLayoutManager extends DisableScrollLinearLayoutManager 
         boolean isThreeAndMoreItemVisible = visibleItemsCount > 1;
 
         if (isThreeAndMoreItemVisible) {
-            position = velocity < 0 ? position + 1 : position;
+            position = velocity < 0 ? position + ((DeviceUtils.getDisplayWidth()/childSize - 1)) : position;
             if (MathUtils.isValuesBetween(lastPosition, firstPosition, (int)position)) {
                 position = Math.abs(velocity) > AndroidUtils.minVelocityPxPerSecond()*4
                         ? velocity > 0
-                            ? firstPosition + 2
+                            ? firstPosition + DeviceUtils.getDisplayWidth()/childSize
                             : firstPosition
-                        : firstPosition + 1;
+                        : firstPosition + (DeviceUtils.getDisplayWidth()/childSize - 1);
             }
         } else {
             if (position == currPos) {

@@ -19,7 +19,7 @@ public class OneSnapLinearLayoutManager extends SnappyLinearLayoutManager {
         if (getChildCount() == 0) {
             return 0;
         }
-                if (getOrientation() == HORIZONTAL) {
+        if (getOrientation() == HORIZONTAL) {
             return calcPosForVelocity(velocityX, getPosition(getChildAt(0)));
         } else {
             return calcPosForVelocity(velocityY, getPosition(getChildAt(0)));
