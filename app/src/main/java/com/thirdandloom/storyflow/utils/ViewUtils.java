@@ -72,6 +72,12 @@ public class ViewUtils extends BaseUtils{
         view.setLayoutParams(params);
     }
 
+    public static void applyMatchParent(View view) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        view.setLayoutParams(params);
+    }
 
     public static void callOnPreDraw(View view, Action1<View> action) {
         view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {

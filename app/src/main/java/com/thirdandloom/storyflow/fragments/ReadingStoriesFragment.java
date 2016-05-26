@@ -144,8 +144,6 @@ public class ReadingStoriesFragment extends BaseFragment {
             }
         });
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (viewHolder, position) -> {
-            //Intent intent = MultiImageStoryPreviewActivity.newInstance(readStoriesAdapter.getStory(position), position,
-            //        readStoriesAdapter.getStories(), readStoriesAdapter.getFromView(position, viewHolder));
             Intent intent = StoryPreviewActivity.newInstance(readStoriesAdapter.getStory(position),
                     readStoriesAdapter.getFromView(position, viewHolder));
             getActivity().startActivity(intent);

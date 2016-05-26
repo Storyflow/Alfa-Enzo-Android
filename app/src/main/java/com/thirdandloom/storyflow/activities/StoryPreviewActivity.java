@@ -9,6 +9,7 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ public class StoryPreviewActivity extends BaseActivity {
 
     private ImageView imageView;
     private View contentView;
+    private PhotoViewAttacher photoViewAttacher;
 
     private int leftDelta;
     private int topDelta;
@@ -75,7 +77,11 @@ public class StoryPreviewActivity extends BaseActivity {
                             @Override
                             public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
                                 imageView.setImageDrawable(resource);
-                                if (isFirstStart) prepareAppearAnimation();
+                                if (isFirstStart) {
+                                    prepareAppearAnimation();
+                                } else {
+                                    initImageViewAttacher();
+                                }
                             }
                         });
                 break;
@@ -83,20 +89,14 @@ public class StoryPreviewActivity extends BaseActivity {
     }
 
     private void prepareAppearAnimation() {
-        ViewTreeObserver observer = imageView.getViewTreeObserver();
-        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                imageView.getViewTreeObserver().removeOnPreDrawListener(this);
-                ViewUtils.getLocationInWindow(imageView, (x, y) -> {
-                    leftDelta = state.fromViewX - x;
-                    topDelta = state.fromViewY - y;
-                    widthScale = (float) state.fromViewWidth / imageView.getWidth();
-                    heightScale = (float) state.fromViewHeight / imageView.getHeight();
-                    startAppearAnimation();
-                });
-                return true;
-            }
+        ViewUtils.callOnPreDraw(imageView, view -> {
+            ViewUtils.getLocationInWindow(imageView, (x, y) -> {
+                leftDelta = state.fromViewX - x;
+                topDelta = state.fromViewY - y;
+                widthScale = (float) state.fromViewWidth / imageView.getWidth();
+                heightScale = (float) state.fromViewHeight / imageView.getHeight();
+                startAppearAnimation();
+            });
         });
     }
 
@@ -110,12 +110,17 @@ public class StoryPreviewActivity extends BaseActivity {
         imageView.animate().setDuration(300)
                 .scaleX(1).scaleY(1)
                 .translationX(0).translationY(0)
+                .withEndAction(this::initImageViewAttacher)
                 .setInterpolator(new DecelerateInterpolator());
-
 
         imageView.setAlpha(0.f);
         imageView.animate().setDuration(300).alphaBy(1).setInterpolator(new AccelerateInterpolator());
         contentView.animate().setDuration(300).alphaBy(1).setInterpolator(new AccelerateInterpolator());
+    }
+
+    private void initImageViewAttacher() {
+        ViewUtils.applyMatchParent(imageView);
+        photoViewAttacher = new PhotoViewAttacher(imageView);
     }
 
     @Override

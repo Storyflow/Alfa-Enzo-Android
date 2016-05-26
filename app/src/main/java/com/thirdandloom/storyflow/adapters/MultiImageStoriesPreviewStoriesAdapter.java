@@ -124,21 +124,14 @@ public class MultiImageStoriesPreviewStoriesAdapter extends RecyclerView.Adapter
 
         private void prepareAppearAnimation() {
             needAppearAnimation = false;
-            ViewTreeObserver observer = imageView.getViewTreeObserver();
-            observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    ImageView view = PreviewStoryHolder.this.imageView;
-                    view.getViewTreeObserver().removeOnPreDrawListener(this);
-                    ViewUtils.getLocationInWindow(view, (x, y) -> {
-                        leftDelta = thumbnailLeft - x;
-                        topDelta = thumbnailTop - y;
-                        widthScale = (float) thumbnailWidth / view.getWidth();
-                        heightScale = (float) thumbnailHeight / view.getHeight();
-                        startAppearAnimation();
-                    });
-                    return true;
-                }
+            ViewUtils.callOnPreDraw(imageView, view -> {
+                ViewUtils.getLocationInWindow(view, (x, y) -> {
+                    leftDelta = thumbnailLeft - x;
+                    topDelta = thumbnailTop - y;
+                    widthScale = (float) thumbnailWidth / view.getWidth();
+                    heightScale = (float) thumbnailHeight / view.getHeight();
+                    startAppearAnimation();
+                });
             });
         }
 
