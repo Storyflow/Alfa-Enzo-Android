@@ -27,10 +27,6 @@ public class ConfigureAvatarRectangleActivity extends BaseActivity {
     private static final String AVATAR_RECT_KEY = "avatar_rect_key";
     private static final String AVATAR_CACHED_SIZE_KEY = "avatar_cached_size_key";
 
-    private ImageView profileImageView;
-    private PhotoViewAttacher photoViewAttacher;
-    private SavedState state;
-
     public static Intent newInstance(String imageData, int takenAction) {
         Intent intent = new Intent(StoryflowApplication.applicationContext, ConfigureAvatarRectangleActivity.class);
         SavedState state = new SavedState();
@@ -40,6 +36,10 @@ public class ConfigureAvatarRectangleActivity extends BaseActivity {
 
         return intent;
     }
+
+    private ImageView profileImageView;
+    private PhotoViewAttacher photoViewAttacher;
+    private SavedState state;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

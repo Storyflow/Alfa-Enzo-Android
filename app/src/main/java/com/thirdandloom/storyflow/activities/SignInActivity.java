@@ -14,14 +14,15 @@ import android.view.View;
 import android.widget.EditText;
 
 public class SignInActivity extends BaseActivity {
-    private EditText loginEditText;
-    private EditText passwordEditText;
-    private View forgotPasswordView;
-    private View continueButton;
 
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.applicationContext, SignInActivity.class);
     }
+
+    private EditText loginEditText;
+    private EditText passwordEditText;
+    private View forgotPasswordView;
+    private View continueButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

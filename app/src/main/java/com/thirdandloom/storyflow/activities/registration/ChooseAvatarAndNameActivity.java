@@ -35,10 +35,6 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
     private static final int SELECT_PHOTO = CAPTURE_PHOTO + 1;
     private static final int SET_PROFILE_PICTURE = SELECT_PHOTO + 1;
 
-    private ImageView avatarImageView;
-    private EditText nameEditText;
-    private SavedState state;
-
     public static Intent newInstance(String userName, String email, String password) {
         Intent intent = new Intent(StoryflowApplication.applicationContext, ChooseAvatarAndNameActivity.class);
         SavedState state = new SavedState();
@@ -48,6 +44,10 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
         putExtra(intent, state);
         return intent;
     }
+
+    private ImageView avatarImageView;
+    private EditText nameEditText;
+    private SavedState state;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

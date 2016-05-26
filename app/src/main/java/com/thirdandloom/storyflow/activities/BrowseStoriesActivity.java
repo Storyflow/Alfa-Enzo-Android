@@ -46,13 +46,6 @@ import java.util.List;
 public class BrowseStoriesActivity extends BaseActivity implements ReadingStoriesFragment.IStoryDetailFragmentDataSource {
     private static final int CREATE_NEW_STORY = 1;
 
-    private SnappyRecyclerView snappyRecyclerView;
-    private View periodChooserView;
-    private TabBar tabBar;
-    private Action1<Float> takeScrollValue;
-    private ReadingStoriesFragment storyDetailsFragment;
-    private int recyclerViewScrollState = RecyclerView.SCROLL_STATE_IDLE;
-
     public static Intent newInstance(boolean continueAnimation) {
         Intent intent = new Intent(StoryflowApplication.applicationContext, BrowseStoriesActivity.class);
         SavedState state = new SavedState();
@@ -60,6 +53,13 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         putExtra(intent, state);
         return intent;
     }
+
+    private SnappyRecyclerView snappyRecyclerView;
+    private View periodChooserView;
+    private TabBar tabBar;
+    private Action1<Float> takeScrollValue;
+    private ReadingStoriesFragment storyDetailsFragment;
+    private int recyclerViewScrollState = RecyclerView.SCROLL_STATE_IDLE;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

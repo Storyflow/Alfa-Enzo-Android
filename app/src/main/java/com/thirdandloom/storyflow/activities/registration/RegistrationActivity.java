@@ -12,13 +12,13 @@ import android.widget.EditText;
 
 public class RegistrationActivity extends BaseActivity {
 
-    private EditText userNameEditText;
-    private EditText emailEditText;
-    private EditText passwordEditText;
-
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.applicationContext, RegistrationActivity.class);
     }
+
+    private EditText userNameEditText;
+    private EditText emailEditText;
+    private EditText passwordEditText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

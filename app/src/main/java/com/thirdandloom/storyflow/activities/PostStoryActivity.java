@@ -36,6 +36,10 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private static final int CAPTURE_PHOTO = 1;
     private static final int SELECT_PHOTO = CAPTURE_PHOTO + 1;
 
+    public static Intent newInstance() {
+        return new Intent(StoryflowApplication.applicationContext, PostStoryActivity.class);
+    }
+
     private PostStoryBar postStoryBar;
     private SizeNotifierFrameLayout sizeNotifierLayout;
     private View keyboardReplacerView;
@@ -43,10 +47,6 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private ScrollView scrollViewContainer;
     private int defaultScrollViewHeight;
     private ImageView postStoryImageView;
-
-    public static Intent newInstance() {
-        return new Intent(StoryflowApplication.applicationContext, PostStoryActivity.class);
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

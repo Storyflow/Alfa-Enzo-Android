@@ -15,7 +15,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
@@ -34,7 +33,6 @@ public class StoryPreviewActivity extends BaseActivity {
             state.fromViewWidth = fromView.getWidth();
             state.fromViewHeight = fromView.getHeight();
         });
-
         putExtra(intent, state);
         return intent;
     }
@@ -86,6 +84,20 @@ public class StoryPreviewActivity extends BaseActivity {
                         });
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        imageView.animate().setDuration(300)
+                .scaleX(widthScale).scaleY(heightScale)
+                .translationX(leftDelta).translationY(topDelta)
+                .withEndAction(() -> {
+                    finish();
+                    overridePendingTransition(0, 0);
+                })
+                .setInterpolator(new DecelerateInterpolator());
+        imageView.animate().setDuration(300).alpha(0.f).setInterpolator(new AccelerateInterpolator());
+        contentView.animate().setDuration(300).alpha(0.f).setInterpolator(new AccelerateInterpolator());
     }
 
     private void prepareAppearAnimation() {

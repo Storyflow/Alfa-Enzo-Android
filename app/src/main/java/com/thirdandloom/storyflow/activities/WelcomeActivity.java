@@ -18,13 +18,14 @@ import android.view.View;
 import android.widget.TextView;
 
 public class WelcomeActivity extends BaseActivity {
-    private View signUpView;
-    private View haveAccountView;
-    private TextView privacyTextView;
 
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.applicationContext, WelcomeActivity.class);
     }
+
+    private View signUpView;
+    private View haveAccountView;
+    private TextView privacyTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
