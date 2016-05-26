@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginRight="@dimen/sizeTiny"
-    android:layout_marginLeft="@dimen/sizeTiny">
+    android:layout_marginRight="@dimen/sizeTiniest"
+    android:layout_marginLeft="@dimen/sizeTiniest">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,6 +21,8 @@
             android:paddingTop="@dimen/sizeMedium"
             android:textColor="@color/greyDark"
             android:textSize="@dimen/textSizeNormal"
+            android:singleLine="true"
+            android:ellipsize="end"
             tools:text="Next Year"
             tools:textColor="@color/white" />
 
@@ -32,6 +34,8 @@
             android:paddingBottom="@dimen/sizeMedium"
             android:textColor="@color/greyDark"
             android:textSize="@dimen/textSizeTiny"
+            android:singleLine="true"
+            android:ellipsize="end"
             tools:text="2017"
             tools:textColor="@color/white" />
 

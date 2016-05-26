@@ -3,7 +3,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:layout_marginBottom="@dimen/sizeSmall">
+             android:layout_marginBottom="@dimen/sizeTiny">
 
     <ImageView
         android:id="@+id/adapter_recycler_item_horizontal_story_image_view"

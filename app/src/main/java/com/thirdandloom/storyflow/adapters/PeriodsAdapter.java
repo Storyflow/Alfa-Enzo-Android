@@ -32,7 +32,7 @@ import java.util.List;
 
 public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHolder> {
     public enum ItemType {
-        Large, Small
+        Large, Small, Smallest
     }
     public enum PeriodType {
         Daily, Monthly, Yearly
@@ -119,6 +119,9 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
                 itemType = ItemType.Small;
                 break;
             case Small:
+                itemType = ItemType.Smallest;
+                break;
+            case Smallest:
                 itemType = ItemType.Large;
                 break;
         }
@@ -134,6 +137,8 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
                 return DeviceUtils.getDisplayWidth()-getItemPadding()*2;
             case Small:
                 return DeviceUtils.getDisplayWidth()/2;
+            case Smallest:
+                return DeviceUtils.getDisplayWidth()/3-getItemPadding()*2;
         }
         throw new UnsupportedOperationException("unsupported itemWidth is using");
     }
@@ -313,6 +318,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     public static int getItemMargin() {
-        return StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.sizeTiny);
+        return StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.sizeTiniest);
     }
 }

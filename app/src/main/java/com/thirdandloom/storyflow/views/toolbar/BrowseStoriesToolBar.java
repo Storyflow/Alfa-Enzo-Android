@@ -90,6 +90,7 @@ public class BrowseStoriesToolBar extends BaseToolBar {
         Map<Integer, Integer> map = new HashMap<>();
         map.put(PeriodsAdapter.ItemType.Small.ordinal(), R.drawable.plus_icon);
         map.put(PeriodsAdapter.ItemType.Large.ordinal(), R.drawable.minus_icon);
+        map.put(PeriodsAdapter.ItemType.Smallest.ordinal(), R.drawable.minus_icon);
         toolbarSizeImage = Collections.unmodifiableMap(map);
     }
 }

@@ -9,6 +9,7 @@
     <dimen name="textSizeXXXLarge">128sp</dimen>
 
 
+    <dimen name="sizeTiniest">1dp</dimen>
     <dimen name="sizeTiny">2dp</dimen>
     <dimen name="sizeSmall">4dp</dimen>
     <dimen name="sizeNormal">8dp</dimen>
