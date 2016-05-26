@@ -43,7 +43,7 @@ public class MultiImageStoryPreviewActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preview_stories);
+        setContentView(R.layout.activity_multiimage_preview_stories);
         restoreState(SavedState.class, savedInstanceState,
                 restored -> state = restored,
                 inited -> state = inited);

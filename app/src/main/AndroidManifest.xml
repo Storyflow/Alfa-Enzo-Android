@@ -75,6 +75,11 @@
                   android:theme="@style/NoTitleWhiteTransparent">
         </activity>
 
+        <activity android:name=".activities.StoryPreviewActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/NoTitleWhiteTransparent">
+        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="007706a287637bde5afb1b4391bf89a8b946cf5f"/>
