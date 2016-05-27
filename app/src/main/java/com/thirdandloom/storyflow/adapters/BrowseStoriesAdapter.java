@@ -10,6 +10,7 @@ import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.glide.RoundedCornersTransformation;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -185,6 +186,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
             Glide
                     .with(context)
                     .load(url)
+                    .bitmapTransform(new RoundedCornersTransformation(context, AndroidUtils.dp(5.f), 0))
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .crossFade()
                     .into(imageView);
