@@ -42,7 +42,6 @@ public class TabBar extends LinearLayout {
         inflate(getContext(), R.layout.view_tab_bar, this);
         setOrientation(HORIZONTAL);
         setMinimumHeight(StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.tabBarHeight));
-        setBackground(getResources().getDrawable(R.drawable.shape_black_gradient));
         setPadding(0, 0, 0, getResources().getDimensionPixelOffset(R.dimen.sizeNormal));
 
         findViewById(R.id.view_tab_bar_updates).setOnClickListener(v -> {

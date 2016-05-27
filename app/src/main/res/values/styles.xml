@@ -86,6 +86,47 @@
 
 
 
+    <style name="TextAppearance.RoboBlackSmall" parent="android:TextAppearance">
+        <item name="fontPath">Roboto-Black.ttf</item>
+        <item name="android:textSize">@dimen/textSizeSmall</item>
+    </style>
+
+    <style name="TextAppearance.RoboBlackNormal" parent="android:TextAppearance">
+        <item name="fontPath">Roboto-Black.ttf</item>
+        <item name="android:textSize">@dimen/textSizeNormal</item>
+    </style>
+
+    <style name="TextAppearance.RoboMediumXTiny" parent="android:TextAppearance">
+        <item name="fontPath">Roboto-Medium.ttf</item>
+        <item name="android:textSize">@dimen/textSizeXTiny</item>
+    </style>
+
+    <style name="TextAppearance.RoboMediumNormal" parent="android:TextAppearance">
+        <item name="fontPath">Roboto-Medium.ttf</item>
+        <item name="android:textSize">@dimen/textSizeNormal</item>
+    </style>
+
+    <style name="TextAppearance.RoboMediumTiny" parent="android:TextAppearance">
+        <item name="fontPath">Roboto-Medium.ttf</item>
+        <item name="android:textSize">@dimen/textSizeTiny</item>
+    </style>
+
+    <style name="TextAppearance.RoboBoldTiny" parent="android:TextAppearance">
+        <item name="fontPath">Roboto-Bold.ttf</item>
+        <item name="android:textSize">@dimen/textSizeTiny</item>
+    </style>
+
+    <style name="TextAppearance.RoboBoldSmall" parent="android:TextAppearance">
+        <item name="fontPath">Roboto-Bold.ttf</item>
+        <item name="android:textSize">@dimen/textSizeSmall</item>
+    </style>
+
+    <style name="TextAppearance.RoboRegularTiniest" parent="android:TextAppearance">
+        <item name="fontPath">Roboto-Regular.ttf</item>
+        <item name="android:textSize">@dimen/textSizeTiniest</item>
+    </style>
+
+    <!-- Old font styles using in N.Dubinka design -->
     <style name="TextAppearance.FontHeavyNormalTextSize" parent="android:TextAppearance">
         <item name="fontPath">AvenirLTStd-Heavy.ttf</item>
         <item name="android:textSize">@dimen/textSizeNormal</item>

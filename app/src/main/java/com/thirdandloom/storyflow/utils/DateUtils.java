@@ -177,7 +177,7 @@ public class DateUtils extends BaseUtils {
             boldText = getResources().getString(weekDayMap.get(checkCalendar.get(Calendar.DAY_OF_WEEK)));
         }
 
-        String formattedDate = getDateString("MM.dd.yyyy", checkCalendar.getTime());
+        String formattedDate = getDateString("EEE, MMMM dd", checkCalendar.getTime());
         representation.call(boldText, formattedDate);
     }
 

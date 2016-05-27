@@ -92,7 +92,7 @@ public class StoryflowApplication extends Application {
                 .build();
         Fabric.with(fabric);
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                        .setDefaultFontPath("AvenirLTStd-Roman.ttf")
+                        .setDefaultFontPath("Roboto-Regular.ttf")
                         .setFontAttrId(R.attr.fontPath)
                         .build()
         );

@@ -53,7 +53,7 @@ public class BrowseStoriesToolBar extends BaseToolBar {
         changePeriodImageView = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_change_period);
 
         User user = StoryflowApplication.account().getUser();
-        userNameTextView.setText(user.getUsername());
+        userNameTextView.setText(String.format("@%s", user.getUsername() ));
         fullUserNameTextView.setText(user.getFullUserName());
         Glide
                 .with(getContext())
@@ -88,9 +88,9 @@ public class BrowseStoriesToolBar extends BaseToolBar {
     private static final Map<Integer, Integer> toolbarSizeImage;
     static {
         Map<Integer, Integer> map = new HashMap<>();
-        map.put(PeriodsAdapter.ItemType.Small.ordinal(), R.drawable.plus_icon);
-        map.put(PeriodsAdapter.ItemType.Large.ordinal(), R.drawable.minus_icon);
-        map.put(PeriodsAdapter.ItemType.Smallest.ordinal(), R.drawable.minus_icon);
+        map.put(PeriodsAdapter.ItemType.Small.ordinal(), R.drawable.ic_view_2);
+        map.put(PeriodsAdapter.ItemType.Large.ordinal(), R.drawable.ic_view_1);
+        map.put(PeriodsAdapter.ItemType.Smallest.ordinal(), R.drawable.ic_view_3);
         toolbarSizeImage = Collections.unmodifiableMap(map);
     }
 }

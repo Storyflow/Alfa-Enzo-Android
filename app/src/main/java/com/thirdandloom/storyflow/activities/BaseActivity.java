@@ -35,7 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private QuickAlertController quickAlert;
     private ProgressBarController progressBar;
-    private Toolbar toolbar;
+    private BaseToolBar toolbar;
     private NetworkReceiver networkReceiver;
 
     @Override
@@ -140,11 +140,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private void findToolBar() {
         if (hasToolBar()) {
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar = (BaseToolBar) findViewById(R.id.toolbar);
             if (toolbar == null) throw new UnsupportedOperationException("If activity has toolbar, u have to include layout_toolbar_simple in content view");
             setSupportActionBar(toolbar);
-            toolbar.setNavigationIcon(R.drawable.ic_up);
-            toolbar.setNavigationOnClickListener(v -> onUpButtonClicked());
+            toolbar.setNavigationIcon(null);
+            toolbar.setOnUpButtonClickListener(this::onUpButtonClicked);
         }
     }
 

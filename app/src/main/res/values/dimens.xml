@@ -1,5 +1,7 @@
 <resources>
 
+    <dimen name="textSizeTiniest">10sp</dimen>
+    <dimen name="textSizeXTiny">12sp</dimen>
     <dimen name="textSizeTiny">14sp</dimen>
     <dimen name="textSizeSmall">16sp</dimen>
     <dimen name="textSizeNormal">20sp</dimen>

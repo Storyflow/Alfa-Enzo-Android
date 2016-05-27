@@ -18,9 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingTop="@dimen/sizeMedium"
-            android:textColor="@color/greyDark"
-            android:textSize="@dimen/textSizeNormal"
+            android:textColor="@color/greyDarkName"
+            android:textAppearance="@style/TextAppearance.RoboMediumNormal"
             android:singleLine="true"
             android:ellipsize="end"
             tools:text="Next Year"
@@ -31,14 +30,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingBottom="@dimen/sizeMedium"
-            android:textColor="@color/greyDark"
-            android:textSize="@dimen/textSizeTiny"
+            android:paddingBottom="@dimen/sizeNormal"
+            android:textColor="@color/greyDarkName"
+            android:textAppearance="@style/TextAppearance.RoboBoldTiny"
             android:singleLine="true"
             android:ellipsize="end"
             tools:text="2017"
             tools:textColor="@color/white" />
-
 
         <com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout
             android:id="@+id/adapter_recycler_item_horizontal_refresh_layout"
@@ -55,13 +53,14 @@
 
     </LinearLayout>
 
-    <TextView
+    <com.thirdandloom.storyflow.views.edittext.AutoResizeTextView
         android:id="@+id/adapter_recycler_item_horizontal_no_stories_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@color/greyLightest"
         android:text="@string/no_stories"
+        android:singleLine="true"
         android:textColor="@color/white"
         android:textSize="@dimen/textSizeLarge"
         android:visibility="visible"

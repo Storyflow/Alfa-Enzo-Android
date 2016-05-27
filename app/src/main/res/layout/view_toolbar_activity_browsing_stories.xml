@@ -7,10 +7,21 @@
               android:background="@color/transparent"
               tools:background="@color/white">
 
+    <ImageView
+        android:id="@+id/view_toolbar_up"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_up"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        />
+
+
     <com.thirdandloom.storyflow.views.RoundSquareImageView
         android:id="@+id/toolbar_activity_browsing_stories_avatar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_gravity="center"
         android:paddingTop="@dimen/sizeSmall"
         android:paddingRight="@dimen/sizeSmall"
         android:paddingBottom="@dimen/sizeSmall"
@@ -26,8 +37,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="bottom"
-            android:textColor="@color/greyDark"
-            android:textSize="@dimen/textSizeNormal"
+            android:textColor="@color/greyDarkName"
+            android:textAppearance="@style/TextAppearance.RoboMediumNormal"
             tools:text="Full name"
             />
         <TextView
@@ -36,9 +47,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="top"
-            android:textColor="@color/greyLight"
-            android:textSize="@dimen/textSizeNormal"
-            tools:text="User name"
+            android:textColor="@color/greyDarkSubName"
+            android:textAppearance="@style/TextAppearance.RoboMediumTiny"
+            tools:text="\@User"
             />
     </LinearLayout>
 
@@ -48,20 +59,20 @@
         />
 
     <ImageView
-        android:id="@+id/toolbar_activity_browsing_stories_change_period"
+        android:id="@+id/toolbar_activity_browsing_stories_increase_size"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/drilldown"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_view_1"
         android:layout_gravity="center"
         android:scaleType="center"
         android:padding="@dimen/sizeSmall"
         />
 
     <ImageView
-        android:id="@+id/toolbar_activity_browsing_stories_increase_size"
+        android:id="@+id/toolbar_activity_browsing_stories_change_period"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/minus_icon"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_filter_time"
         android:layout_gravity="center"
         android:scaleType="center"
         android:padding="@dimen/sizeSmall"
@@ -70,12 +81,11 @@
     <ImageView
         android:id="@+id/toolbar_activity_browsing_stories_plus_stories_chooser"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/chooser"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_filter_options_"
         android:layout_gravity="center"
         android:scaleType="center"
         android:padding="@dimen/sizeSmall"
-        android:layout_marginRight="@dimen/sizeMedium"
         />
 
 </LinearLayout>

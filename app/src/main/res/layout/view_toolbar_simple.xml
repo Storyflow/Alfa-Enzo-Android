@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/transparent">
+
+    <ImageView
+        android:id="@+id/view_toolbar_up"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_up"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        />
 
     <TextView
         android:id="@+id/view_toolbar_title_text_view"
@@ -15,4 +24,4 @@
         tools:text="Title text"
         />
 
-</FrameLayout>
+</LinearLayout>

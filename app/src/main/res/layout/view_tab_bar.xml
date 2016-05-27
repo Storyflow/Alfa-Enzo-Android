@@ -5,34 +5,70 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:weightSum="5"
-              android:background="@drawable/shape_black_gradient"
               android:paddingBottom="@dimen/sizeNormal">
 
-    <TextView
-        android:id="@+id/view_tab_bar_updates"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:gravity="center|bottom"
-        android:layout_weight="1"
-        android:textColor="@color/white"
-        android:text="@string/updates"
-        tools:text="Updates"
-        />
 
-    <TextView
-        android:id="@+id/view_tab_bar_messages"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:gravity="center|bottom"
-        android:textColor="@color/white"
-        android:layout_weight="1"
-        android:text="@string/messages"
-        tools:text="Messages"
-        />
+    <LinearLayout android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:id="@+id/view_tab_bar_updates"
+                  android:layout_weight="1"
+                  android:gravity="bottom"
+                  android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:scaleType="center"
+            android:src="@drawable/ic_activities"
+            tools:text="Updates"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|bottom"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.RoboMediumTiny"
+            android:text="@string/updates"
+            tools:text="Updates"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:id="@+id/view_tab_bar_messages"
+                  android:layout_weight="1"
+                  android:gravity="bottom"
+                  android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:scaleType="center"
+            android:src="@drawable/ic_messages"
+            tools:text="Updates"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|bottom"
+            android:textColor="@color/white"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.RoboMediumTiny"
+            android:text="@string/messages"
+            tools:text="Messages"
+            />
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="70dp"
         android:layout_weight="1">
 
         <com.thirdandloom.storyflow.views.RoundSquareImageView
@@ -53,26 +89,62 @@
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/view_tab_bar_post"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:gravity="center|bottom"
-        android:textColor="@color/white"
-        android:layout_weight="1"
-        android:text="@string/post"
-        tools:text="Post"
-        />
+    <LinearLayout android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:id="@+id/view_tab_bar_post"
+                  android:layout_weight="1"
+                  android:gravity="bottom"
+                  android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/view_tab_bar_profile"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:gravity="center|bottom"
-        android:textColor="@color/white"
-        android:layout_weight="1"
-        android:text="@string/profile"
-        tools:text="Profile"
-        />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:scaleType="center"
+            android:src="@drawable/ic_post"
+            tools:text="Updates"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.RoboMediumTiny"
+            android:text="@string/post"
+            tools:text="Post"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:id="@+id/view_tab_bar_profile"
+                  android:layout_weight="1"
+                  android:gravity="bottom"
+                  android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:scaleType="center"
+            android:src="@drawable/ic_profile"
+            tools:text="Updates"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:singleLine="true"
+            android:text="@string/profile"
+            android:textAppearance="@style/TextAppearance.RoboMediumTiny"
+            tools:text="Profile"
+            />
+
+    </LinearLayout>
 
 </merge>
