@@ -58,13 +58,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@color/greyLightest"
+        android:background="@color/transparent"
         android:text="@string/no_stories"
         android:singleLine="true"
         android:textColor="@color/white"
         android:textSize="@dimen/textSizeLarge"
         android:visibility="visible"
-
         tools:background="@color/red"
         tools:visibility="visible" />
 

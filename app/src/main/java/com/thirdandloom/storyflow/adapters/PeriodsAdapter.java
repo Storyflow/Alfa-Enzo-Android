@@ -263,10 +263,11 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
 
         public void updateEmptyView(BrowseStoriesAdapter.DataType dataType) {
             ViewUtils.setShown(noStoriesView, dataType == BrowseStoriesAdapter.DataType.EmptyStories);
-            int backgroundColorId = dataType == BrowseStoriesAdapter.DataType.EmptyStories
-                    ? R.color.greyLightest
-                    : R.color.transparent;
-            recyclerView.setBackgroundColor(StoryflowApplication.resources().getColor(backgroundColorId));
+            if (dataType == BrowseStoriesAdapter.DataType.EmptyStories) {
+                recyclerView.setBackground(StoryflowApplication.resources().getDrawable(R.drawable.shape_grey_lightest_round_corners));
+            } else {
+                recyclerView.setBackgroundColor(StoryflowApplication.resources().getColor(R.color.transparent));
+            }
         }
 
         public void setDateRepresentation(String boldText, String formattedDate) {
