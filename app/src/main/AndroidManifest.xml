@@ -16,7 +16,6 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -82,13 +81,8 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="007706a287637bde5afb1b4391bf89a8b946cf5f"/>
-
-        <receiver android:name=".utils.connectivity.ConnectivityReceiver" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+            android:value="007706a287637bde5afb1b4391bf89a8b946cf5f"
+            />
 
     </application>
 

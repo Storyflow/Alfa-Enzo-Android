@@ -1,17 +1,17 @@
 package com.thirdandloom.storyflow.utils.event;
 
-import com.thirdandloom.storyflow.utils.connectivity.NetworkType;
+import com.thirdandloom.storyflow.utils.connectivity.NetworkReceiver;
 
 public class NetworkChangedEvent {
-    private NetworkType networkType;
+    private NetworkReceiver.NetworkType networkType;
     private boolean available;
 
-    public NetworkChangedEvent(NetworkType networkType, boolean available) {
+    public NetworkChangedEvent(NetworkReceiver.NetworkType networkType, boolean available) {
         this.networkType = networkType;
         this.available = available;
     }
 
-    public NetworkType getNetworkType() {
+    public NetworkReceiver.NetworkType getNetworkType() {
         return networkType;
     }
 

@@ -11,7 +11,6 @@ import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.service.UploadStoriesService;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.concurrent.SimpleExecutor;
-import com.thirdandloom.storyflow.utils.connectivity.ConnectivityObserver;
 import io.fabric.sdk.android.Fabric;
 import rx.functions.Action1;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -34,17 +33,11 @@ public class StoryflowApplication extends Application {
     private static StoryflowApplication instance;
     private IRestClient restClient;
     private AccountManager accountManager;
-    private ConnectivityObserver connectivityObserver;
     private PendingStoriesManager pendingStoriesManager;
 
     public static AccountManager account() {
         return instance.accountManager;
     }
-
-    public static ConnectivityObserver connectivityObserver() {
-        return instance.connectivityObserver;
-    }
-
 
     public static IRestClient restClient() {
         return instance.restClient;
@@ -105,7 +98,6 @@ public class StoryflowApplication extends Application {
         );
         this.restClient = new RestClient(this);
         this.accountManager = new AccountManager();
-        this.connectivityObserver = new ConnectivityObserver();
         this.pendingStoriesManager = new PendingStoriesManager();
         UploadStoriesService.notifyService();
     }

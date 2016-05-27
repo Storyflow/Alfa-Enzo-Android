@@ -3,6 +3,7 @@ package com.thirdandloom.storyflow.activities;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.Theme;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.connectivity.NetworkReceiver;
 import com.thirdandloom.storyflow.utils.event.HideProgressEvent;
 import com.thirdandloom.storyflow.utils.event.ShowProgressEvent;
 import com.thirdandloom.storyflow.views.alert.QuickAlertController;
@@ -17,6 +18,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
@@ -33,6 +36,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private QuickAlertController quickAlert;
     private ProgressBarController progressBar;
     private Toolbar toolbar;
+    private NetworkReceiver networkReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         DeviceUtils.updateStatusBarColor(getWindow(), getResources().getColor(getStatusBarColorResourceId()));
         initQuickAlertController();
         initProgressBar();
+        initNetworkReceiver();
     }
 
     @Override
@@ -87,10 +92,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     @ColorRes
     public abstract int getStatusBarColorResourceId();
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        quickAlert.hide();
+    private void initNetworkReceiver() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        networkReceiver = new NetworkReceiver();
+        registerReceiver(networkReceiver, filter);
     }
 
     @Override
@@ -103,6 +108,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        quickAlert.hide();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (networkReceiver != null) {
+            this.unregisterReceiver(networkReceiver);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
