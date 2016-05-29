@@ -144,7 +144,9 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
             getPeriodsAdapter().setPeriodType(periodType);
             getPeriodsAdapter().clearData();
             getPeriodsAdapter().notifyDataSetChanged();
-            loadStoriesBetweenPositions(position - 1, position + 1);
+            int first = getLayoutManager().findFirstVisibleItemPosition();
+            int last = getLayoutManager().findLastVisibleItemPosition();
+            loadStoriesBetweenPositions(first, last);
         }
     }
 
@@ -167,12 +169,21 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     private void changeSize() {
         PeriodsAdapter adapter = getPeriodsAdapter();
+        int previousItems = DeviceUtils.getDisplayWidth()/adapter.getItemWidthPixel();
         adapter.changeItemWidth();
         adapter.notifyDataSetChanged();
         int position = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
         updateOffset(position);
-        tabBar.setItemWidth(adapter.getItemWidthPixel());
+        tabBar.setItemWidth(adapter.getItemWidthPixel() + PeriodsAdapter.getItemMargin() * 2);
         ((BrowseStoriesToolBar) getToolbar()).onNewItemWidthSelected(adapter.getItemType());
+
+        int newVisibleItems = DeviceUtils.getDisplayWidth()/adapter.getItemWidthPixel();
+        if (newVisibleItems > previousItems) {
+            int delta = newVisibleItems - previousItems;
+            int first = getLayoutManager().findFirstVisibleItemPosition();
+            int last = getLayoutManager().findLastVisibleItemPosition();
+            fetchData(first-delta, last+delta);
+        }
     }
 
     private void updateOffset(int position) {
@@ -183,7 +194,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         layoutManager.scrollToPositionWithOffset(position, offset / 2);
     }
 
-    private DisableScrollLinearLayoutManager getHorizontalRecyclerViewLayoutManager() {
+    private DisableScrollLinearLayoutManager getLayoutManager() {
         return (DisableScrollLinearLayoutManager) snappyRecyclerView.getLayoutManager();
     }
 
@@ -206,18 +217,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         toolBar.setActions(new BrowseStoriesToolBar.Actions() {
             @Override
             public void onChangeSizeClicked() {
-//                int firstVisiblePosition = getHorizontalRecyclerViewLayoutManager().findFirstVisibleItemPosition();
-//                int lastVisiblePosition = getHorizontalRecyclerViewLayoutManager().findLastVisibleItemPosition();
-//                int previousVisibleItemsCount = lastVisiblePosition - firstVisiblePosition;
                 changeSize();
-//                fetchData();
-
-//                firstVisiblePosition = getHorizontalRecyclerViewLayoutManager().findFirstVisibleItemPosition();
-//                lastVisiblePosition = getHorizontalRecyclerViewLayoutManager().findLastVisibleItemPosition();
-//                int newVisibleItemsCount = lastVisiblePosition - firstVisiblePosition;
-//                if (newVisibleItemsCount > previousVisibleItemsCount) {
-//                    fetchData(firstVisiblePosition, lastVisiblePosition);
-//                }
             }
 
             @Override
@@ -259,8 +259,8 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     }
 
     private void fetchData() {
-        int firstVisiblePosition = getHorizontalRecyclerViewLayoutManager().findFirstVisibleItemPosition();
-        int lastVisiblePosition = getHorizontalRecyclerViewLayoutManager().findLastVisibleItemPosition();
+        int firstVisiblePosition = getLayoutManager().findFirstVisibleItemPosition();
+        int lastVisiblePosition = getLayoutManager().findLastVisibleItemPosition();
         fetchData(firstVisiblePosition, lastVisiblePosition);
     }
 
@@ -317,19 +317,19 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     private final PeriodsAdapter.StoryHolder.Actions storyPreviewActions = new PeriodsAdapter.StoryHolder.Actions() {
         @Override
         public void onDragStarted() {
-            getHorizontalRecyclerViewLayoutManager().setDisableScroll(true);
+            getLayoutManager().setDisableScroll(true);
         }
 
         @Override
         public void onDragFinished(int velocity) {
             if (storyDetailsFragment != null)
                 storyDetailsFragment.onDragFinished(velocity);
-            getHorizontalRecyclerViewLayoutManager().setDisableScroll(false);
+            getLayoutManager().setDisableScroll(false);
         }
 
         @Override
         public void pullToRefreshMotionNotifier(int motionEventAction) {
-            getHorizontalRecyclerViewLayoutManager().setDisableScroll(motionEventAction == MotionEvent.ACTION_MOVE);
+            getLayoutManager().setDisableScroll(motionEventAction == MotionEvent.ACTION_MOVE);
         }
 
         @Override
@@ -438,7 +438,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
             state.savedRequestData = requestData;
         });
         state.savedItemType = getPeriodsAdapter().getItemType();
-        state.currentPosition = getHorizontalRecyclerViewLayoutManager().findFirstCompletelyVisibleItemPosition();
+        state.currentPosition = getLayoutManager().findFirstCompletelyVisibleItemPosition();
         return state;
     }
 
