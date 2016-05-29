@@ -19,6 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BrowseStoriesToolBar extends BaseToolBar {
+    public interface Actions {
+        void onChangeSizeClicked();
+        void onChangePeriodClicked();
+        void onChangeAuthorsClicked();
+    }
+
     public BrowseStoriesToolBar(Context context) {
         super(context);
     }
@@ -39,18 +45,19 @@ public class BrowseStoriesToolBar extends BaseToolBar {
     private TextView userNameTextView;
     private TextView fullUserNameTextView;
     private ImageView avatarImageView;
-    private ImageView changeSizeImageView;
-    private ImageView changePeriodImageView;
-    private Action0 onChangePeriod;
-    private Action0 onChangeSize;
+    private ImageView sizeFilterImageVie;
+    private ImageView periodFilterImageView;
+    private View authorsFilterImageView;
+    private Actions actions;
 
     @Override
     protected void init() {
         userNameTextView = (TextView) findViewById(R.id.toolbar_activity_browsing_stories_user_name);
         fullUserNameTextView = (TextView) findViewById(R.id.toolbar_activity_browsing_stories_full_name);
         avatarImageView = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_avatar);
-        changeSizeImageView = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_increase_size);
-        changePeriodImageView = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_change_period);
+        sizeFilterImageVie = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_increase_size);
+        periodFilterImageView = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_change_period);
+        authorsFilterImageView = findViewById(R.id.toolbar_activity_browsing_stories_plus_stories_chooser);
 
         User user = StoryflowApplication.account().getUser();
         userNameTextView.setText(String.format("@%s", user.getUsername() ));
@@ -61,28 +68,23 @@ public class BrowseStoriesToolBar extends BaseToolBar {
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .dontAnimate()
                 .into(avatarImageView);
-        changePeriodImageView.setOnClickListener(this::onChangePeriodClicked);
-        changeSizeImageView.setOnClickListener(this::onChangeSizeClicked);
+        periodFilterImageView.setOnClickListener(v -> {
+            if (actions != null) actions.onChangePeriodClicked();
+        });
+        sizeFilterImageVie.setOnClickListener(v -> {
+            if (actions != null) actions.onChangeSizeClicked();
+        });
+        authorsFilterImageView.setOnClickListener(v -> {
+            if (actions != null) actions.onChangeAuthorsClicked();
+        });
     }
 
-    private void onChangePeriodClicked(View view) {
-        if (onChangePeriod != null) onChangePeriod.call();
-    }
-
-    private void onChangeSizeClicked(View view) {
-        if (onChangeSize != null) onChangeSize.call();
-    }
-
-    public void setOnChangePeriod(Action0 onChangePeriod) {
-        this.onChangePeriod = onChangePeriod;
-    }
-
-    public void setOnChangeSize(Action0 onChangeSize) {
-        this.onChangeSize = onChangeSize;
+    public void setActions(Actions actions) {
+        this.actions = actions;
     }
 
     public void onNewItemWidthSelected(PeriodsAdapter.ItemType itemType) {
-        changeSizeImageView.setImageResource(toolbarSizeImage.get(itemType.ordinal()));
+        sizeFilterImageVie.setImageResource(toolbarSizeImage.get(itemType.ordinal()));
     }
 
     private static final Map<Integer, Integer> toolbarSizeImage;

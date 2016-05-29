@@ -144,7 +144,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (toolbar == null) throw new UnsupportedOperationException("If activity has toolbar, u have to include layout_toolbar_simple in content view");
             setSupportActionBar(toolbar);
             toolbar.setNavigationIcon(null);
-            toolbar.setOnUpButtonClickListener(this::onUpButtonClicked);
+            toolbar.onUpButtonClicked(this::onUpButtonClicked);
         }
     }
 

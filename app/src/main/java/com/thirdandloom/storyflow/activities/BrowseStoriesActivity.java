@@ -95,17 +95,17 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         periodChooserView.requestLayout();
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_yearly).setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodYearly();
-            onChangePeriodClicked();
+            changePeriod();
             onPeriodChanged(PeriodsAdapter.PeriodType.Yearly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_monthly).setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodMonthly();
-            onChangePeriodClicked();
+            changePeriod();
             onPeriodChanged(PeriodsAdapter.PeriodType.Monthly);
         });
         periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_daily).setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodDaily();
-            onChangePeriodClicked();
+            changePeriod();
             onPeriodChanged(PeriodsAdapter.PeriodType.Daily);
         });
     }
@@ -139,7 +139,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     private void onPeriodChanged(PeriodsAdapter.PeriodType periodType) {
         if (getPeriodsAdapter().getPeriodType() != periodType) {
-            int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
+            int position = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
             getPeriodsAdapter().setCenterPosition(position);
             getPeriodsAdapter().setPeriodType(periodType);
             getPeriodsAdapter().clearData();
@@ -148,7 +148,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         }
     }
 
-    private void onChangePeriodClicked() {
+    private void changePeriod() {
         state.choosePeriodIsVisible = !state.choosePeriodIsVisible;
         ViewUtils.getMeasuredSize(periodChooserView, (width, height) -> {
             ValueAnimator valueAnimator = state.choosePeriodIsVisible
@@ -165,11 +165,11 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         });
     }
 
-    private void onChangeSizeClicked() {
+    private void changeSize() {
         PeriodsAdapter adapter = getPeriodsAdapter();
         adapter.changeItemWidth();
         adapter.notifyDataSetChanged();
-        int position = RecyclerLayoutManagerUtils.getCurrentVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
+        int position = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
         updateOffset(position);
         tabBar.setItemWidth(adapter.getItemWidthPixel());
         ((BrowseStoriesToolBar) getToolbar()).onNewItemWidthSelected(adapter.getItemType());
@@ -203,22 +203,33 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     private void initToolBar() {
         BrowseStoriesToolBar toolBar = (BrowseStoriesToolBar) getToolbar();
-        toolBar.setOnChangePeriod(this::onChangePeriodClicked);
-        toolBar.setOnChangeSize(this::onChangeSizeClicked);
-    }
+        toolBar.setActions(new BrowseStoriesToolBar.Actions() {
+            @Override
+            public void onChangeSizeClicked() {
+//                int firstVisiblePosition = getHorizontalRecyclerViewLayoutManager().findFirstVisibleItemPosition();
+//                int lastVisiblePosition = getHorizontalRecyclerViewLayoutManager().findLastVisibleItemPosition();
+//                int previousVisibleItemsCount = lastVisiblePosition - firstVisiblePosition;
+                changeSize();
+//                fetchData();
 
-    private void initLaunchAnimation(Bundle savedInstanceState) {
-        state.continueAnimation = false;
-        View launchView = findViewById(R.id.launch_layout);
-        if (savedInstanceState == null) {
-            View circleView = launchView.findViewById(R.id.launch_circle_view);
-            ViewUtils.getMeasuredSize(findViewById(R.id.launch_text_view), (width, height) -> {
-                ViewUtils.setViewFrame(circleView, height, height);
-                AnimationUtils.applyStartAnimation(launchView, circleView);
-            });
-        } else {
-            ViewUtils.removeFromParent(launchView);
-        }
+//                firstVisiblePosition = getHorizontalRecyclerViewLayoutManager().findFirstVisibleItemPosition();
+//                lastVisiblePosition = getHorizontalRecyclerViewLayoutManager().findLastVisibleItemPosition();
+//                int newVisibleItemsCount = lastVisiblePosition - firstVisiblePosition;
+//                if (newVisibleItemsCount > previousVisibleItemsCount) {
+//                    fetchData(firstVisiblePosition, lastVisiblePosition);
+//                }
+            }
+
+            @Override
+            public void onChangePeriodClicked() {
+                changePeriod();
+            }
+
+            @Override
+            public void onChangeAuthorsClicked() {
+
+            }
+        });
     }
 
     @Override
@@ -250,6 +261,10 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     private void fetchData() {
         int firstVisiblePosition = getHorizontalRecyclerViewLayoutManager().findFirstVisibleItemPosition();
         int lastVisiblePosition = getHorizontalRecyclerViewLayoutManager().findLastVisibleItemPosition();
+        fetchData(firstVisiblePosition, lastVisiblePosition);
+    }
+
+    private void fetchData(int firstVisiblePosition, int lastVisiblePosition) {
         loadStoriesBetweenPositions(firstVisiblePosition, lastVisiblePosition);
     }
 
@@ -397,6 +412,20 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
                 default:
                     break;
             }
+        }
+    }
+
+    private void initLaunchAnimation(Bundle savedInstanceState) {
+        state.continueAnimation = false;
+        View launchView = findViewById(R.id.launch_layout);
+        if (savedInstanceState == null) {
+            View circleView = launchView.findViewById(R.id.launch_circle_view);
+            ViewUtils.getMeasuredSize(findViewById(R.id.launch_text_view), (width, height) -> {
+                ViewUtils.setViewFrame(circleView, height, height);
+                AnimationUtils.applyStartAnimation(launchView, circleView);
+            });
+        } else {
+            ViewUtils.removeFromParent(launchView);
         }
     }
 

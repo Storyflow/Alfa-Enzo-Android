@@ -83,25 +83,6 @@ public class MathUtils extends BaseUtils {
 
     /**
      *
-     * @param firstVisiblePosition - first visible position in list
-     * @param lastVisiblePosition - last visible position in list
-     * @return first visible position in list + 1, if 3+ items are visible
-     *
-     *          for example in list: 0|1|2|3|4|5..
-     *          this method getIncrementedFirstPosition(0, 5) return 1
-     *          BUT
-     *          in list: ..4|5..
-     *          this method getIncrementedFirstPosition(0, 5) return 4
-     */
-    public static int getIncrementedFirstPosition(int firstVisiblePosition, int lastVisiblePosition) {
-        int position = lastVisiblePosition - firstVisiblePosition == 0
-                ? firstVisiblePosition
-                : firstVisiblePosition + 1;
-        return position;
-    }
-
-    /**
-     *
      * @param value1 first value
      * @param value2 second value
      * @param checkingValue value for check

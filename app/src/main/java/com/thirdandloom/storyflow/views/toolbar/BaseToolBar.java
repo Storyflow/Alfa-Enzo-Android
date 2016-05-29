@@ -45,7 +45,7 @@ public abstract class BaseToolBar extends Toolbar {
 
     protected abstract void init();
 
-    public void setOnUpButtonClickListener(Action0 click) {
+    public void onUpButtonClicked(Action0 click) {
         if (upButton == null) {
             throw new UnsupportedOperationException("If u want to use up button "
                     + "u should add view with id:R.id.view_toolbar_up into your layout");
