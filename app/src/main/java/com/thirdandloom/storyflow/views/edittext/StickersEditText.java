@@ -3,21 +3,18 @@ package com.thirdandloom.storyflow.views.edittext;
 import com.rockerhieu.emojicon.EmojiconEditText;
 import com.thirdandloom.storyflow.Theme;
 
+import com.thirdandloom.storyflow.utils.StickersUtils;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Action2;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.text.Editable;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,12 +22,13 @@ import java.util.regex.Pattern;
 public class StickersEditText extends EmojiconEditText {
     private static final String FIND_REG_EXP = "\\[(\\w*?)\\]|\\[(\\w*?)*-(\\w*?)\\]";
     private static final String FIND_DELETED_REG_EXP = "\\[\\s*(\\w+)*$|\\[\\s*(\\w+)*\\s|\\[\\s*(\\w+)*[\\[]";
-    private static final Pattern FIND_IMAGE_PATTERN = Pattern.compile(FIND_REG_EXP);
+
+    public static final Pattern FIND_IMAGE_PATTERN = Pattern.compile(FIND_REG_EXP);
     private static final Pattern FIND_DELETE_IMAGE_PATTERN = Pattern.compile(FIND_DELETED_REG_EXP);
     private static final char START_STICKER = "[".charAt(0);
     private static final char END_STICKER = "]".charAt(0);
 
-    private List<DisplayedSticker> oldDetectedStickers;
+    private List<StickersUtils.DisplayedSticker> oldDetectedStickers;
 
     public StickersEditText(Context context) {
         this(context, null);
@@ -44,7 +42,7 @@ public class StickersEditText extends EmojiconEditText {
         super(context, attrs);
     }
 
-    public List<DisplayedSticker> getOldDetectedStickers() {
+    public List<StickersUtils.DisplayedSticker> getOldDetectedStickers() {
         if (oldDetectedStickers == null) {
             oldDetectedStickers = new ArrayList<>();
         }
@@ -62,10 +60,10 @@ public class StickersEditText extends EmojiconEditText {
                 });
     }
 
-    private static void detectTapStickerSelection(int selStart, int selEnd, List<DisplayedSticker> oldDetectedStickers,
+    private static void detectTapStickerSelection(int selStart, int selEnd, List<StickersUtils.DisplayedSticker> oldDetectedStickers,
             Action2<Integer, Integer> detected, Action0 notDetected) {
         if (selStart == selEnd) {
-            DisplayedSticker sticker = getDisplayedStickerForPosition(selStart, oldDetectedStickers);
+            StickersUtils.DisplayedSticker sticker = getDisplayedStickerForPosition(selStart, oldDetectedStickers);
             if (sticker != null) {
                 selStart = selStart == sticker.startPosition
                         ? selStart
@@ -78,7 +76,7 @@ public class StickersEditText extends EmojiconEditText {
         notDetected.call();
     }
 
-    private static void detectGroupStickerSelection(Editable text, int selStart, int selEnd, List<DisplayedSticker> oldDetectedStickers,
+    private static void detectGroupStickerSelection(Editable text, int selStart, int selEnd, List<StickersUtils.DisplayedSticker> oldDetectedStickers,
             Action2<Integer, Integer> detected, Action0 notDetected) {
         if (selStart != selEnd) {
             boolean found = false;
@@ -124,11 +122,11 @@ public class StickersEditText extends EmojiconEditText {
                 });
     }
 
-    private static void getTextWithImages(List<DisplayedSticker> oldDetectedStickers, final Editable text, int selectionStart, int selectionEnd,
-                                          Action2<Editable, List<DisplayedSticker>> onChanged, Action1<List<DisplayedSticker>> onNotChanged) {
+    private static void getTextWithImages(List<StickersUtils.DisplayedSticker> oldDetectedStickers, final Editable text, int selectionStart, int selectionEnd,
+                                          Action2<Editable, List<StickersUtils.DisplayedSticker>> onChanged, Action1<List<StickersUtils.DisplayedSticker>> onNotChanged) {
         Matcher matcher = FIND_IMAGE_PATTERN.matcher(text.toString());
-        removeImageSpans(text);
-        List<DisplayedSticker> detectedStickers = addNewSpans(matcher, text);
+        StickersUtils.removeImageSpans(text);
+        List<StickersUtils.DisplayedSticker> detectedStickers = StickersUtils.addNewSpans(matcher, text);
 
         checkRemovedStickers(text, oldDetectedStickers, detectedStickers, newEditable -> {
             onChanged.call(newEditable, detectedStickers);
@@ -141,7 +139,7 @@ public class StickersEditText extends EmojiconEditText {
         });
     }
 
-    private static void checkLastSticker(Editable text, int selectionEnd, int selectionStart, List<DisplayedSticker> oldDetectedStickers,
+    private static void checkLastSticker(Editable text, int selectionEnd, int selectionStart, List<StickersUtils.DisplayedSticker> oldDetectedStickers,
             Action1<Editable> detected, Action0 notDetected) {
         if (selectionEnd == selectionStart && selectionEnd > 2) {
             int lastStickerPosition = selectionEnd + 1;
@@ -156,7 +154,7 @@ public class StickersEditText extends EmojiconEditText {
         notDetected.call();
     }
 
-    private static void checkRemovedStickers(Editable text, List<DisplayedSticker> oldDetectedStickers, List<DisplayedSticker> detectedStickers,
+    private static void checkRemovedStickers(Editable text, List<StickersUtils.DisplayedSticker> oldDetectedStickers, List<StickersUtils.DisplayedSticker> detectedStickers,
             Action1<Editable> detected, Action0 notDetected) {
         boolean found = false;
         if (oldDetectedStickers.size() > detectedStickers.size()) {
@@ -183,42 +181,14 @@ public class StickersEditText extends EmojiconEditText {
         }
     }
 
-    private static List<DisplayedSticker> addNewSpans(Matcher matcher, Editable text) {
-        List<DisplayedSticker> detectedStickers = new ArrayList<>();
-        while (matcher.find()) {
-            String sticker = matcher.group();
-            if (Theme.Stickers.catMap.containsKey(sticker)) {
-                int start = matcher.start();
-                int end = matcher.end();
-                detectedStickers.add(new DisplayedSticker(start, end, sticker));
-                Drawable image = Theme.Stickers.catMap.get(sticker);
-                ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BASELINE);
-                text.setSpan(imageSpan,
-                        start,
-                        end,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
-            }
-        }
-        return detectedStickers;
-    }
-
-    private static void removeImageSpans(Editable text) {
-        ImageSpan[] oldSpans = text.getSpans(0, text.length(), ImageSpan.class);
-        List<ImageSpan> oldSpansList = new ArrayList<>(new ArrayList<>(Arrays.asList(oldSpans)));
-        for (ImageSpan span : oldSpansList) {
-            text.removeSpan(span);
-        }
-    }
-
     /**
      *
      * @param endPosition
      * @return null if not detected
      */
     @Nullable
-    private static String getStickerWithEndStickerPos(int endPosition, List<DisplayedSticker> oldDetectedStickers) {
-        for (DisplayedSticker sticker : oldDetectedStickers) {
+    private static String getStickerWithEndStickerPos(int endPosition, List<StickersUtils.DisplayedSticker> oldDetectedStickers) {
+        for (StickersUtils.DisplayedSticker sticker : oldDetectedStickers) {
             if (sticker.endPosition == endPosition) {
                 return sticker.text;
             }
@@ -231,8 +201,8 @@ public class StickersEditText extends EmojiconEditText {
      * @param startPosition
      * @return null if not detected
      */
-    private static String getStickerWithStartStickerPos(int startPosition, List<DisplayedSticker> oldDetectedStickers) {
-        for (DisplayedSticker sticker : oldDetectedStickers) {
+    private static String getStickerWithStartStickerPos(int startPosition, List<StickersUtils.DisplayedSticker> oldDetectedStickers) {
+        for (StickersUtils.DisplayedSticker sticker : oldDetectedStickers) {
             if (sticker.startPosition == startPosition) {
                 return sticker.text;
             }
@@ -241,8 +211,8 @@ public class StickersEditText extends EmojiconEditText {
     }
 
     @Nullable
-    private static DisplayedSticker getDisplayedStickerForPosition(int position, List<DisplayedSticker> detectedStickers) {
-        for (DisplayedSticker sticker :  detectedStickers) {
+    private static StickersUtils.DisplayedSticker getDisplayedStickerForPosition(int position, List<StickersUtils.DisplayedSticker> detectedStickers) {
+        for (StickersUtils.DisplayedSticker sticker :  detectedStickers) {
             if (sticker.startPosition <= position
                     && sticker.endPosition >= position) {
                 return sticker;
@@ -261,17 +231,5 @@ public class StickersEditText extends EmojiconEditText {
             }
         }
         return false;
-    }
-
-    public static class DisplayedSticker {
-        public int startPosition;
-        public int endPosition;
-        public String text;
-
-        public DisplayedSticker(int startPos, int endPos, String text) {
-            this.startPosition = startPos;
-            this.endPosition = endPos;
-            this.text = text;
-        }
     }
 }

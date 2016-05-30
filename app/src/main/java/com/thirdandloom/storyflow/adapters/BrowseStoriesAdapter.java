@@ -4,17 +4,26 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.models.Mention;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
+import com.thirdandloom.storyflow.utils.SpannableUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
 import com.thirdandloom.storyflow.utils.glide.RoundedCornersTransformation;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,15 +38,24 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
         EmptyStories, PendingStories, PopulatedStories
     }
 
+    public enum  AuthorViewType {
+        Full, DescriptionOnly, None
+    }
+
     private Context context;
     private Story.WrapList wrapStoriesList;
     private int itemWidthPixels;
     private DataType dataType;
     private Date currentDate;
+    private AuthorViewType authorViewType = AuthorViewType.None;
 
     public BrowseStoriesAdapter(Context context, @Nullable Story.WrapList wrapStoriesList, int itemWidthPixels) {
         this.context = context;
         setData(wrapStoriesList, itemWidthPixels);
+    }
+
+    public void setAuthorViewType(AuthorViewType authorViewType) {
+        this.authorViewType = authorViewType;
     }
 
     public void setData(@Nullable Story.WrapList wrapStoriesList, int itemWidthPixels) {
@@ -57,6 +75,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
     public void onBindViewHolder(StoryContentHolder holder, int position) {
         Story story = wrapStoriesList.getStory(position);
         holder.configureUi(story, context, itemWidthPixels);
+        holder.initAuthorUi(context, story, authorViewType);
     }
 
     @Override
@@ -101,22 +120,37 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
     }
 
     public static class StoryContentHolder extends RecyclerView.ViewHolder {
-        TextView textView;
-        ImageView imageView;
+        private ImageView imageView;
+        private View pendingActionsContainer;
+        private View retryButton;
+        private View deleteButton;
+        private String storyLocalUid;
 
-        View pendingActionsContainer;
-        View retryButton;
-        View deleteButton;
-        String storyLocalUid;
+        private View authorDataContainer;
+        private View storyDescriptionContainer;
+        private TextView authorFullNameTextView;
+        private ImageView authorAvatar;
+        private TextView description;
 
         public StoryContentHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
+            findViews();
+            initListeners();
+        }
+
+        private void findViews() {
             imageView = (ImageView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_image_view);
             pendingActionsContainer = itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_pending_container);
             retryButton = itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_pending_retry);
             deleteButton = itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_pending_delete);
+            storyDescriptionContainer = itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_description_data_container);
+            authorDataContainer = itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_data_container);
+            authorFullNameTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_full_name);
+            authorAvatar = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_avatar);
+            description = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
+        }
 
+        private void initListeners() {
             retryButton.setOnClickListener(v -> {
                 StoryflowApplication.getPendingStoriesManager().retry(storyLocalUid);
                 ViewUtils.hide(pendingActionsContainer);
@@ -128,7 +162,6 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
         }
 
         public void configureUi(Story story, Context context, int itemWidthPixels) {
-            textView.setText(story.getDescription());
             storyLocalUid = story.getLocalUid();
 
             String imageUrl;
@@ -213,6 +246,74 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
                 default:
                     break;
 
+            }
+        }
+
+        public void initAuthorUi(Context context, Story story, AuthorViewType authorViewType) {
+            switch (authorViewType) {
+                case None:
+                    ViewUtils.hide(storyDescriptionContainer);
+                    break;
+                case DescriptionOnly:
+                    ViewUtils.show(storyDescriptionContainer);
+                    ViewUtils.hide(authorDataContainer);
+                    setStoryDescription(story);
+                    break;
+                case Full:
+                    ViewUtils.show(storyDescriptionContainer);
+                    ViewUtils.show(authorDataContainer);
+                    setStoryDescription(story);
+                    Glide
+                            .with(context)
+                            .load(story.getAuthor().getCroppedAvatar().getImageUrl())
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                            .bitmapTransform(new CropCircleTransformation(context))
+                            .dontAnimate()
+                            .into(authorAvatar);
+                    authorFullNameTextView.setText(story.getAuthor().getFullName());
+                    break;
+                default:
+                    throw new UnsupportedOperationException("You are using unsupported authorViewType");
+            }
+        }
+
+        public void setStoryDescription(Story story) {
+            String storyDescription = story.getDescription();
+            if (ArrayUtils.isEmpty(story.getMentionsList())) {
+                description.setText(storyDescription);
+            } else {
+                for (Mention mention : story.getMentionsList()) {
+                    String mentionName = mention.getMentionUserName();
+                    storyDescription = storyDescription.replace(mentionName, mention.getFullName());
+                }
+                SpannableString ss = new SpannableString(storyDescription);
+                for (Mention mention : story.getMentionsList()) {
+                    SpannableUtils.setOnClick(ss, new MentionClickable(mention),
+                            mention.getFullName(), storyDescription);
+                }
+                description.setText(ss);
+                description.setMovementMethod(LinkMovementMethod.getInstance());
+                description.setHighlightColor(Color.TRANSPARENT);
+            }
+        }
+
+        private static class MentionClickable extends ClickableSpan {
+            private final Mention mention;
+
+            public MentionClickable(Mention mention) {
+                this.mention = mention;
+            }
+
+            @Override
+            public void onClick(View textView) {
+                Timber.d("onClick mention name: %s", mention.getFullName());
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setColor(StoryflowApplication.resources().getColor(R.color.yellow));
+                ds.setUnderlineText(false);
             }
         }
     }

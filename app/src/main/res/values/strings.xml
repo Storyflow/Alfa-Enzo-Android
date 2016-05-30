@@ -62,6 +62,7 @@
     <string name="cats">Cats</string>
     <string name="retry">Retry</string>
     <string name="story_should_contain_at_least_one_character">Story should contains at least one character or image.</string>
+    <string name="private_string">Private</string>
 
     <string name="daily">DAILY</string>
     <string name="monthly">MONTHLY</string>

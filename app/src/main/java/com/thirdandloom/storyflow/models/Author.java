@@ -40,6 +40,10 @@ public class Author extends BaseModel {
         return lastName;
     }
 
+    public String getFullName() {
+        return String.format("%s %s", firstName, lastName);
+    }
+
     public CroppedImage getCroppedAvatar() {
         return croppedImageProfile;
     }

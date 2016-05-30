@@ -1,14 +1,15 @@
-package com.thirdandloom.storyflow.activities;
+package com.thirdandloom.storyflow.activities.launch;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.activities.BaseActivity;
+import com.thirdandloom.storyflow.activities.BrowseStoriesActivity;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.Validation;
 import com.thirdandloom.storyflow.views.dialog.ForgotPasswordDialog;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;

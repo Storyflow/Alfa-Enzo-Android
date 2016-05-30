@@ -1,8 +1,8 @@
-package com.thirdandloom.storyflow.activities;
+package com.thirdandloom.storyflow.activities.launch;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.utils.Timber;
+import com.thirdandloom.storyflow.activities.BaseActivity;
 
 import android.content.Intent;
 import android.os.Bundle;

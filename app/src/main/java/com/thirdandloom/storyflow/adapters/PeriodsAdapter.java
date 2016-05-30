@@ -181,6 +181,17 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             adapter.setData(storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
             adapter.notifyDataSetChanged();
         }
+        switch (itemType) {
+            case Large:
+                adapter.setAuthorViewType(BrowseStoriesAdapter.AuthorViewType.Full);
+                break;
+            case Small:
+                adapter.setAuthorViewType(BrowseStoriesAdapter.AuthorViewType.DescriptionOnly);
+                break;
+            case Smallest:
+                adapter.setAuthorViewType(BrowseStoriesAdapter.AuthorViewType.None);
+                break;
+        }
         adapter.setCurrentDate(storyDate.getTime());
         displayingAdapters.add(adapter);
 
@@ -221,7 +232,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
 
         public StoryHolder(View itemView, Actions actions) {
             super(itemView);
-            dateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
+            dateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_main_horizontal_story_text_view);
             recyclerView = (VerticalDragNotifierRecyclerView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_recycler_view);
             boldDateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_bold_text_view);
             progressBar = itemView.findViewById(R.id.adapter_recycler_item_horizontal_recycler_progress_bar);

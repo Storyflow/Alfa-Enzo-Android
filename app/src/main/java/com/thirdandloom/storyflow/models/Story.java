@@ -33,8 +33,8 @@ public class Story extends BaseModel {
     private int privacyId;
     @SerializedName("image")
     private StoryImageModel imageData;
-    //@SerializedName("mentions")
-    //private mentions mentions;
+    @SerializedName("mentions")
+    private List<Mention> mentionsList;
     //@SerializedName("likes")
     //private likes likes;
 
@@ -124,6 +124,10 @@ public class Story extends BaseModel {
 
     public void setLocalUid(String localUid) {
         this.localUid = localUid;
+    }
+
+    public List<Mention> getMentionsList() {
+        return mentionsList;
     }
 
     public enum Type { Text, Image }

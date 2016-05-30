@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.activities;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.activities.launch.ProfileActivity;
 import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
 import com.thirdandloom.storyflow.fragments.ReadingStoriesFragment;
 import com.thirdandloom.storyflow.managers.StoriesManager;
