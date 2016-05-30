@@ -38,7 +38,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
         EmptyStories, PendingStories, PopulatedStories
     }
 
-    public enum  AuthorViewType {
+    enum AuthorViewType {
         Full, DescriptionOnly, None
     }
 

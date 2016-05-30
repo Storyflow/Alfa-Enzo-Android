@@ -15,9 +15,9 @@
 
     <LinearLayout
         android:id="@+id/adapter_recycler_item_horizontal_story_description_data_container"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/sizeMedium"
+        android:layout_margin="@dimen/sizeMedium"
         android:layout_gravity="bottom"
         android:orientation="vertical">
 

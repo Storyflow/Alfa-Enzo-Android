@@ -37,7 +37,8 @@
         android:id="@+id/activity_browse_stories_tab_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        android:background="@drawable/shape_transparent_black_linear_gradient">
     </com.thirdandloom.storyflow.views.TabBar>
 
     <include

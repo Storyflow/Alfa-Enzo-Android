@@ -16,6 +16,7 @@
     <!-- new design colors-->
     <color name="greyDarkName">#262728</color>
     <color name="greyDarkSubName">#5B5B5B</color>
+    <color name="blackTransparent">#51000000</color>
 
 
     <color name="white">#FFFFFF</color>
