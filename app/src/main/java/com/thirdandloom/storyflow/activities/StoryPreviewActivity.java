@@ -8,6 +8,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -63,27 +64,34 @@ public class StoryPreviewActivity extends BaseActivity {
     }
 
     private void initGui(boolean isFirstStart) {
-        contentView.setAlpha(isFirstStart ? 0.f : 1.f);
+        String imageUrl;
         switch (state.story.getType()) {
             case Image:
-                String imageUrl = state.story.getImageData().getNormalSizedImage().url();
-                Glide
-                        .with(this)
-                        .load(imageUrl)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .into(new SimpleTarget<GlideDrawable>() {
-                            @Override
-                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                                imageView.setImageDrawable(resource);
-                                if (isFirstStart) {
-                                    prepareAppearAnimation();
-                                } else {
-                                    initImageViewAttacher();
-                                }
-                            }
-                        });
+                imageUrl = state.story.getImageData().getNormalSizedImage().url();
                 break;
+            case Text:
+                imageUrl = state.story.getAuthor().getCroppedImageCover().getImageUrl();
+                break;
+            default:
+                imageUrl = null;
         }
+        if (imageUrl == null) return;
+        contentView.setAlpha(isFirstStart ? 0.f : 1.f);
+        Glide
+                .with(this)
+                .load(imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(new SimpleTarget<GlideDrawable>() {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                        imageView.setImageDrawable(resource);
+                        if (isFirstStart) {
+                            prepareAppearAnimation();
+                        } else {
+                            initImageViewAttacher();
+                        }
+                    }
+                });
     }
 
     @Override
