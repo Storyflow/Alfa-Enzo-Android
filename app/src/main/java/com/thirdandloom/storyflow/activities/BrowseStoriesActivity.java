@@ -13,6 +13,7 @@ import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.utils.event.StoryCreationSuccessEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
@@ -94,21 +95,28 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     private void initPeriodChooser() {
         periodChooserView.getLayoutParams().height = 0;
         periodChooserView.requestLayout();
-        periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_yearly).setOnClickListener(v -> {
+        View yearlyView = periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_yearly);
+        View dailyView = periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_daily);
+        View monthlyView = periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_monthly);
+
+        yearlyView.setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodYearly();
             changePeriod();
             onPeriodChanged(PeriodsAdapter.PeriodType.Yearly);
         });
-        periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_monthly).setOnClickListener(v -> {
+        monthlyView.setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodMonthly();
             changePeriod();
             onPeriodChanged(PeriodsAdapter.PeriodType.Monthly);
         });
-        periodChooserView.findViewById(R.id.activity_browse_stories_period_chooser_daily).setOnClickListener(v -> {
+        dailyView.setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodDaily();
             changePeriod();
             onPeriodChanged(PeriodsAdapter.PeriodType.Daily);
         });
+        SpringAnimation.initVisibleAfterClick(dailyView);
+        SpringAnimation.initVisibleAfterClick(monthlyView);
+        SpringAnimation.initVisibleAfterClick(yearlyView);
     }
 
     private void initSnappyRecyclerView() {

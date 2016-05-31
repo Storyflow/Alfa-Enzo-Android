@@ -5,8 +5,8 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
 import com.thirdandloom.storyflow.models.User;
+import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
-import rx.functions.Action0;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -59,8 +59,13 @@ public class BrowseStoriesToolBar extends BaseToolBar {
         periodFilterImageView = (ImageView) findViewById(R.id.toolbar_activity_browsing_stories_change_period);
         authorsFilterImageView = findViewById(R.id.toolbar_activity_browsing_stories_plus_stories_chooser);
 
+        initGui();
+        initListeners();
+    }
+
+    private void initGui() {
         User user = StoryflowApplication.account().getUser();
-        userNameTextView.setText(String.format("@%s", user.getUsername() ));
+        userNameTextView.setText(String.format("@%s", user.getUsername()));
         fullUserNameTextView.setText(user.getFullUserName());
         Glide
                 .with(getContext())
@@ -68,6 +73,9 @@ public class BrowseStoriesToolBar extends BaseToolBar {
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .dontAnimate()
                 .into(avatarImageView);
+    }
+
+    private void initListeners() {
         periodFilterImageView.setOnClickListener(v -> {
             if (actions != null) actions.onChangePeriodClicked();
         });
@@ -77,6 +85,9 @@ public class BrowseStoriesToolBar extends BaseToolBar {
         authorsFilterImageView.setOnClickListener(v -> {
             if (actions != null) actions.onChangeAuthorsClicked();
         });
+        SpringAnimation.initVisibleAfterClick(periodFilterImageView);
+        SpringAnimation.initVisibleAfterClick(sizeFilterImageVie);
+        SpringAnimation.initVisibleAfterClick(authorsFilterImageView);
     }
 
     public void setActions(Actions actions) {

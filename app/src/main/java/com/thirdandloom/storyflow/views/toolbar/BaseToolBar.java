@@ -1,6 +1,7 @@
 package com.thirdandloom.storyflow.views.toolbar;
 
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 import rx.functions.Action0;
 
 import android.content.Context;
@@ -51,5 +52,6 @@ public abstract class BaseToolBar extends Toolbar {
                     + "u should add view with id:R.id.view_toolbar_up into your layout");
         }
         upButton.setOnClickListener(v -> click.call());
+        SpringAnimation.initVisibleAfterClick(upButton);
     }
 }

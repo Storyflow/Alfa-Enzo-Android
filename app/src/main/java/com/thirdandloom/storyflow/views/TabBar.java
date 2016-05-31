@@ -2,8 +2,7 @@ package com.thirdandloom.storyflow.views;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.utils.AndroidUtils;
-import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -44,20 +43,22 @@ public class TabBar extends LinearLayout {
         setMinimumHeight(StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.tabBarHeight));
         setPadding(0, 0, 0, getResources().getDimensionPixelOffset(R.dimen.sizeNormal));
 
-        findViewById(R.id.view_tab_bar_updates).setOnClickListener(v -> {
-            actions.updatesClicked();
-        });
-        findViewById(R.id.view_tab_bar_messages).setOnClickListener(v -> {
-            actions.messagesClicked();
-        });
-        findViewById(R.id.view_tab_bar_post).setOnClickListener(v -> {
-            actions.postClicked();
-        });
-        findViewById(R.id.view_tab_bar_profile).setOnClickListener(v -> {
-            actions.profileClicked();
-        });
-        flipCircleView = findViewById(R.id.view_tab_bar_flippable_circle);
+        View updatesView = findViewById(R.id.view_tab_bar_updates);
+        View messagesView = findViewById(R.id.view_tab_bar_messages);
+        View postView = findViewById(R.id.view_tab_bar_post);
+        View profileView = findViewById(R.id.view_tab_bar_profile);
 
+        updatesView.setOnClickListener(v -> actions.updatesClicked());
+        messagesView.setOnClickListener(v -> actions.messagesClicked());
+        postView.setOnClickListener(v -> actions.postClicked());
+        profileView.setOnClickListener(v -> actions.profileClicked());
+
+        SpringAnimation.init(postView);
+        SpringAnimation.init(profileView);
+        SpringAnimation.init(messagesView);
+        SpringAnimation.init(updatesView);
+
+        flipCircleView = findViewById(R.id.view_tab_bar_flippable_circle);
         int distance = 8000;
         float scale = getResources().getDisplayMetrics().density * distance;
         flipCircleView.setCameraDistance(scale);

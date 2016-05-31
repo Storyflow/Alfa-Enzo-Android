@@ -5,6 +5,7 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -326,7 +327,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     public static int getItemPadding() {
-        return StoryflowApplication.resources().getDimensionPixelOffset(R.dimen.sizeNormal);
+        return AndroidUtils.dp(14);
     }
 
     public static int getItemMargin() {
