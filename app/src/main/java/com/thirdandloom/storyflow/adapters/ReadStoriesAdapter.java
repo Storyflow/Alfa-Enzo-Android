@@ -37,7 +37,7 @@ import java.util.List;
 public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
         StickyHeaderAdapter<ReadStoriesAdapter.ReadingStoryHeaderHolder> {
 
-    private static final int FILLED_STORY = 0;
+    public static final int FILLED_STORY = 0;
     private static final int EMPTY_STORY = FILLED_STORY + 1;
     private static final int LOADING = EMPTY_STORY + 1;
 

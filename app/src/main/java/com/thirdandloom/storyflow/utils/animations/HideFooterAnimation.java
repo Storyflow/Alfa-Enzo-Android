@@ -1,9 +1,5 @@
 package com.thirdandloom.storyflow.utils.animations;
 
-
-import com.thirdandloom.storyflow.utils.DeviceUtils;
-
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 
@@ -16,7 +12,6 @@ public class HideFooterAnimation extends TranslateAnimation {
     }
 
     private static float getToYDelta(View footer) {
-        DisplayMetrics displaymetrics = DeviceUtils.getDisplayMetrics();
-        return displaymetrics.heightPixels - footer.getY();
+        return footer.getY() - footer.getHeight();
     }
 }

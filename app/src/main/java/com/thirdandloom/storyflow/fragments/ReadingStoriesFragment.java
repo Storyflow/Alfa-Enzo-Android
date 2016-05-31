@@ -2,7 +2,6 @@ package com.thirdandloom.storyflow.fragments;
 
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.activities.MultiImageStoryPreviewActivity;
 import com.thirdandloom.storyflow.activities.StoryPreviewActivity;
 import com.thirdandloom.storyflow.adapters.ReadStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
@@ -12,6 +11,7 @@ import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.animations.FooterHiderScrollListener;
 import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
@@ -51,6 +51,7 @@ public class ReadingStoriesFragment extends BaseFragment {
 
     public interface IStoryDetailFragmentDataSource {
         void setTakeScrollDelta(Action1<Float> takeScroll);
+        View getBottomBar();
     }
 
     private RecyclerView recyclerView;
@@ -144,11 +145,14 @@ public class ReadingStoriesFragment extends BaseFragment {
             }
         });
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (viewHolder, position) -> {
-            Intent intent = StoryPreviewActivity.newInstance(readStoriesAdapter.getStory(position),
-                    readStoriesAdapter.getFromView(position, viewHolder));
-            getActivity().startActivity(intent);
-            getActivity().overridePendingTransition(0, 0);
+            if (readStoriesAdapter.getItemViewType(position) == ReadStoriesAdapter.FILLED_STORY) {
+                Intent intent = StoryPreviewActivity.newInstance(readStoriesAdapter.getStory(position),
+                        readStoriesAdapter.getFromView(position, viewHolder));
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(0, 0);
+            }
         }));
+        FooterHiderScrollListener.init(recyclerView, getBottomBar());
     }
 
     private void loadInitStories() {
@@ -332,6 +336,10 @@ public class ReadingStoriesFragment extends BaseFragment {
 
     private void takeScrollFromParent(Action1<Float> onScroll) {
         ((IStoryDetailFragmentDataSource)getActivity()).setTakeScrollDelta(onScroll);
+    }
+
+    private View getBottomBar() {
+        return ((IStoryDetailFragmentDataSource)getActivity()).getBottomBar();
     }
 
     @Override

@@ -247,6 +247,11 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     }
 
     @Override
+    public View getBottomBar() {
+        return tabBar;
+    }
+
+    @Override
     public void onBackPressed() {
         if (storyDetailsFragment != null && storyDetailsFragment.isAdded()) {
             storyDetailsFragment.dismiss();
