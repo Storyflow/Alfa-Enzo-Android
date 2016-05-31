@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 public class ViewUtils extends BaseUtils{

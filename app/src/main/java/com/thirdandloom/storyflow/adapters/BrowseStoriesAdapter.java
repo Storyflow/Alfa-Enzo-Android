@@ -164,30 +164,6 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
         }
 
         public void configureUi(Story story, Context context, int itemWidthPixels) {
-            if (itemView.getParent() == null) {
-                ViewUtils.callOnPreDraw(itemView, view -> {
-                    RecyclerView recyclerView = (RecyclerView)view.getParent();
-                    LinearLayoutManager manager = (LinearLayoutManager)recyclerView.getLayoutManager();
-                    int layoutPosition = StoryContentHolder.this.getLayoutPosition();
-                    int lastPosition = manager.findLastVisibleItemPosition();
-                    if (lastPosition == layoutPosition) {
-                        ViewUtils.applyFrameLayoutParamsGravity(StoryContentHolder.this.storyDescriptionContainer, Gravity.TOP);
-                    } else {
-                        ViewUtils.applyFrameLayoutParamsGravity(StoryContentHolder.this.storyDescriptionContainer, Gravity.BOTTOM);
-                    }
-                });
-            } else {
-                RecyclerView recyclerView = (RecyclerView)itemView.getParent();
-                LinearLayoutManager manager = (LinearLayoutManager)recyclerView.getLayoutManager();
-                int layoutPosition = StoryContentHolder.this.getLayoutPosition();
-                int lastPosition = manager.findLastVisibleItemPosition();
-                if (lastPosition == layoutPosition) {
-                    ViewUtils.applyFrameLayoutParamsGravity(StoryContentHolder.this.storyDescriptionContainer, Gravity.TOP);
-                } else {
-                    ViewUtils.applyFrameLayoutParamsGravity(StoryContentHolder.this.storyDescriptionContainer, Gravity.BOTTOM);
-                }
-            }
-
             storyLocalUid = story.getLocalUid();
 
             String imageUrl;

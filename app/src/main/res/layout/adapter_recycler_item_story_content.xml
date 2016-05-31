@@ -78,7 +78,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <com.thirdandloom.storyflow.views.edittext.StickersTextView
+        <TextView
             android:id="@+id/adapter_recycler_item_horizontal_story_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -86,7 +86,6 @@
             android:layout_gravity="bottom"
             android:textAppearance="@style/TextAppearance.RoboBlackSmall"
             android:maxLines="2"
-            android:focusable="false"
             tools:text="Best party!"
             />
 
