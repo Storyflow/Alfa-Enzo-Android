@@ -19,11 +19,13 @@ import com.thirdandloom.storyflow.utils.glide.RoundedCornersTransformation;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,6 +164,30 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
         }
 
         public void configureUi(Story story, Context context, int itemWidthPixels) {
+            if (itemView.getParent() == null) {
+                ViewUtils.callOnPreDraw(itemView, view -> {
+                    RecyclerView recyclerView = (RecyclerView)view.getParent();
+                    LinearLayoutManager manager = (LinearLayoutManager)recyclerView.getLayoutManager();
+                    int layoutPosition = StoryContentHolder.this.getLayoutPosition();
+                    int lastPosition = manager.findLastVisibleItemPosition();
+                    if (lastPosition == layoutPosition) {
+                        ViewUtils.applyFrameLayoutParamsGravity(StoryContentHolder.this.storyDescriptionContainer, Gravity.TOP);
+                    } else {
+                        ViewUtils.applyFrameLayoutParamsGravity(StoryContentHolder.this.storyDescriptionContainer, Gravity.BOTTOM);
+                    }
+                });
+            } else {
+                RecyclerView recyclerView = (RecyclerView)itemView.getParent();
+                LinearLayoutManager manager = (LinearLayoutManager)recyclerView.getLayoutManager();
+                int layoutPosition = StoryContentHolder.this.getLayoutPosition();
+                int lastPosition = manager.findLastVisibleItemPosition();
+                if (lastPosition == layoutPosition) {
+                    ViewUtils.applyFrameLayoutParamsGravity(StoryContentHolder.this.storyDescriptionContainer, Gravity.TOP);
+                } else {
+                    ViewUtils.applyFrameLayoutParamsGravity(StoryContentHolder.this.storyDescriptionContainer, Gravity.BOTTOM);
+                }
+            }
+
             storyLocalUid = story.getLocalUid();
 
             String imageUrl;

@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 public class ViewUtils extends BaseUtils{
@@ -70,6 +72,12 @@ public class ViewUtils extends BaseUtils{
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         view.setLayoutParams(params);
+    }
+
+    public static void applyFrameLayoutParamsGravity(View layout, int gravity) {
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)layout.getLayoutParams();
+        params.gravity = gravity;
+        layout.setLayoutParams(params);
     }
 
     public static void applyMatchParent(View view) {
