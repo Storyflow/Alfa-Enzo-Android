@@ -41,14 +41,30 @@ android {
         }
     }
     productFlavors {
-        qa {}
-        dev {}
+        qa {
+            applicationId "com.thirdandloom.storyflow.qa"
+        }
+        dev {
+            applicationId "com.thirdandloom.storyflow.dev"
+        }
+        production {
+            applicationId "com.thirdandloom.storyflow"
+        }
     }
 
     enforceUniquePackageName false
 
     lintOptions {
         abortOnError false
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/DEPENDENCIES'
+        pickFirst 'AndroidManifest.xml'
     }
 }
 
@@ -74,4 +90,10 @@ dependencies {
     compile 'com.rockerhieu.emojicon:library:1.3.3'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile files ('libs/rebound-0.3.8.jar')
+
+//  creative SDK
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.adobe.creativesdk.foundation:auth:0.9.7'
+//
 }

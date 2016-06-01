@@ -1,5 +1,7 @@
 package com.thirdandloom.storyflow;
 
+import com.adobe.creativesdk.foundation.AdobeCSDKFoundation;
+import com.adobe.creativesdk.foundation.auth.IAdobeAuthClientCredentials;
 import com.crashlytics.android.Crashlytics;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.managers.AccountManager;
@@ -22,7 +24,7 @@ import android.os.Handler;
 
 import java.util.concurrent.Future;
 
-public class StoryflowApplication extends Application {
+public class StoryflowApplication extends Application implements IAdobeAuthClientCredentials {
     private static volatile Handler applicationHandler;
     private static volatile SimpleExecutor<Runnable> backgroundThreadExecutor;
 
@@ -34,6 +36,9 @@ public class StoryflowApplication extends Application {
     private IRestClient restClient;
     private AccountManager accountManager;
     private PendingStoriesManager pendingStoriesManager;
+
+    private static final String CREATIVE_SDK_CLIENT_ID = "b4bdc6c45e2846229fb8eb247a6664e2";
+    private static final String CREATIVE_SDK_CLIENT_SECRET = "e9917989-e5fb-4fe7-9d04-288dead3e5bf";
 
     public static AccountManager account() {
         return instance.accountManager;
@@ -85,6 +90,7 @@ public class StoryflowApplication extends Application {
         userPreferences = new UserPreferences();
         applicationPreferences = new ApplicationPreferences();
 
+        AdobeCSDKFoundation.initializeCSDKFoundation(applicationContext);
         initTimber();
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics())
@@ -132,5 +138,15 @@ public class StoryflowApplication extends Application {
         protected void log(int priority, String tag, String message, Throwable t) {
 
         }
+    }
+
+    @Override
+    public String getClientID() {
+        return CREATIVE_SDK_CLIENT_ID;
+    }
+
+    @Override
+    public String getClientSecret() {
+        return CREATIVE_SDK_CLIENT_SECRET;
     }
 }
