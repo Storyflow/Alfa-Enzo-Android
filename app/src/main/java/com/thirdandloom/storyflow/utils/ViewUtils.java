@@ -29,8 +29,20 @@ public class ViewUtils extends BaseUtils{
         setHidden(view, true);
     }
 
+    public static void hide(View... views) {
+        for (View view : views) {
+            setHidden(view, true);
+        }
+    }
+
     public static void show(View view) {
         setHidden(view, false);
+    }
+
+    public static void show(View... views) {
+        for (View view : views) {
+            setHidden(view, false);
+        }
     }
 
     public static void applyWidth(View itemView, int widthPixel) {

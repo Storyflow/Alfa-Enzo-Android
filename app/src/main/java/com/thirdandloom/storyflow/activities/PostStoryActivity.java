@@ -8,16 +8,15 @@ import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.service.UploadStoriesService;
 import com.thirdandloom.storyflow.utils.ActivityUtils;
 import com.thirdandloom.storyflow.utils.DateUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.UriUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
 import com.thirdandloom.storyflow.views.edittext.OpenEventDetectorEditText;
 import com.thirdandloom.storyflow.views.PostStoryBar;
 import com.thirdandloom.storyflow.views.SizeNotifierFrameLayout;
 import com.thirdandloom.storyflow.views.emoji.CatsStickersView;
 import com.thirdandloom.storyflow.views.emoji.KeyboardController;
-import org.w3c.dom.Text;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class PostStoryActivity extends EmojiKeyboardActivity {
     private static final int CAPTURE_PHOTO = 1;
@@ -47,6 +45,8 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private ScrollView scrollViewContainer;
     private int defaultScrollViewHeight;
     private ImageView postStoryImageView;
+    private View enhancePostStoryImageView;
+    private View deletePostStoryImageView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +55,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         setTitle(R.string.post_story);
         findViews();
         initGui();
+        initListeners();
         restoreState(SavedState.class, savedInstanceState,
                 restored -> state = restored,
                 inited -> state = inited);
@@ -73,6 +74,21 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         catsStickersView = (CatsStickersView)findViewById(R.id.activity_post_story_cats_emoji);
         scrollViewContainer = (ScrollView)findViewById(R.id.activity_post_story_scroll_view);
         postStoryImageView = (ImageView)findViewById(R.id.activity_post_story_image_view);
+        enhancePostStoryImageView = findViewById(R.id.activity_post_story_enhance);
+        deletePostStoryImageView = findViewById(R.id.activity_post_story_delete);
+    }
+
+    private void initListeners() {
+        enhancePostStoryImageView.setOnClickListener(v -> {
+
+        });
+        deletePostStoryImageView.setOnClickListener(v -> {
+            ViewUtils.hide(enhancePostStoryImageView, deletePostStoryImageView, postStoryImageView);
+            state.capturedAbsolutePhotoPath = null;
+            postStoryImageView.setImageDrawable(null);
+        });
+        SpringAnimation.init(enhancePostStoryImageView);
+        SpringAnimation.initVisibleAfterClick(deletePostStoryImageView);
     }
 
     private void initGui() {
@@ -249,6 +265,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                     state.capturedAbsolutePhotoPath = UriUtils.getPath(this, Uri.parse(data.getData().toString()));
                     break;
             }
+            ViewUtils.show(postStoryImageView, deletePostStoryImageView, enhancePostStoryImageView);
             Glide
                     .with(this)
                     .load(state.capturedAbsolutePhotoPath)
