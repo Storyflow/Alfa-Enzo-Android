@@ -1,5 +1,6 @@
 package com.thirdandloom.storyflow.activities;
 
+import com.adobe.creativesdk.aviary.AdobeImageIntent;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.thirdandloom.storyflow.R;
@@ -33,6 +34,7 @@ import java.io.Serializable;
 public class PostStoryActivity extends EmojiKeyboardActivity {
     private static final int CAPTURE_PHOTO = 1;
     private static final int SELECT_PHOTO = CAPTURE_PHOTO + 1;
+    private static final int ENHANCE_PHOTO = SELECT_PHOTO + 1;
 
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.applicationContext, PostStoryActivity.class);
@@ -80,7 +82,10 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
 
     private void initListeners() {
         enhancePostStoryImageView.setOnClickListener(v -> {
-
+            Intent imageEditorIntent = new AdobeImageIntent.Builder(this)
+                    .setData(Uri.parse(state.capturedAbsolutePhotoPath))
+                    .build();
+            startActivityForResult(imageEditorIntent, ENHANCE_PHOTO);
         });
         deletePostStoryImageView.setOnClickListener(v -> {
             ViewUtils.hide(enhancePostStoryImageView, deletePostStoryImageView, postStoryImageView);
@@ -263,6 +268,9 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                     break;
                 case SELECT_PHOTO:
                     state.capturedAbsolutePhotoPath = UriUtils.getPath(this, Uri.parse(data.getData().toString()));
+                    break;
+                case ENHANCE_PHOTO:
+                    state.capturedAbsolutePhotoPath = data.getData().toString();
                     break;
             }
             ViewUtils.show(postStoryImageView, deletePostStoryImageView, enhancePostStoryImageView);

@@ -84,6 +84,12 @@
             android:value="007706a287637bde5afb1b4391bf89a8b946cf5f"
             />
 
+
+        <provider
+            android:name="com.adobe.creativesdk.aviary.internal.cds.CdsProvider"
+            android:authorities="${applicationId}.CdsProvider"
+            android:exported="false" />
+
     </application>
 
     <uses-feature

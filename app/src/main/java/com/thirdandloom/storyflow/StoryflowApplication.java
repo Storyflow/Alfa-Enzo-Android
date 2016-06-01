@@ -1,7 +1,7 @@
 package com.thirdandloom.storyflow;
 
+import com.adobe.creativesdk.aviary.IAviaryClientCredentials;
 import com.adobe.creativesdk.foundation.AdobeCSDKFoundation;
-import com.adobe.creativesdk.foundation.auth.IAdobeAuthClientCredentials;
 import com.crashlytics.android.Crashlytics;
 import com.thirdandloom.storyflow.config.Config;
 import com.thirdandloom.storyflow.managers.AccountManager;
@@ -21,10 +21,11 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
+import android.support.multidex.MultiDexApplication;
 
 import java.util.concurrent.Future;
 
-public class StoryflowApplication extends Application implements IAdobeAuthClientCredentials {
+public class StoryflowApplication extends MultiDexApplication implements IAviaryClientCredentials {
     private static volatile Handler applicationHandler;
     private static volatile SimpleExecutor<Runnable> backgroundThreadExecutor;
 
@@ -140,6 +141,7 @@ public class StoryflowApplication extends Application implements IAdobeAuthClien
         }
     }
 
+    // Creative SDK: Image Editor
     @Override
     public String getClientID() {
         return CREATIVE_SDK_CLIENT_ID;
@@ -148,5 +150,10 @@ public class StoryflowApplication extends Application implements IAdobeAuthClien
     @Override
     public String getClientSecret() {
         return CREATIVE_SDK_CLIENT_SECRET;
+    }
+
+    @Override
+    public String getBillingKey() {
+        return "";
     }
 }

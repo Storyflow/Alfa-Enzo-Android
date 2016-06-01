@@ -33,7 +33,16 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        multiDexEnabled true
     }
+
+    dexOptions {
+        incremental = true;
+        preDexLibraries = false
+        javaMaxHeapSize "4g"
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -91,9 +100,10 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile files ('libs/rebound-0.3.8.jar')
 
+    compile 'com.android.support:multidex:1.0.0'
+
 //  creative SDK
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:23.1.1'
-    compile 'com.adobe.creativesdk.foundation:auth:0.9.7'
+    compile 'com.adobe.creativesdk:image:4.4.8'
 //
 }
