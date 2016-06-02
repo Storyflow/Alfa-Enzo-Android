@@ -7,6 +7,7 @@ import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout;
 import com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView;
@@ -49,7 +50,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     private Context context;
     private int centerPosition;
     private StoryHolder.Actions storyPreviewActions;
-    private List<BrowseStoriesAdapter> displayingAdapters = new ArrayList<>();
 
     public PeriodsAdapter(Context context, @Nullable LinkedHashMap<Calendar, Story.WrapList> store,
             @Nullable List<Integer> fetchedPositions, @Nullable StoriesManager.RequestData requestData) {
@@ -159,11 +159,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         ViewUtils.applyWidth(storyHolder.itemView, getItemWidthPixel());
         Calendar storyDate = updateDate(storyHolder, position, centerPosition, periodType);
 
-        RecyclerView.Adapter previousAdapter = storyHolder.recyclerView.getAdapter();
-        if (previousAdapter != null) {
-            displayingAdapters.remove(previousAdapter);
-        }
-
         BrowseStoriesAdapter adapter;
         if (!storyDate.equals(storyHolder.getDateCalendar())) {
             storyHolder.setDateCalendar(storyDate);
@@ -186,7 +181,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
                 break;
         }
         adapter.setCurrentDate(storyDate.getTime());
-        displayingAdapters.add(adapter);
 
         ViewUtils.setHidden(storyHolder.progressBar, adapter.getDataType() != BrowseStoriesAdapter.DataType.PendingStories);
         storyHolder.updateEmptyView(adapter.getDataType());
@@ -198,6 +192,8 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     public void updateDataFromLocalStore(int position) {
+        Timber.d("Browse stories updateDataFromLocalStore notifyItemChanged");
+
         postponeHandler.post(() -> notifyItemChanged(position));
         //postponeHandler.post(this::notifyDataSetChanged);
     }

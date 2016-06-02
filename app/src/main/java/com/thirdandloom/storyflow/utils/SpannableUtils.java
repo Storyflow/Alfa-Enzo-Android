@@ -8,6 +8,13 @@ public class SpannableUtils extends BaseUtils {
     public static void setOnClick(SpannableString spannableString, ClickableSpan clickableSpan, String inString, String fromString) {
         int start = fromString.indexOf(inString);
         int end = start + inString.length();
-        spannableString.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //spannableString.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        Timber.d("setSpan start:%d end: %d", start, end);
+
+        try {
+            spannableString.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } catch (IndexOutOfBoundsException e) {
+            Timber.d("setSpan IndexOutOfBoundsException !!! e");
+        }
     }
 }
