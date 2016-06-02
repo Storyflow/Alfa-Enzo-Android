@@ -3,6 +3,8 @@ package com.thirdandloom.storyflow.utils;
 import rx.functions.Action1;
 import rx.functions.Action2;
 
+import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -112,11 +114,52 @@ public class ViewUtils extends BaseUtils{
     public static void getLocationInWindow(View view, Action2<Integer, Integer> action) {
         int[] location = new int[2];
         view.getLocationInWindow(location);
-        action.call(location[0], location[1]);
+        int x = location[0];
+        int y = location[1];
+        action.call(x, y);
     }
 
     public static int getScrollViewContentHeight(ScrollView view) {
         return view.getChildAt(0).getHeight();
+    }
+
+    /**
+     * Copied from recycler view
+     * Find the topmost view under the given point.
+     *
+     * @param x Horizontal position in pixels to search
+     * @param y Vertical position in pixels to search
+     * @return The child view under (x, y) or null if no matching child is found
+     */
+    @Nullable
+    public static View findChildViewUnder(@Nullable ViewGroup viewGroup, float x, float y) {
+        if (viewGroup == null) return null;
+
+        final int count = viewGroup.getChildCount();
+        for (int i = count - 1; i >= 0; i--) {
+            final View child = viewGroup.getChildAt(i);
+            final float translationX = ViewCompat.getTranslationX(child);
+            final float translationY = ViewCompat.getTranslationY(child);
+
+            int[] location = new int[2];
+            child.getLocationInWindow(location);
+            final int childLeft = location[0];
+            final int childRight = location[0] + child.getWidth();
+            final int childTop = location[1];
+            final int childBottom = location[1] + child.getHeight();
+
+            if (x >= childLeft + translationX &&
+                    x <= childRight + translationX &&
+                    y >= childTop + translationY &&
+                    y <= childBottom + translationY) {
+                if (child instanceof ViewGroup) {
+                    return findChildViewUnder((ViewGroup)child, x, y);
+                } else {
+                    return child;
+                }
+            }
+        }
+        return null;
     }
 
 }

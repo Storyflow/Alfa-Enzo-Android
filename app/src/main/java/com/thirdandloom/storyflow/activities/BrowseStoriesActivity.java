@@ -61,7 +61,6 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     private TabBar tabBar;
     private Action1<Float> takeScrollValue;
     private ReadingStoriesFragment storyDetailsFragment;
-    private int recyclerViewScrollState = RecyclerView.SCROLL_STATE_IDLE;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -264,18 +263,12 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            recyclerViewScrollState = newState;
-            if (canUpdateData()) {
-                getPeriodsAdapter().updateDataFromLocalStore();
-                fetchData();
+            if (newState != RecyclerView.SCROLL_STATE_SETTLING) {
+                int first = getLayoutManager().findFirstVisibleItemPosition();
+                int last = getLayoutManager().findLastVisibleItemPosition();
+                fetchData(first, last);
             }
         }
-    }
-
-    private void fetchData() {
-        int firstVisiblePosition = getLayoutManager().findFirstVisibleItemPosition();
-        int lastVisiblePosition = getLayoutManager().findLastVisibleItemPosition();
-        fetchData(firstVisiblePosition, lastVisiblePosition);
     }
 
     private void fetchData(int firstVisiblePosition, int lastVisiblePosition) {
@@ -296,7 +289,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
             Calendar calendar = PeriodsAdapter.getDateCalendar(position, centerPosition, periodType);
             storiesManager.addFetchedStoryPosition(position);
             StoryflowApplication.restClient().loadStories(storiesManager.getRequestData(calendar), (Story.WrapList list) -> {
-                getPeriodsAdapter().onNewStoriesFetched(list, calendar);
+                getPeriodsAdapter().onNewStoriesFetched(list, calendar, position);
             }, (errorMessage, type) -> {
                 showError(errorMessage);
                 getPeriodsAdapter().onNewStoriesFetchFailed(position);
@@ -306,7 +299,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(StoryCreationFailedEvent event) {
-        getPeriodsAdapter().notifyDataSetChanged();
+        getPeriodsAdapter().notifyItemChanged(pendingStoryPosition(event.getStory()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -321,11 +314,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(StoryDeletePendingEvent event) {
-        getPeriodsAdapter().deleteStory(event.getStory());
-    }
-
-    private boolean canUpdateData() {
-        return recyclerViewScrollState != RecyclerView.SCROLL_STATE_SETTLING;
+        getPeriodsAdapter().notifyItemChanged(pendingStoryPosition(event.getStory()));
     }
 
     private final PeriodsAdapter.StoryHolder.Actions storyPreviewActions = new PeriodsAdapter.StoryHolder.Actions() {
@@ -380,9 +369,9 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         }
 
         @Override
-        public void onPullToRefreshStarted(SwipeRefreshLayout refreshLayout, Calendar calendar) {
+        public void onPullToRefreshStarted(SwipeRefreshLayout refreshLayout, Calendar calendar, int position) {
             StoryflowApplication.restClient().loadStories(getPeriodsAdapter().getStoriesManager().getRequestData(calendar), (Story.WrapList list) -> {
-                getPeriodsAdapter().onNewStoriesFetched(list, calendar);
+                getPeriodsAdapter().onNewStoriesFetched(list, calendar, position);
                 refreshLayout.setRefreshing(false);
             }, (errorMessage, type) -> {
                 showError(errorMessage);
@@ -421,12 +410,19 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CREATE_NEW_STORY:
-                    getPeriodsAdapter().notifyDataSetChanged();
+                    PendingStory story = PostStoryActivity.extractResult(data);
+                    getPeriodsAdapter().notifyItemChanged(pendingStoryPosition(story));
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private int pendingStoryPosition(PendingStory story) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(story.getDate());
+        return getPeriodsAdapter().getPosition(calendar);
     }
 
     private void initLaunchAnimation(Bundle savedInstanceState) {

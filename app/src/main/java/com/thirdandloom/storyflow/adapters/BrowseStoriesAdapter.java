@@ -19,19 +19,19 @@ import com.thirdandloom.storyflow.utils.glide.RoundedCornersTransformation;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdapter.StoryContentHolder> {
@@ -189,7 +189,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
                     imageUrl = story.getImageData().getNormalSizedImage().url();
                     imageHeight = story.getImageData().getNormalSizedImage().size().height();
                     imageWidth = story.getImageData().getNormalSizedImage().size().width();
-                    scaleType = ImageView.ScaleType.FIT_CENTER;
+                    scaleType = ImageView.ScaleType.FIT_XY;
 
                     //TODO
                     //this code should be removed after story.getImageData().getNormalSizedImage().size()

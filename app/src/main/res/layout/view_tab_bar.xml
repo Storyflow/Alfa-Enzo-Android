@@ -12,9 +12,9 @@
     <LinearLayout
         android:id="@+id/view_tab_bar_updates"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="bottom"
+        android:layout_gravity="bottom"
         android:orientation="vertical">
 
         <ImageView
@@ -40,9 +40,9 @@
     <LinearLayout
         android:id="@+id/view_tab_bar_messages"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="bottom"
+        android:layout_gravity="bottom"
         android:orientation="vertical">
 
         <ImageView
@@ -96,9 +96,9 @@
     <LinearLayout
         android:id="@+id/view_tab_bar_post"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="bottom"
+        android:layout_gravity="bottom"
         android:orientation="vertical">
 
         <ImageView
@@ -124,9 +124,9 @@
     <LinearLayout
         android:id="@+id/view_tab_bar_profile"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="bottom"
+        android:layout_gravity="bottom"
         android:orientation="vertical">
 
         <ImageView

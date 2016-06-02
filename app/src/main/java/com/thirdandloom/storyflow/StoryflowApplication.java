@@ -17,7 +17,6 @@ import io.fabric.sdk.android.Fabric;
 import rx.functions.Action1;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;

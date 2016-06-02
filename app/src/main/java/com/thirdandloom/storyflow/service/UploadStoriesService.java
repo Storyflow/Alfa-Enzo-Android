@@ -51,8 +51,8 @@ public class UploadStoriesService extends Service {
                         }
                         try {
                             Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            Timber.e(e.getMessage());
+                        } catch (InterruptedException ignored) {
+
                         }
                     }
                 }
@@ -125,14 +125,18 @@ public class UploadStoriesService extends Service {
     }
 
     private void sendUploadImageRequest(PendingStory story) {
-        StoryflowApplication.restClient().uploadImageSync(story, () -> {
-            storyCreationImpossible(story);
-        }, storyId -> {
-            getPendingStoriesManager().setStoryId(storyId.getId(), story);
-            sendCreateImageStoryRequest(story);
-        }, (errorMessage, errorType) -> {
+        StoryflowApplication.runOnUIThread(() -> {
             storyCreationFailed(story);
-        });
+        }, 3000);
+
+        //StoryflowApplication.restClient().uploadImageSync(story, () -> {
+        //    storyCreationImpossible(story);
+        //}, storyId -> {
+        //    getPendingStoriesManager().setStoryId(storyId.getId(), story);
+        //    sendCreateImageStoryRequest(story);
+        //}, (errorMessage, errorType) -> {
+        //    storyCreationFailed(story);
+        //});
     }
 
     private void sendCreateTextStoryRequest(PendingStory story) {

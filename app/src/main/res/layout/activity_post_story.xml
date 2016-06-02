@@ -31,14 +31,13 @@
                              android:layout_height="wrap_content"
                              android:layout_centerHorizontal="true"
                              android:layout_below="@+id/activity_post_story_edit_text"
-                             android:paddingRight="@dimen/sizeNormal"
-                             android:paddingLeft="@dimen/sizeNormal"
                     >
                     <ImageView
                         android:id="@+id/activity_post_story_image_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
                         />
 
                     <LinearLayout android:layout_width="match_parent"

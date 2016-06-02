@@ -35,6 +35,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
     private static final int CAPTURE_PHOTO = 1;
     private static final int SELECT_PHOTO = CAPTURE_PHOTO + 1;
     private static final int ENHANCE_PHOTO = SELECT_PHOTO + 1;
+    private static final String PENDING_STORY_LOCAL_UID = "PENDING_STORY_LOCAL_UID";
 
     public static Intent newInstance() {
         return new Intent(StoryflowApplication.applicationContext, PostStoryActivity.class);
@@ -228,7 +229,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                 story.setImageData(state.capturedAbsolutePhotoPath, postStoryImageView.getWidth(), postStoryImageView.getHeight());
                 StoryflowApplication.getPendingStoriesManager().add(story);
                 UploadStoriesService.notifyService();
-                setResult(RESULT_OK);
+                setResult(RESULT_OK, createResultIntent(story));
                 finish();
             }
         }
@@ -280,6 +281,16 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(postStoryImageView);
         }
+    }
+
+    public static Intent createResultIntent(PendingStory story) {
+        Intent intent = new Intent();
+        intent.putExtra(PENDING_STORY_LOCAL_UID, story);
+        return intent;
+    }
+
+    public static PendingStory extractResult(Intent intent) {
+        return (PendingStory) intent.getSerializableExtra(PENDING_STORY_LOCAL_UID);
     }
 
     @Nullable

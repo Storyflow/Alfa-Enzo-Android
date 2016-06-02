@@ -73,6 +73,7 @@ public class ReadingStoriesFragment extends BaseFragment {
     private Calendar dateCalendar;
     private Story.WrapList stories;
     private ReadStoriesAdapter readStoriesAdapter;
+    private FooterHiderScrollListener footerHiderScrollListener;
 
     @Nullable
     @Override
@@ -152,7 +153,7 @@ public class ReadingStoriesFragment extends BaseFragment {
                 getActivity().overridePendingTransition(0, 0);
             }
         }));
-        FooterHiderScrollListener.init(recyclerView, getBottomBar());
+        footerHiderScrollListener = FooterHiderScrollListener.init(recyclerView, getBottomBar());
     }
 
     private void loadInitStories() {
@@ -236,6 +237,7 @@ public class ReadingStoriesFragment extends BaseFragment {
     }
 
     private void startFinishDismissAnimation(int animationDuration) {
+        if (footerHiderScrollListener != null) footerHiderScrollListener.showFooter();
         viewContainer.animate().setDuration(animationDuration)
                 .scaleX(firstStartWidth / featureWidth)
                 .scaleY(firstStartHeight / featureHeight)

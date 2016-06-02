@@ -1,10 +1,13 @@
 package com.thirdandloom.storyflow.views.recyclerview;
 
+import com.thirdandloom.storyflow.utils.ViewUtils;
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
     private OnItemClickListener itemClickListener;
@@ -27,6 +30,10 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
     @Override
     public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        ViewGroup viewGroup = (ViewGroup)view.findChildViewUnder(e.getX(), e.getY());
+        View childViewUnder = ViewUtils.findChildViewUnder(viewGroup, e.getX(), e.getY());
+        if (childViewUnder != null && childViewUnder.hasOnClickListeners()) return false;
+
         View childView = view.findChildViewUnder(e.getX(), e.getY());
         if (childView != null && itemClickListener != null && singleTapDetector.onTouchEvent(e)) {
             itemClickListener.onItemClick(view.getChildViewHolder(childView), view.getChildAdapterPosition(childView));

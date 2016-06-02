@@ -8,8 +8,8 @@ import android.view.View;
 
 public class FooterHiderScrollListener extends RecyclerView.OnScrollListener {
 
-    public static void init(RecyclerView recyclerView, View footerView) {
-        new FooterHiderScrollListener(recyclerView, footerView);
+    public static FooterHiderScrollListener init(RecyclerView recyclerView, View footerView) {
+        return new FooterHiderScrollListener(recyclerView, footerView);
     }
 
     private final View footer;
@@ -29,14 +29,22 @@ public class FooterHiderScrollListener extends RecyclerView.OnScrollListener {
             currentScroll = AndroidUtils.minScrollPx();
             if (footerIsVisible) {
                 footerIsVisible = false;
-                AnimationUtils.hideFooter(footer, recyclerView.getHeight());
+                AnimationUtils.hideFooter(footer);
             }
         } else if (currentScroll < 0) {
             currentScroll = 0;
-            if (!footerIsVisible) {
-                footerIsVisible = true;
-                AnimationUtils.showFooter(footer, recyclerView.getHeight());
-            }
+            startShowFooterAnimated();
+        }
+    }
+
+    public void showFooter() {
+        startShowFooterAnimated();
+    }
+
+    private void startShowFooterAnimated() {
+        if (!footerIsVisible) {
+            footerIsVisible = true;
+            AnimationUtils.showFooter(footer);
         }
     }
 }

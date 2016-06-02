@@ -359,7 +359,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     imageUrl = story.getImageData().getNormalSizedImage().url();
                     imageHeight = story.getImageData().getNormalSizedImage().size().height();
                     imageWidth = story.getImageData().getNormalSizedImage().size().width();
-                    scaleType = ImageView.ScaleType.FIT_CENTER;
+                    scaleType = ImageView.ScaleType.FIT_XY;
 
                     //TODO
                     //this code should be removed after story.getImageData().getNormalSizedImage().size()

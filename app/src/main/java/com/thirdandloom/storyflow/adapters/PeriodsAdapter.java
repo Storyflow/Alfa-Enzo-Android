@@ -3,7 +3,6 @@ package com.thirdandloom.storyflow.adapters;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.managers.StoriesManager;
-import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DateUtils;
@@ -18,6 +17,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,14 +27,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHolder> {
+
     public enum ItemType {
         Large, Small, Smallest
     }
+
     public enum PeriodType {
         Daily, Monthly, Yearly
     }
@@ -47,7 +49,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     private Context context;
     private int centerPosition;
     private StoryHolder.Actions storyPreviewActions;
-    private boolean fetchedStories;
     private List<BrowseStoriesAdapter> displayingAdapters = new ArrayList<>();
 
     public PeriodsAdapter(Context context, @Nullable LinkedHashMap<Calendar, Story.WrapList> store,
@@ -77,15 +78,17 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     public void onNewStoriesFetched(Story.WrapList list, Calendar calendar) {
-        fetchedStories = true;
+        onNewStoriesFetched(list, calendar, getPosition(calendar));
+    }
+
+    public void onNewStoriesFetched(Story.WrapList list, Calendar calendar, int position) {
         storiesManager.storeData(calendar, list);
-        updateDataFromLocalStore();
+        updateDataFromLocalStore(position);
     }
 
     public void onNewStoriesFetchFailed(int position) {
-        fetchedStories = true;
         storiesManager.removeFromFetchedPositions(position);
-        updateDataFromLocalStore();
+        updateDataFromLocalStore(position);
     }
 
     public void updatePeriodType() {
@@ -135,24 +138,13 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     public int getItemWidthPixel() {
         switch (itemType) {
             case Large:
-                return DeviceUtils.getDisplayWidth()-getItemPadding()*2;
+                return DeviceUtils.getDisplayWidth() - getItemPadding() * 2;
             case Small:
-                return DeviceUtils.getDisplayWidth()/2;
+                return DeviceUtils.getDisplayWidth() / 2;
             case Smallest:
-                return DeviceUtils.getDisplayWidth()/3-getItemPadding()*2;
+                return DeviceUtils.getDisplayWidth() / 3 - getItemPadding() * 2;
         }
         throw new UnsupportedOperationException("unsupported itemWidth is using");
-    }
-
-    public void deleteStory(PendingStory story) {
-        for (BrowseStoriesAdapter adapter : displayingAdapters) {
-            Date adapterDate = adapter.getCurrentDate();
-            Date storyDate = story.getDate();
-            if (adapterDate.equals(storyDate)) {
-                adapter.deleteStory(story);
-                break;
-            }
-        }
     }
 
     @Override
@@ -178,7 +170,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             adapter = new BrowseStoriesAdapter(context, storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
             storyHolder.recyclerView.setAdapter(adapter);
         } else {
-            adapter = (BrowseStoriesAdapter)storyHolder.recyclerView.getAdapter();
+            adapter = (BrowseStoriesAdapter) storyHolder.recyclerView.getAdapter();
             adapter.setData(storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
             adapter.notifyDataSetChanged();
         }
@@ -205,11 +197,31 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         return Integer.MAX_VALUE;
     }
 
-    public void updateDataFromLocalStore() {
-        if (fetchedStories) {
-            fetchedStories = false;
-            final Runnable r = this::notifyDataSetChanged;
-            postponeHandler.post(r);
+    public void updateDataFromLocalStore(int position) {
+        postponeHandler.post(() -> notifyItemChanged(position));
+        //postponeHandler.post(this::notifyDataSetChanged);
+    }
+
+    public int getPosition(Calendar storyDateCalendar) {
+        Calendar calendar = DateUtils.todayCalendar();
+
+        switch (periodType) {
+            case Daily:
+                long todayTime = calendar.getTime().getTime();
+                long storyDateTime = storyDateCalendar.getTime().getTime();
+                long diffDays = TimeUnit.MILLISECONDS.toDays(todayTime - storyDateTime);
+                return (int) (centerPosition + diffDays);
+
+            case Monthly:
+                int diffYear = calendar.get(Calendar.YEAR) - storyDateCalendar.get(Calendar.YEAR);
+                int diffMonth = diffYear * 12 + calendar.get(Calendar.MONTH) - storyDateCalendar.get(Calendar.MONTH);
+                return (centerPosition + diffMonth);
+
+            case Yearly:
+                return (centerPosition + (calendar.get(Calendar.YEAR) - storyDateCalendar.get(Calendar.YEAR)));
+
+            default:
+                throw new UnsupportedOperationException("unsupported itemType is using");
         }
     }
 
@@ -220,7 +232,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             void pullToRefreshMotionNotifier(int motionEventAction);
             void onDrag(float scrollAbsolute, float scrollDelta, View scrollingView, Calendar calendar);
             void onClick(View view, Calendar calendar);
-            void onPullToRefreshStarted(SwipeRefreshLayout refreshLayout, Calendar calendar);
+            void onPullToRefreshStarted(SwipeRefreshLayout refreshLayout, Calendar calendar, int adapterPosition);
         }
 
         private TextView dateTextView;
@@ -242,7 +254,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
 
             refreshLayout.setColorSchemeResources(R.color.yellow, R.color.grey);
             refreshLayout.setOnRefreshListener(() -> {
-                actions.onPullToRefreshStarted(refreshLayout, dateCalendar);
+                actions.onPullToRefreshStarted(refreshLayout, dateCalendar, StoryHolder.this.getAdapterPosition());
             });
             refreshLayout.setNotifier(actions::pullToRefreshMotionNotifier);
 
@@ -251,6 +263,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
             manager.setDisableScroll(true);
 
             recyclerView.setLayoutManager(manager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setDragStarted(actions::onDragStarted);
             recyclerView.setDragFinished(actions::onDragFinished);
             recyclerView.setOnDrag((current, delta, view) -> {
