@@ -26,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,11 +49,13 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     private Context context;
     private int centerPosition;
     private StoryHolder.Actions storyPreviewActions;
+    private final RecyclerView.RecycledViewPool recycledViewPool;
 
     public PeriodsAdapter(Context context, @Nullable LinkedHashMap<Calendar, Story.WrapList> store,
             @Nullable List<Integer> fetchedPositions, @Nullable StoriesManager.RequestData requestData) {
         this.context = context;
         this.storiesManager = new StoriesManager(store, fetchedPositions, requestData);
+        this.recycledViewPool = new RecyclerView.RecycledViewPool();
     }
 
     public void setStoryPreviewActions(StoryHolder.Actions storyPreviewActions) {
@@ -82,6 +83,8 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     public void onNewStoriesFetched(Story.WrapList list, Calendar calendar, int position) {
+        Timber.d("MEMORY LEAK onNewStoriesFetched: %d, calendar: %s", position, calendar.toString());
+
         storiesManager.storeData(calendar, list);
         updateDataFromLocalStore(position);
     }
@@ -151,6 +154,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_main_horizontal, parent, false);
         StoryHolder storyHolder = new StoryHolder(v, storyPreviewActions);
+        storyHolder.recyclerView.setRecycledViewPool(recycledViewPool);
         return storyHolder;
     }
 
@@ -162,11 +166,11 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
         BrowseStoriesAdapter adapter;
         if (!storyDate.equals(storyHolder.getDateCalendar())) {
             storyHolder.setDateCalendar(storyDate);
-            adapter = new BrowseStoriesAdapter(context, storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
+            adapter = new BrowseStoriesAdapter(context, storiesManager.getDisplayingStories(storyDate), getItemWidthPixel(), getItemType());
             storyHolder.recyclerView.setAdapter(adapter);
         } else {
             adapter = (BrowseStoriesAdapter) storyHolder.recyclerView.getAdapter();
-            adapter.setData(storiesManager.getDisplayingStories(storyDate), getItemWidthPixel());
+            adapter.setData(storiesManager.getDisplayingStories(storyDate), getItemWidthPixel(), getItemType());
             adapter.notifyDataSetChanged();
         }
         switch (itemType) {
@@ -180,7 +184,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
                 adapter.setAuthorViewType(BrowseStoriesAdapter.AuthorViewType.None);
                 break;
         }
-        adapter.setCurrentDate(storyDate.getTime());
 
         ViewUtils.setHidden(storyHolder.progressBar, adapter.getDataType() != BrowseStoriesAdapter.DataType.PendingStories);
         storyHolder.updateEmptyView(adapter.getDataType());
@@ -192,8 +195,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
     }
 
     public void updateDataFromLocalStore(int position) {
-        Timber.d("Browse stories updateDataFromLocalStore notifyItemChanged");
-
         postponeHandler.post(() -> notifyItemChanged(position));
         //postponeHandler.post(this::notifyDataSetChanged);
     }
@@ -284,11 +285,10 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.StoryHol
 
         public void updateEmptyView(BrowseStoriesAdapter.DataType dataType) {
             ViewUtils.setShown(noStoriesView, dataType == BrowseStoriesAdapter.DataType.EmptyStories);
-            if (dataType == BrowseStoriesAdapter.DataType.EmptyStories) {
-                recyclerView.setBackground(StoryflowApplication.resources().getDrawable(R.drawable.shape_grey_lightest_round_corners));
-            } else {
-                recyclerView.setBackgroundColor(StoryflowApplication.resources().getColor(R.color.transparent));
-            }
+            int backgroundColorId = dataType == BrowseStoriesAdapter.DataType.EmptyStories
+                    ? R.color.greyLightest
+                    : R.color.transparent;
+            recyclerView.setBackgroundColor(StoryflowApplication.resources().getColor(backgroundColorId));
         }
 
         public void setDateRepresentation(String boldText, String formattedDate) {

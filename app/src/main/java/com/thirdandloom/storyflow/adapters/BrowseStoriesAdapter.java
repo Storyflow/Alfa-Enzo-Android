@@ -14,7 +14,6 @@ import com.thirdandloom.storyflow.utils.SpannableUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
-import com.thirdandloom.storyflow.utils.glide.RoundedCornersTransformation;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -30,10 +29,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-
 public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdapter.StoryContentHolder> {
 
     enum DataType {
@@ -48,21 +43,22 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
     private Story.WrapList wrapStoriesList;
     private int itemWidthPixels;
     private DataType dataType;
-    private Date currentDate;
     private AuthorViewType authorViewType = AuthorViewType.None;
+    private PeriodsAdapter.ItemType itemType;
 
-    public BrowseStoriesAdapter(Context context, @Nullable Story.WrapList wrapStoriesList, int itemWidthPixels) {
+    public BrowseStoriesAdapter(Context context, @Nullable Story.WrapList wrapStoriesList, int itemWidthPixels, PeriodsAdapter.ItemType itemType) {
         this.context = context;
-        setData(wrapStoriesList, itemWidthPixels);
+        setData(wrapStoriesList, itemWidthPixels, itemType);
     }
 
     public void setAuthorViewType(AuthorViewType authorViewType) {
         this.authorViewType = authorViewType;
     }
 
-    public void setData(@Nullable Story.WrapList wrapStoriesList, int itemWidthPixels) {
+    public void setData(@Nullable Story.WrapList wrapStoriesList, int itemWidthPixels, PeriodsAdapter.ItemType itemType) {
         this.wrapStoriesList = wrapStoriesList;
         this.itemWidthPixels = itemWidthPixels;
+        this.itemType = itemType;
         updateDataType();
     }
 
@@ -70,13 +66,14 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
     public StoryContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_story_content, parent, false);
         StoryContentHolder holder = new StoryContentHolder(v);
+        Timber.d("memory leaK: onCreateViewHolder");
         return holder;
     }
 
     @Override
     public void onBindViewHolder(StoryContentHolder holder, int position) {
         Story story = wrapStoriesList.getStory(position);
-        holder.configureUi(story, context, itemWidthPixels);
+        holder.configureUi(story, context, itemWidthPixels, itemType);
         holder.initAuthorUi(context, story, authorViewType);
     }
 
@@ -85,25 +82,6 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
         return dataType != DataType.PopulatedStories
                 ? 0
                 : wrapStoriesList.getStories().size();
-    }
-
-    public void setCurrentDate(Date currentDate) {
-        this.currentDate = currentDate;
-    }
-
-    public Date getCurrentDate() {
-        return currentDate;
-    }
-
-    public void deleteStory(PendingStory pendingStory) {
-        ArrayUtils.forEach(wrapStoriesList.getStories(), (story, position) -> {
-            if (story.getLocalUid().equals(pendingStory.getLocalUid())) {
-                wrapStoriesList.removeStory(story);
-                notifyItemRemoved(position);
-                return false;
-            }
-            return true;
-        });
     }
 
     public DataType getDataType() {
@@ -163,7 +141,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
             });
         }
 
-        public void configureUi(Story story, Context context, int itemWidthPixels) {
+        public void configureUi(Story story, Context context, int itemWidthPixels, PeriodsAdapter.ItemType itemType) {
             storyLocalUid = story.getLocalUid();
 
             String imageUrl;
@@ -186,9 +164,20 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
                     scaleType = ImageView.ScaleType.CENTER_CROP;
                     break;
                 case Image:
-                    imageUrl = story.getImageData().getNormalSizedImage().url();
-                    imageHeight = story.getImageData().getNormalSizedImage().size().height();
-                    imageWidth = story.getImageData().getNormalSizedImage().size().width();
+                    switch (itemType) {
+                        case Small:
+                        case Smallest:
+                        default:
+                            imageUrl = story.getImageData().getCollapsedSizedImage().url();
+                            imageHeight = story.getImageData().getCollapsedSizedImage().size().height();
+                            imageWidth = story.getImageData().getCollapsedSizedImage().size().width();
+                            break;
+                        case Large:
+                            imageUrl = story.getImageData().getNormalSizedImage().url();
+                            imageHeight = story.getImageData().getNormalSizedImage().size().height();
+                            imageWidth = story.getImageData().getNormalSizedImage().size().width();
+                            break;
+                    }
                     scaleType = ImageView.ScaleType.FIT_XY;
 
                     //TODO
@@ -221,9 +210,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
             Glide
                     .with(context)
                     .load(url)
-                    .bitmapTransform(new RoundedCornersTransformation(context, AndroidUtils.dp(5.f), 0))
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageView);
         }
 
@@ -308,7 +295,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
 
             @Override
             public void onClick(View textView) {
-                Timber.d("onClick mention name: %s", mention.getFullName());
+
             }
 
             @Override
