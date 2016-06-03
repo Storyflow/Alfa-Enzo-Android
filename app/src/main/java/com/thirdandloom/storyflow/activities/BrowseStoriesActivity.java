@@ -128,6 +128,8 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         PeriodsAdapter adapter = new PeriodsAdapter(this, state.savedStore, state.savedFetchedPositions, state.savedRequestData);
         adapter.setStoryPreviewActions(storyPreviewActions);
         adapter.setItemType(state.savedItemType);
+        adapter.setGetParentHeightAction(() -> snappyRecyclerView.getHeight());
+
         snappyRecyclerView.setAdapter(adapter);
         ((BrowseStoriesToolBar) getToolbar()).onNewItemWidthSelected(adapter.getItemType());
 

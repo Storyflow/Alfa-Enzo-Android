@@ -29,6 +29,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdapter.StoryContentHolder> {
 
     enum DataType {
@@ -76,6 +79,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
         holder.configureUi(story, context, itemWidthPixels, itemType);
         holder.initAuthorUi(context, story, authorViewType);
     }
+
 
     @Override
     public int getItemCount() {
@@ -125,8 +129,8 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
             deleteButton = itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_pending_delete);
             storyDescriptionContainer = itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_description_data_container);
             authorDataContainer = itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_data_container);
-            authorFullNameTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_full_name);
-            authorAvatar = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_avatar);
+            authorFullNameTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_full_name);
+            authorAvatar = (ImageView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_avatar);
             description = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_text_view);
         }
 

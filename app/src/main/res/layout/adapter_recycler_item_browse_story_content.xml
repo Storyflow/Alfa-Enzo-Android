@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/transparent"
+              android:orientation="vertical"
+              android:layout_marginRight="@dimen/sizeTiniest"
+              android:layout_marginLeft="@dimen/sizeTiniest"
+              tools:background="@color/greyDark">
+
+    <TextView
+        android:id="@+id/adapter_recycler_item_browse_story_content_date_top_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/greyDarkName"
+        android:textAppearance="@style/TextAppearance.RoboMediumNormal"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="Next Year"
+        tools:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/adapter_recycler_item_browse_story_content_date_bottom_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="@dimen/sizeNormal"
+        android:textColor="@color/greyDarkName"
+        android:textAppearance="@style/TextAppearance.RoboBoldTiny"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="2017"
+        tools:textColor="@color/white"/>
+
+    <com.thirdandloom.storyflow.views.edittext.AutoResizeTextView
+        android:id="@+id/adapter_recycler_item_horizontal_no_stories_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@color/greyLightest"
+        android:text="@string/no_stories"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeLarge"
+        tools:visibility="visible" />
+
+</LinearLayout>

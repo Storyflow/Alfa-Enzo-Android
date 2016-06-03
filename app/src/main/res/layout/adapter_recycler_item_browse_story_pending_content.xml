@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_marginRight="@dimen/sizeTiniest"
+              android:layout_marginLeft="@dimen/sizeTiniest"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/adapter_recycler_item_browse_story_pendig_content_date_top_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/greyDarkName"
+        android:textAppearance="@style/TextAppearance.RoboMediumNormal"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="Next Year"
+        tools:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/adapter_recycler_item_browse_story_pending_content_date_bottom_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="@dimen/sizeNormal"
+        android:textColor="@color/greyDarkName"
+        android:textAppearance="@style/TextAppearance.RoboBoldTiny"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="2017"
+        tools:textColor="@color/white"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:theme="@style/YellowProgressBar"
+        android:visibility="visible" />
+
+</LinearLayout>
