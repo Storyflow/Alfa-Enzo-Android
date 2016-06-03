@@ -4,6 +4,7 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.activities.launch.ProfileActivity;
 import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
+import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodBaseHolder;
 import com.thirdandloom.storyflow.fragments.ReadingStoriesFragment;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.PendingStory;
@@ -319,7 +320,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         getPeriodsAdapter().notifyItemChanged(pendingStoryPosition(event.getStory()));
     }
 
-    private final PeriodsAdapter.StoryHolder.Actions storyPreviewActions = new PeriodsAdapter.StoryHolder.Actions() {
+    private final BrowsePeriodBaseHolder.Actions storyPreviewActions = new BrowsePeriodBaseHolder.Actions() {
         @Override
         public void onDragStarted() {
             getLayoutManager().setDisableScroll(true);

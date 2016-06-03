@@ -1,16 +1,16 @@
 package com.thirdandloom.storyflow.adapters;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodBaseHolder;
+import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodEmptyHolder;
+import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodPendingHolder;
+import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodSmallestPopulatedHolder;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
-import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
-import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout;
@@ -29,16 +29,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePeriodEmptyContentHolder> {
+public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder> {
 
     public enum ItemType {
         Large, Small, Smallest
@@ -48,6 +46,14 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePe
         Daily, Monthly, Yearly
     }
 
+    enum DataType {
+        EmptyStories, PendingStories, PopulatedStories
+    }
+
+    private static final int EMPTY = 1;
+    private static final int PENDING = EMPTY + 1;
+    private static final int POPULATED = PENDING + 1;
+
     private final Handler postponeHandler = new Handler();
     private final StoriesManager storiesManager;
 
@@ -55,7 +61,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePe
     private PeriodType periodType = PeriodType.Daily;
     private Context context;
     private int centerPosition;
-    private StoryHolder.Actions storyPreviewActions;
+    private BrowsePeriodBaseHolder.Actions storyPreviewActions;
     private Func0<Integer> getParentHeightAction;
 
     public PeriodsAdapter(Context context, @Nullable LinkedHashMap<Calendar, Story.WrapList> store,
@@ -68,7 +74,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePe
         this.getParentHeightAction = getParentHeightAction;
     }
 
-    public void setStoryPreviewActions(StoryHolder.Actions storyPreviewActions) {
+    public void setStoryPreviewActions(BrowsePeriodBaseHolder.Actions storyPreviewActions) {
         this.storyPreviewActions = storyPreviewActions;
     }
 
@@ -232,14 +238,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePe
     }
 
     public static class StoryHolder extends RecyclerView.ViewHolder {
-        public interface Actions {
-            void onDragStarted();
-            void onDragFinished(int velocity);
-            void pullToRefreshMotionNotifier(int motionEventAction);
-            void onDrag(float scrollAbsolute, float scrollDelta, View scrollingView, Calendar calendar);
-            void onClick(View view, Calendar calendar);
-            void onPullToRefreshStarted(SwipeRefreshLayout refreshLayout, Calendar calendar, int adapterPosition);
-        }
 
         private TextView dateTextView;
         private TextView boldDateTextView;
@@ -249,7 +247,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePe
         private OnSwipeStartNotifyRefreshLayout refreshLayout;
         private Calendar dateCalendar;
 
-        public StoryHolder(View itemView, Actions actions) {
+        public StoryHolder(View itemView, BrowsePeriodBaseHolder.Actions actions) {
             super(itemView);
             dateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_main_horizontal_story_text_view);
             recyclerView = (VerticalDragNotifierRecyclerView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_recycler_view);
@@ -326,7 +324,7 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePe
     //}
 
     @NonNull
-    private static Calendar updateDate(BrowsePeriodEmptyContentHolder holder, int position, int centerPosition, PeriodType periodType) {
+    private static Calendar updateDate(BrowsePeriodEmptyHolder holder, int position, int centerPosition, PeriodType periodType) {
         Calendar calendar = getDateCalendar(position, centerPosition, periodType);
         switch (periodType) {
             case Daily:
@@ -372,35 +370,27 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePe
     }
 
     @Override
-    public BrowsePeriodEmptyContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        BrowsePeriodEmptyContentHolder storyHolder;
-        View view;
+    public BrowsePeriodEmptyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case EMPTY:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_browse_story_content, parent, false);
-                storyHolder = new BrowsePeriodEmptyContentHolder(view, storyPreviewActions);
-                return storyHolder;
+                return BrowsePeriodEmptyHolder.newInstance(parent, R.layout.adapter_recycler_item_browse_story_content, storyPreviewActions);
             case POPULATED:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_browse_story_filled_content, parent, false);
-                storyHolder = new BrowsePeriodPopuladedContentHolder(view, storyPreviewActions);
-                return storyHolder;
+                return BrowsePeriodSmallestPopulatedHolder.newInstance(parent, R.layout.adapter_recycler_item_browse_story_filled_content, storyPreviewActions);
             case PENDING:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_browse_story_pending_content, parent, false);
-                storyHolder = new BrowsePeriodPendingContentHolder(view, storyPreviewActions);
-                return storyHolder;
+                return BrowsePeriodPendingHolder.newInstance(parent, R.layout.adapter_recycler_item_browse_story_pending_content, storyPreviewActions);
             default:
                 throw new UnsupportedOperationException("Your are using unsupported item view type");
         }
     }
 
     @Override
-    public void onBindViewHolder(BrowsePeriodEmptyContentHolder holder, int position) {
+    public void onBindViewHolder(BrowsePeriodEmptyHolder holder, int position) {
         ViewUtils.applyWidth(holder.itemView, getItemWidthPixel());
         Calendar storyDate = updateDate(holder, position, centerPosition, periodType);
         switch (getItemViewType(position)) {
             case POPULATED:
                 Story.WrapList wrapList = storiesManager.getDisplayingStories(storyDate);
-                BrowsePeriodPopuladedContentHolder populatedHolder = (BrowsePeriodPopuladedContentHolder) holder;
+                BrowsePeriodSmallestPopulatedHolder populatedHolder = (BrowsePeriodSmallestPopulatedHolder) holder;
                 populatedHolder.setStories(wrapList.getStories(), context, getItemWidthPixel(), getItemType(), getParentHeightAction.call());
                 break;
         }
@@ -422,15 +412,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePe
         }
     }
 
-    enum DataType {
-        EmptyStories, PendingStories, PopulatedStories
-    }
-
-    private static final int EMPTY = 1;
-    private static final int PENDING = EMPTY + 1;
-    private static final int POPULATED = PENDING + 1;
-
-
     private DataType getDataType(Story.WrapList wrapList) {
         if (wrapList == null) {
             return DataType.PendingStories;
@@ -439,162 +420,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<PeriodsAdapter.BrowsePe
             return DataType.EmptyStories;
         } else {
             return DataType.PopulatedStories;
-        }
-    }
-
-    public static class BrowsePeriodEmptyContentHolder extends RecyclerView.ViewHolder {
-
-        protected TextView dateTopTextView;
-        protected TextView dateBottomTextView;
-
-        public BrowsePeriodEmptyContentHolder(View itemView, StoryHolder.Actions storyPreviewActions) {
-            super(itemView);
-            findViews();
-        }
-
-        private void findViews() {
-            dateTopTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_content_date_top_text_view);
-            dateBottomTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_content_date_bottom_text_view);
-        }
-
-        public void setDateRepresentation(String topText, String bottomText) {
-            dateTopTextView.setText(topText);
-            dateBottomTextView.setText(bottomText);
-        }
-    }
-
-    public static class BrowsePeriodPopuladedContentHolder extends BrowsePeriodEmptyContentHolder {
-
-        private List<ImageView> imageViews;
-        private int addedImageViewsHeight;
-
-        public BrowsePeriodPopuladedContentHolder(View itemView, StoryHolder.Actions storyPreviewActions) {
-            super(itemView, storyPreviewActions);
-            findViews();
-        }
-
-        private void findViews() {
-            dateTopTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_top_text_view);
-            dateBottomTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_text_view);
-
-            imageViews = Arrays.asList((ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view0),
-                    (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view1),
-                    (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view2),
-                    (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view3),
-                    (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view4),
-                    (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view5),
-                    (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view6),
-                    (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view7),
-                    (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view8),
-                    (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view9)
-            );
-        }
-
-        public void setStories(List<Story> stories, Context context, int itemWidthPixels, PeriodsAdapter.ItemType itemType, int parentHeight) {
-            this.addedImageViewsHeight = 0;
-
-            ArrayUtils.forEach(imageViews, (imageView, pos) -> {
-                boolean settingsStoriesCompleted = addedImageViewsHeight >= (parentHeight - dateTopTextView.getMeasuredHeight() - dateBottomTextView.getMeasuredHeight());
-                imageView.setImageDrawable(null);
-
-                if (pos < stories.size() && !settingsStoriesCompleted) {
-                    int height = configureImageView(imageView, stories.get(pos), context, itemWidthPixels, itemType);
-                    addedImageViewsHeight += height;
-                }
-            });
-        }
-
-        /**
-         *
-         * @param imageView
-         * @param story
-         * @param context
-         * @param itemWidthPixels
-         * @param itemType
-         * @return added height
-         */
-        public int configureImageView(ImageView imageView, Story story, Context context, int itemWidthPixels, PeriodsAdapter.ItemType itemType) {
-            //storyLocalUid = story.getLocalUid();
-
-            String imageUrl;
-            int height;
-            int imageHeight;
-            int imageWidth;
-            switch (story.getType()) {
-                case Text:
-                    imageUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
-                    if (story.getAuthor().getCroppedImageCover().getRect() != null
-                            && story.getAuthor().getCroppedImageCover().getRect().height() != 0
-                            && story.getAuthor().getCroppedImageCover().getRect().width() != 0) {
-                        imageHeight = story.getAuthor().getCroppedImageCover().getRect().height();
-                        imageWidth = story.getAuthor().getCroppedImageCover().getRect().width();
-                    } else {
-                        imageHeight = AndroidUtils.dp(100);
-                        imageWidth = AndroidUtils.dp(100);
-                    }
-                    break;
-                case Image:
-                    switch (itemType) {
-                        case Small:
-                        case Smallest:
-                        default:
-                            imageUrl = story.getImageData().getCollapsedSizedImage().url();
-                            imageHeight = story.getImageData().getCollapsedSizedImage().size().height();
-                            imageWidth = story.getImageData().getCollapsedSizedImage().size().width();
-                            break;
-                        case Large:
-                            imageUrl = story.getImageData().getNormalSizedImage().url();
-                            imageHeight = story.getImageData().getNormalSizedImage().size().height();
-                            imageWidth = story.getImageData().getNormalSizedImage().size().width();
-                            break;
-                    }
-
-                    //TODO
-                    //this code should be removed after story.getImageData().getNormalSizedImage().size()
-                    //fixed: story.getImageData().getNormalSizedImage().size() = (0, 0)
-                    if (imageHeight == 0 || imageWidth == 0) {
-                        imageHeight = AndroidUtils.dp(100);
-                        imageWidth = AndroidUtils.dp(100);
-                    }
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unsupported story type.");
-            }
-
-            float coef = MathUtils.calculateMaxScaleRatio(imageWidth, imageHeight, itemWidthPixels);
-            height = Math.round(coef * imageHeight);
-
-            configureImage(imageView, context, imageUrl, height, itemWidthPixels);
-            return height;
-            //configurePendingActions(story.getPendingStatus());
-        }
-
-        private void configureImage(ImageView imageView, Context context, String url, int height, int width) {
-            //TODO
-            //scaleType be removed after story.getAuthor().getCroppedImageCover().getRect()
-            //fixed: -180x106x735x391
-            //imageView.setScaleType(scaleType);
-            ViewUtils.applyHeight(imageView, height);
-            Glide
-                    .with(context)
-                    .load(url)
-                    .override(width, height)
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .into(imageView);
-        }
-    }
-
-    public static class BrowsePeriodPendingContentHolder extends BrowsePeriodEmptyContentHolder {
-
-        public BrowsePeriodPendingContentHolder(View itemView, StoryHolder.Actions storyPreviewActions) {
-            super(itemView, storyPreviewActions);
-            findViews();
-        }
-
-        private void findViews() {
-            dateTopTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_pendig_content_date_top_text_view);
-            dateBottomTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_pending_content_date_bottom_text_view);
         }
     }
 }
