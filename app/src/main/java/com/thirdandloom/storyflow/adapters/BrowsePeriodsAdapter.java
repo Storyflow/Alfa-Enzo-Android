@@ -4,7 +4,9 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodBaseHolder;
 import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodEmptyHolder;
+import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodLargePopulatedHolder;
 import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodPendingHolder;
+import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodSmallPopulatedHolder;
 import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodSmallestPopulatedHolder;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Story;
@@ -22,11 +24,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -36,7 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder> {
+public class BrowsePeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder> {
 
     public enum ItemType {
         Large, Small, Smallest
@@ -52,7 +52,9 @@ public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder
 
     private static final int EMPTY = 1;
     private static final int PENDING = EMPTY + 1;
-    private static final int POPULATED = PENDING + 1;
+    private static final int POPULATED_LARGE = PENDING + 1;
+    private static final int POPULATED_SMALL = POPULATED_LARGE + 1;
+    private static final int POPULATED_SMALLEST = POPULATED_SMALL + 1;
 
     private final Handler postponeHandler = new Handler();
     private final StoriesManager storiesManager;
@@ -64,8 +66,8 @@ public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder
     private BrowsePeriodBaseHolder.Actions storyPreviewActions;
     private Func0<Integer> getParentHeightAction;
 
-    public PeriodsAdapter(Context context, @Nullable LinkedHashMap<Calendar, Story.WrapList> store,
-            @Nullable List<Integer> fetchedPositions, @Nullable StoriesManager.RequestData requestData) {
+    public BrowsePeriodsAdapter(Context context, @Nullable LinkedHashMap<Calendar, Story.WrapList> store,
+                                @Nullable List<Integer> fetchedPositions, @Nullable StoriesManager.RequestData requestData) {
         this.context = context;
         this.storiesManager = new StoriesManager(store, fetchedPositions, requestData);
     }
@@ -166,44 +168,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder
         throw new UnsupportedOperationException("unsupported itemWidth is using");
     }
 
-    //@Override
-    //public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    //    View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_main_horizontal, parent, false);
-    //    StoryHolder storyHolder = new StoryHolder(v, storyPreviewActions);
-    //    storyHolder.recyclerView.setRecycledViewPool(recycledViewPool);
-    //    return storyHolder;
-    //}
-
-    //@Override
-    //public void onBindViewHolder(StoryHolder storyHolder, int position) {
-    //    ViewUtils.applyWidth(storyHolder.itemView, getItemWidthPixel());
-    //    Calendar storyDate = updateDate(storyHolder, position, centerPosition, periodType);
-    //
-    //    BrowseStoriesAdapter adapter = (BrowseStoriesAdapter)storyHolder.recyclerView.getAdapter();
-    //    if (adapter == null) {
-    //        adapter = new BrowseStoriesAdapter(context, storiesManager.getDisplayingStories(storyDate), getItemWidthPixel(), getItemType());
-    //        storyHolder.recyclerView.setAdapter(adapter);
-    //    } else {
-    //        adapter.setData(storiesManager.getDisplayingStories(storyDate), getItemWidthPixel(), getItemType());
-    //        adapter.notifyDataSetChanged();
-    //    }
-    //
-    //    switch (itemType) {
-    //        case Large:
-    //            adapter.setAuthorViewType(BrowseStoriesAdapter.AuthorViewType.Full);
-    //            break;
-    //        case Small:
-    //            adapter.setAuthorViewType(BrowseStoriesAdapter.AuthorViewType.DescriptionOnly);
-    //            break;
-    //        case Smallest:
-    //            adapter.setAuthorViewType(BrowseStoriesAdapter.AuthorViewType.None);
-    //            break;
-    //    }
-    //
-    //    ViewUtils.setHidden(storyHolder.progressBar, adapter.getDataType() != BrowseStoriesAdapter.DataType.PendingStories);
-    //    storyHolder.updateEmptyView(adapter.getDataType());
-    //}
-
     @Override
     public int getItemCount() {
         return Integer.MAX_VALUE;
@@ -211,7 +175,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder
 
     public void updateDataFromLocalStore(int position) {
         postponeHandler.post(() -> notifyItemChanged(position));
-        //postponeHandler.post(this::notifyDataSetChanged);
     }
 
     public int getPosition(Calendar storyDateCalendar) {
@@ -304,25 +267,6 @@ public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder
         }
     }
 
-    //@NonNull
-    //private static Calendar updateDate(StoryHolder storyHolder, int position, int centerPosition, PeriodType periodType) {
-    //    Calendar calendar = getDateCalendar(position, centerPosition, periodType);
-    //    switch (periodType) {
-    //        case Daily:
-    //            DateUtils.getDailyRepresentation(calendar, storyHolder::setDateRepresentation);
-    //            break;
-    //        case Monthly:
-    //            DateUtils.getMonthlyRepresentation(calendar, storyHolder::setDateRepresentation);
-    //            break;
-    //        case Yearly:
-    //            DateUtils.getYearlyRepresentation(calendar, storyHolder::setDateRepresentation);
-    //            break;
-    //        default:
-    //            throw new UnsupportedOperationException("unsupported itemType is using");
-    //    }
-    //    return calendar;
-    //}
-
     @NonNull
     private static Calendar updateDate(BrowsePeriodEmptyHolder holder, int position, int centerPosition, PeriodType periodType) {
         Calendar calendar = getDateCalendar(position, centerPosition, periodType);
@@ -373,11 +317,16 @@ public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder
     public BrowsePeriodEmptyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case EMPTY:
-                return BrowsePeriodEmptyHolder.newInstance(parent, R.layout.adapter_recycler_item_browse_story_content, storyPreviewActions);
-            case POPULATED:
-                return BrowsePeriodSmallestPopulatedHolder.newInstance(parent, R.layout.adapter_recycler_item_browse_story_filled_content, storyPreviewActions);
+                return BrowsePeriodEmptyHolder.newInstance(parent, storyPreviewActions);
             case PENDING:
-                return BrowsePeriodPendingHolder.newInstance(parent, R.layout.adapter_recycler_item_browse_story_pending_content, storyPreviewActions);
+                return BrowsePeriodPendingHolder.newInstance(parent, storyPreviewActions);
+            case POPULATED_LARGE:
+                return BrowsePeriodLargePopulatedHolder.newInstance(parent, storyPreviewActions);
+            case POPULATED_SMALL:
+                return BrowsePeriodSmallPopulatedHolder.newInstance(parent, storyPreviewActions);
+            case POPULATED_SMALLEST:
+                return BrowsePeriodSmallestPopulatedHolder.newInstance(parent, storyPreviewActions);
+
             default:
                 throw new UnsupportedOperationException("Your are using unsupported item view type");
         }
@@ -388,7 +337,9 @@ public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder
         ViewUtils.applyWidth(holder.itemView, getItemWidthPixel());
         Calendar storyDate = updateDate(holder, position, centerPosition, periodType);
         switch (getItemViewType(position)) {
-            case POPULATED:
+            case POPULATED_LARGE:
+            case POPULATED_SMALL:
+            case POPULATED_SMALLEST:
                 Story.WrapList wrapList = storiesManager.getDisplayingStories(storyDate);
                 BrowsePeriodSmallestPopulatedHolder populatedHolder = (BrowsePeriodSmallestPopulatedHolder) holder;
                 populatedHolder.setStories(wrapList.getStories(), context, getItemWidthPixel(), getItemType(), getParentHeightAction.call());
@@ -406,7 +357,16 @@ public class PeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmptyHolder
             case PendingStories:
                 return PENDING;
             case PopulatedStories:
-                return POPULATED;
+                switch (itemType) {
+                    case Smallest:
+                        return POPULATED_SMALLEST;
+                    case Small:
+                        return POPULATED_SMALL;
+                    case Large:
+                        return POPULATED_LARGE;
+                    default:
+                        throw new UnsupportedOperationException("Your are using unsupported item type");
+                }
             default:
                 throw new UnsupportedOperationException("Your are using unsupported item view type");
         }

@@ -3,7 +3,7 @@ package com.thirdandloom.storyflow.views.toolbar;
 import com.bumptech.glide.Glide;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
+import com.thirdandloom.storyflow.adapters.BrowsePeriodsAdapter;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
@@ -94,16 +94,16 @@ public class BrowseStoriesToolBar extends BaseToolBar {
         this.actions = actions;
     }
 
-    public void onNewItemWidthSelected(PeriodsAdapter.ItemType itemType) {
+    public void onNewItemWidthSelected(BrowsePeriodsAdapter.ItemType itemType) {
         sizeFilterImageVie.setImageResource(toolbarSizeImage.get(itemType.ordinal()));
     }
 
     private static final Map<Integer, Integer> toolbarSizeImage;
     static {
         Map<Integer, Integer> map = new HashMap<>();
-        map.put(PeriodsAdapter.ItemType.Small.ordinal(), R.drawable.ic_view_2);
-        map.put(PeriodsAdapter.ItemType.Large.ordinal(), R.drawable.ic_view_1);
-        map.put(PeriodsAdapter.ItemType.Smallest.ordinal(), R.drawable.ic_view_3);
+        map.put(BrowsePeriodsAdapter.ItemType.Small.ordinal(), R.drawable.ic_view_2);
+        map.put(BrowsePeriodsAdapter.ItemType.Large.ordinal(), R.drawable.ic_view_1);
+        map.put(BrowsePeriodsAdapter.ItemType.Smallest.ordinal(), R.drawable.ic_view_3);
         toolbarSizeImage = Collections.unmodifiableMap(map);
     }
 }

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_marginRight="@dimen/sizeTiniest"
+    android:layout_marginLeft="@dimen/sizeTiniest"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_date_top_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/greyDarkName"
+        android:textAppearance="@style/TextAppearance.RoboMediumNormal"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="Next Year"
+        tools:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_date_bottom_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="@dimen/sizeNormal"
+        android:textColor="@color/greyDarkName"
+        android:textAppearance="@style/TextAppearance.RoboBoldTiny"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="2017"
+        tools:textColor="@color/white"/>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_image_view0"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="@dimen/sizeTiny"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/sizeMedium"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/adapter_recycler_item_horizontal_story_author_avatar0"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/sizeTiny">
+
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_author_full_name0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textAppearance="@style/TextAppearance.RoboBoldSmall"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="Tony Tran"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_lock"
+                            />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:layout_gravity="center"
+                            android:textAppearance="@style/TextAppearance.RoboRegularTiniest"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="@string/private_string"
+                            tools:text="Private"
+                            />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_story_description_text_view0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_gravity="bottom"
+                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                android:maxLines="2"
+                tools:text="Best party!"
+                />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_image_view1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="@dimen/sizeTiny"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/sizeMedium"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/adapter_recycler_item_horizontal_story_author_avatar1"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/sizeTiny">
+
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_author_full_name1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textAppearance="@style/TextAppearance.RoboBoldSmall"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="Tony Tran"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_lock"
+                            />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:layout_gravity="center"
+                            android:textAppearance="@style/TextAppearance.RoboRegularTiniest"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="@string/private_string"
+                            tools:text="Private"
+                            />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_story_description_text_view1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_gravity="bottom"
+                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                android:maxLines="2"
+                tools:text="Best party!"
+                />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_image_view2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="@dimen/sizeTiny"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/sizeMedium"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/adapter_recycler_item_horizontal_story_author_avatar2"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/sizeTiny">
+
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_author_full_name2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textAppearance="@style/TextAppearance.RoboBoldSmall"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="Tony Tran"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_lock"
+                            />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:layout_gravity="center"
+                            android:textAppearance="@style/TextAppearance.RoboRegularTiniest"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="@string/private_string"
+                            tools:text="Private"
+                            />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_story_description_text_view2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_gravity="bottom"
+                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                android:maxLines="2"
+                tools:text="Best party!"
+                />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_image_view3"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="@dimen/sizeTiny"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/sizeMedium"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/adapter_recycler_item_horizontal_story_author_avatar3"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/sizeTiny">
+
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_author_full_name3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textAppearance="@style/TextAppearance.RoboBoldSmall"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="Tony Tran"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_lock"
+                            />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:layout_gravity="center"
+                            android:textAppearance="@style/TextAppearance.RoboRegularTiniest"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="@string/private_string"
+                            tools:text="Private"
+                            />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/adapter_recycler_item_browse_story_large_filled_content_story_description_text_view3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_gravity="bottom"
+                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                android:maxLines="2"
+                tools:text="Best party!"
+                />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

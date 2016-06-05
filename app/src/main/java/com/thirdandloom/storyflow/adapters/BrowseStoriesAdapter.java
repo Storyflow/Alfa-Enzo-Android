@@ -29,9 +29,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdapter.StoryContentHolder> {
 
     enum DataType {
@@ -47,9 +44,9 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
     private int itemWidthPixels;
     private DataType dataType;
     private AuthorViewType authorViewType = AuthorViewType.None;
-    private PeriodsAdapter.ItemType itemType;
+    private BrowsePeriodsAdapter.ItemType itemType;
 
-    public BrowseStoriesAdapter(Context context, @Nullable Story.WrapList wrapStoriesList, int itemWidthPixels, PeriodsAdapter.ItemType itemType) {
+    public BrowseStoriesAdapter(Context context, @Nullable Story.WrapList wrapStoriesList, int itemWidthPixels, BrowsePeriodsAdapter.ItemType itemType) {
         this.context = context;
         setData(wrapStoriesList, itemWidthPixels, itemType);
     }
@@ -58,7 +55,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
         this.authorViewType = authorViewType;
     }
 
-    public void setData(@Nullable Story.WrapList wrapStoriesList, int itemWidthPixels, PeriodsAdapter.ItemType itemType) {
+    public void setData(@Nullable Story.WrapList wrapStoriesList, int itemWidthPixels, BrowsePeriodsAdapter.ItemType itemType) {
         this.wrapStoriesList = wrapStoriesList;
         this.itemWidthPixels = itemWidthPixels;
         this.itemType = itemType;
@@ -145,7 +142,7 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
             });
         }
 
-        public void configureUi(Story story, Context context, int itemWidthPixels, PeriodsAdapter.ItemType itemType) {
+        public void configureUi(Story story, Context context, int itemWidthPixels, BrowsePeriodsAdapter.ItemType itemType) {
             storyLocalUid = story.getLocalUid();
 
             String imageUrl;

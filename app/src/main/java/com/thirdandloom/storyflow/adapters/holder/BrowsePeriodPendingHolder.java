@@ -1,9 +1,7 @@
 package com.thirdandloom.storyflow.adapters.holder;
 
 import com.thirdandloom.storyflow.R;
-import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
 
-import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +9,8 @@ import android.widget.TextView;
 
 public class BrowsePeriodPendingHolder extends BrowsePeriodEmptyHolder {
 
-    public static BrowsePeriodPendingHolder newInstance(ViewGroup parent, @LayoutRes int layoutRes, Actions actions) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+    public static BrowsePeriodPendingHolder newInstance(ViewGroup parent, Actions actions) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_browse_story_pending_content, parent, false);
         return new BrowsePeriodPendingHolder(itemView, actions);
     }
 

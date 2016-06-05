@@ -3,7 +3,7 @@ package com.thirdandloom.storyflow.adapters.holder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.thirdandloom.storyflow.R;
-import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
+import com.thirdandloom.storyflow.adapters.BrowsePeriodsAdapter;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
@@ -11,7 +11,6 @@ import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +22,8 @@ import java.util.List;
 
 public class BrowsePeriodSmallestPopulatedHolder extends BrowsePeriodEmptyHolder {
 
-    public static BrowsePeriodSmallestPopulatedHolder newInstance(ViewGroup parent, @LayoutRes int layoutRes, Actions actions) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+    public static BrowsePeriodSmallestPopulatedHolder newInstance(ViewGroup parent, Actions actions) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_browse_story_filled_content, parent, false);
         return new BrowsePeriodSmallestPopulatedHolder(itemView, actions);
     }
 
@@ -32,7 +31,7 @@ public class BrowsePeriodSmallestPopulatedHolder extends BrowsePeriodEmptyHolder
         super(itemView, actions);
     }
 
-    private List<ImageView> imageViews;
+    protected List<ImageView> imageViews;
     private int addedImageViewsHeight;
 
     @Override
@@ -53,18 +52,26 @@ public class BrowsePeriodSmallestPopulatedHolder extends BrowsePeriodEmptyHolder
         );
     }
 
-    public void setStories(List<Story> stories, Context context, int itemWidthPixels, PeriodsAdapter.ItemType itemType, int parentHeight) {
+    public void setStories(List<Story> stories, Context context, int itemWidthPixels, BrowsePeriodsAdapter.ItemType itemType, int parentHeight) {
         this.addedImageViewsHeight = 0;
 
         ArrayUtils.forEach(imageViews, (imageView, pos) -> {
             boolean settingsStoriesCompleted = addedImageViewsHeight >= (parentHeight - dateTopTextView.getMeasuredHeight() - dateBottomTextView.getMeasuredHeight());
-            imageView.setImageDrawable(null);
+            resetData(pos);
 
             if (pos < stories.size() && !settingsStoriesCompleted) {
-                int height = configureImageView(imageView, stories.get(pos), context, itemWidthPixels, itemType);
-                addedImageViewsHeight += height;
+                configureData(context, stories.get(pos), pos, itemWidthPixels, itemType);
             }
         });
+    }
+
+    protected void configureData(Context context, Story story, Integer pos, int itemWidthPixels, BrowsePeriodsAdapter.ItemType itemType) {
+        int height = configureImageView(imageViews.get(pos), story, context, itemWidthPixels, itemType);
+        addedImageViewsHeight += height;
+    }
+
+    protected void resetData(int position) {
+        imageViews.get(position).setImageDrawable(null);
     }
 
     /**
@@ -76,7 +83,7 @@ public class BrowsePeriodSmallestPopulatedHolder extends BrowsePeriodEmptyHolder
      * @param itemType
      * @return added height
      */
-    public int configureImageView(ImageView imageView, Story story, Context context, int itemWidthPixels, PeriodsAdapter.ItemType itemType) {
+    public int configureImageView(ImageView imageView, Story story, Context context, int itemWidthPixels, BrowsePeriodsAdapter.ItemType itemType) {
         //storyLocalUid = story.getLocalUid();
 
         String imageUrl;

@@ -3,7 +3,7 @@ package com.thirdandloom.storyflow.activities;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.activities.launch.ProfileActivity;
-import com.thirdandloom.storyflow.adapters.PeriodsAdapter;
+import com.thirdandloom.storyflow.adapters.BrowsePeriodsAdapter;
 import com.thirdandloom.storyflow.adapters.holder.BrowsePeriodBaseHolder;
 import com.thirdandloom.storyflow.fragments.ReadingStoriesFragment;
 import com.thirdandloom.storyflow.managers.StoriesManager;
@@ -102,17 +102,17 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         yearlyView.setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodYearly();
             changePeriod();
-            onPeriodChanged(PeriodsAdapter.PeriodType.Yearly);
+            onPeriodChanged(BrowsePeriodsAdapter.PeriodType.Yearly);
         });
         monthlyView.setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodMonthly();
             changePeriod();
-            onPeriodChanged(PeriodsAdapter.PeriodType.Monthly);
+            onPeriodChanged(BrowsePeriodsAdapter.PeriodType.Monthly);
         });
         dailyView.setOnClickListener(v -> {
             getPeriodsAdapter().getStoriesManager().getRequestData().selectPeriodDaily();
             changePeriod();
-            onPeriodChanged(PeriodsAdapter.PeriodType.Daily);
+            onPeriodChanged(BrowsePeriodsAdapter.PeriodType.Daily);
         });
         SpringAnimation.initVisibleAfterClick(dailyView);
         SpringAnimation.initVisibleAfterClick(monthlyView);
@@ -126,7 +126,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         snappyRecyclerView.setHasFixedSize(true);
         snappyRecyclerView.setLayoutManager(layoutManager);
 
-        PeriodsAdapter adapter = new PeriodsAdapter(this, state.savedStore, state.savedFetchedPositions, state.savedRequestData);
+        BrowsePeriodsAdapter adapter = new BrowsePeriodsAdapter(this, state.savedStore, state.savedFetchedPositions, state.savedRequestData);
         adapter.setStoryPreviewActions(storyPreviewActions);
         adapter.setItemType(state.savedItemType);
         adapter.setGetParentHeightAction(() -> snappyRecyclerView.getHeight());
@@ -144,11 +144,11 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
         snappyRecyclerView.addOnScrollListener(tabBar.getRecyclerViewScrollListener());
         snappyRecyclerView.addOnScrollListener(new OnScrollListener());
-        tabBar.setItemWidth(adapter.getItemWidthPixel()+PeriodsAdapter.getItemMargin()*2);
+        tabBar.setItemWidth(adapter.getItemWidthPixel()+ BrowsePeriodsAdapter.getItemMargin()*2);
         tabBar.setActions(tabBarActions);
     }
 
-    private void onPeriodChanged(PeriodsAdapter.PeriodType periodType) {
+    private void onPeriodChanged(BrowsePeriodsAdapter.PeriodType periodType) {
         if (getPeriodsAdapter().getPeriodType() != periodType) {
             int position = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
             getPeriodsAdapter().setCenterPosition(position);
@@ -179,13 +179,13 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     }
 
     private void changeSize() {
-        PeriodsAdapter adapter = getPeriodsAdapter();
+        BrowsePeriodsAdapter adapter = getPeriodsAdapter();
         int previousItems = DeviceUtils.getDisplayWidth()/adapter.getItemWidthPixel();
         adapter.changeItemWidth();
         adapter.notifyDataSetChanged();
         int position = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
         updateOffset(position);
-        tabBar.setItemWidth(adapter.getItemWidthPixel() + PeriodsAdapter.getItemMargin() * 2);
+        tabBar.setItemWidth(adapter.getItemWidthPixel() + BrowsePeriodsAdapter.getItemMargin() * 2);
         ((BrowseStoriesToolBar) getToolbar()).onNewItemWidthSelected(adapter.getItemType());
 
         int newVisibleItems = DeviceUtils.getDisplayWidth()/adapter.getItemWidthPixel();
@@ -199,9 +199,9 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     private void updateOffset(int position) {
         LinearLayoutManager layoutManager = (LinearLayoutManager) snappyRecyclerView.getLayoutManager();
-        PeriodsAdapter adapter = getPeriodsAdapter();
+        BrowsePeriodsAdapter adapter = getPeriodsAdapter();
 
-        int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - PeriodsAdapter.getItemMargin() * 2;
+        int offset = DeviceUtils.getDisplayWidth() - adapter.getItemWidthPixel() - BrowsePeriodsAdapter.getItemMargin() * 2;
         layoutManager.scrollToPositionWithOffset(position, offset / 2);
     }
 
@@ -209,8 +209,8 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         return (DisableScrollLinearLayoutManager) snappyRecyclerView.getLayoutManager();
     }
 
-    private PeriodsAdapter getPeriodsAdapter() {
-        return (PeriodsAdapter) snappyRecyclerView.getAdapter();
+    private BrowsePeriodsAdapter getPeriodsAdapter() {
+        return (BrowsePeriodsAdapter) snappyRecyclerView.getAdapter();
     }
 
     @Override
@@ -280,16 +280,16 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     private void loadStoriesBetweenPositions(int firstVisiblePosition, int lastVisiblePosition) {
         int centerPosition = getPeriodsAdapter().getCenterPosition();
-        PeriodsAdapter.PeriodType periodType = getPeriodsAdapter().getPeriodType();
+        BrowsePeriodsAdapter.PeriodType periodType = getPeriodsAdapter().getPeriodType();
         StoriesManager storiesManager = getPeriodsAdapter().getStoriesManager();
         for (int position = firstVisiblePosition; position <= lastVisiblePosition; position++) {
             sendFetchStoriesRequest(position, centerPosition, periodType, storiesManager);
         }
     }
 
-    private void sendFetchStoriesRequest(int position, int centerPosition, PeriodsAdapter.PeriodType periodType, StoriesManager storiesManager) {
+    private void sendFetchStoriesRequest(int position, int centerPosition, BrowsePeriodsAdapter.PeriodType periodType, StoriesManager storiesManager) {
         if (!storiesManager.isFetchedPosition(position)) {
-            Calendar calendar = PeriodsAdapter.getDateCalendar(position, centerPosition, periodType);
+            Calendar calendar = BrowsePeriodsAdapter.getDateCalendar(position, centerPosition, periodType);
             storiesManager.addFetchedStoryPosition(position);
             StoryflowApplication.restClient().loadStories(storiesManager.getRequestData(calendar), (Story.WrapList list) -> {
                 getPeriodsAdapter().onNewStoriesFetched(list, calendar, position);
@@ -466,6 +466,6 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         List<Integer> savedFetchedPositions;
         int currentPosition = ArrayUtils.EMPTY_POSITION;
         StoriesManager.RequestData savedRequestData;
-        PeriodsAdapter.ItemType savedItemType = PeriodsAdapter.ItemType.Large;
+        BrowsePeriodsAdapter.ItemType savedItemType = BrowsePeriodsAdapter.ItemType.Large;
     }
 }

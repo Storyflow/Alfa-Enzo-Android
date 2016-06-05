@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 public class BrowsePeriodEmptyHolder extends BrowsePeriodBaseHolder {
 
-    public static BrowsePeriodEmptyHolder newInstance(ViewGroup parent, @LayoutRes int layoutRes, Actions actions) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+    public static BrowsePeriodEmptyHolder newInstance(ViewGroup parent, Actions actions) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_browse_story_content, parent, false);
         return new BrowsePeriodEmptyHolder(itemView, actions);
     }
 
