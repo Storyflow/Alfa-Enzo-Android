@@ -254,6 +254,11 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     }
 
     @Override
+    public void onReadingStoriesDismissed() {
+        getLayoutManager().setDisableScroll(false);
+    }
+
+    @Override
     public void onBackPressed() {
         if (storyDetailsFragment != null && storyDetailsFragment.isAdded()) {
             storyDetailsFragment.dismiss();
@@ -330,7 +335,6 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         public void onDragFinished(int velocity) {
             if (storyDetailsFragment != null)
                 storyDetailsFragment.onDragFinished(velocity);
-            getLayoutManager().setDisableScroll(false);
         }
 
         @Override

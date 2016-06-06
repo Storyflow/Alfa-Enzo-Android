@@ -9,6 +9,8 @@ import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.views.LockedNotifyScrollView;
+import com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -38,7 +40,8 @@ public class BrowsePeriodSmallestPopulatedHolder extends BrowsePeriodEmptyHolder
     protected void findViews() {
         dateTopTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_top_text_view);
         dateBottomTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_text_view);
-        dataContainer = itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_container);
+        swipeRefreshLayout = (OnSwipeStartNotifyRefreshLayout)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_swipe_container);
+        notifyScrollView = (LockedNotifyScrollView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_scroll_view);
 
         imageViews = Arrays.asList((ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view0),
                 (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_filled_content_date_bottom_image_view1),

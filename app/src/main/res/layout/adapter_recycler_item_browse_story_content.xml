@@ -34,16 +34,32 @@
         tools:text="2017"
         tools:textColor="@color/white"/>
 
-    <com.thirdandloom.storyflow.views.edittext.AutoResizeTextView
-        android:id="@+id/adapter_recycler_item_horizontal_no_stories_view"
+    <com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout
+        android:id="@+id/adapter_recycler_item_browse_story_content_swipe_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:background="@color/greyLightest"
-        android:text="@string/no_stories"
-        android:singleLine="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/textSizeLarge"
-        tools:visibility="visible" />
+        android:layout_height="match_parent">
+
+        <com.thirdandloom.storyflow.views.LockedNotifyScrollView
+            android:id="@+id/adapter_recycler_item_browse_story_content_locked_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <com.thirdandloom.storyflow.views.edittext.AutoResizeTextView
+                android:id="@+id/adapter_recycler_item_horizontal_no_stories_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@color/greyLightest"
+                android:text="@string/no_stories"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeLarge"
+                tools:visibility="visible"/>
+
+        </com.thirdandloom.storyflow.views.LockedNotifyScrollView>
+
+    </com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout>
 
 </LinearLayout>

@@ -13,6 +13,8 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.adapters.BrowsePeriodsAdapter;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
+import com.thirdandloom.storyflow.views.LockedNotifyScrollView;
+import com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +37,8 @@ public class BrowsePeriodLargePopulatedHolder extends BrowsePeriodSmallPopulated
     protected void findViews() {
         dateTopTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_date_top_text_view);
         dateBottomTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_date_bottom_text_view);
-        dataContainer = itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_container);
+        notifyScrollView = (LockedNotifyScrollView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_locked_scrollview);
+        swipeRefreshLayout = (OnSwipeStartNotifyRefreshLayout)itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_swipe_container);
 
         imageViews = Arrays.asList((ImageView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_image_view0),
                 (ImageView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_image_view1),
@@ -56,7 +59,7 @@ public class BrowsePeriodLargePopulatedHolder extends BrowsePeriodSmallPopulated
                 (ImageView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_avatar1),
                 (ImageView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_avatar2),
                 (ImageView)itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_author_avatar3)
-                );
+        );
     }
 
     @Override

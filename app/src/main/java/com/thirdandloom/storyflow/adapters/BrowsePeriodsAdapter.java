@@ -13,23 +13,15 @@ import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
-import com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout;
-import com.thirdandloom.storyflow.views.recyclerview.VerticalDragNotifierRecyclerView;
-import com.thirdandloom.storyflow.views.recyclerview.DisableScrollLinearLayoutManager;
 import rx.functions.Func0;
 
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.LinkedHashMap;
@@ -58,11 +50,11 @@ public class BrowsePeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmpty
 
     private final Handler postponeHandler = new Handler();
     private final StoriesManager storiesManager;
+    private final Context context;
+    private int centerPosition;
 
     private ItemType itemType = ItemType.Large;
     private PeriodType periodType = PeriodType.Daily;
-    private Context context;
-    private int centerPosition;
     private BrowsePeriodBaseHolder.Actions storyPreviewActions;
     private Func0<Integer> getParentHeightAction;
 
@@ -101,8 +93,6 @@ public class BrowsePeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmpty
     }
 
     public void onNewStoriesFetched(Story.WrapList list, Calendar calendar, int position) {
-        Timber.d("MEMORY LEAK onNewStoriesFetched: %d, calendar: %s", position, calendar.toString());
-
         storiesManager.storeData(calendar, list);
         updateDataFromLocalStore(position);
     }
@@ -197,73 +187,6 @@ public class BrowsePeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmpty
 
             default:
                 throw new UnsupportedOperationException("unsupported itemType is using");
-        }
-    }
-
-    public static class StoryHolder extends RecyclerView.ViewHolder {
-
-        private TextView dateTextView;
-        private TextView boldDateTextView;
-        private VerticalDragNotifierRecyclerView recyclerView;
-        private View progressBar;
-        private View noStoriesView;
-        private OnSwipeStartNotifyRefreshLayout refreshLayout;
-        private Calendar dateCalendar;
-
-        public StoryHolder(View itemView, BrowsePeriodBaseHolder.Actions actions) {
-            super(itemView);
-            dateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_main_horizontal_story_text_view);
-            recyclerView = (VerticalDragNotifierRecyclerView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_recycler_view);
-            boldDateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_horizontal_story_bold_text_view);
-            progressBar = itemView.findViewById(R.id.adapter_recycler_item_horizontal_recycler_progress_bar);
-            refreshLayout = (OnSwipeStartNotifyRefreshLayout) itemView.findViewById(R.id.adapter_recycler_item_horizontal_refresh_layout);
-            noStoriesView = itemView.findViewById(R.id.adapter_recycler_item_horizontal_no_stories_view);
-
-            refreshLayout.setColorSchemeResources(R.color.yellow, R.color.grey);
-            refreshLayout.setOnRefreshListener(() -> {
-                actions.onPullToRefreshStarted(refreshLayout, dateCalendar, StoryHolder.this.getAdapterPosition());
-            });
-            refreshLayout.setNotifier(actions::pullToRefreshMotionNotifier);
-
-            DisableScrollLinearLayoutManager manager = new DisableScrollLinearLayoutManager(itemView.getContext());
-            manager.setOrientation(LinearLayoutManager.VERTICAL);
-            manager.setDisableScroll(true);
-
-            recyclerView.setLayoutManager(manager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setDragStarted(actions::onDragStarted);
-            recyclerView.setDragFinished(actions::onDragFinished);
-            recyclerView.setOnDrag((current, delta, view) -> {
-                actions.onDrag(current, delta, view, getDateCalendar());
-            });
-            recyclerView.setOnClick(() -> {
-                actions.onClick(recyclerView, getDateCalendar());
-            });
-
-            itemView.setOnClickListener(v -> {
-                actions.onClick(recyclerView, getDateCalendar());
-            });
-        }
-
-        public void setDateCalendar(Calendar dateCalendar) {
-            this.dateCalendar = dateCalendar;
-        }
-
-        public Calendar getDateCalendar() {
-            return dateCalendar;
-        }
-
-        public void updateEmptyView(BrowseStoriesAdapter.DataType dataType) {
-            ViewUtils.setShown(noStoriesView, dataType == BrowseStoriesAdapter.DataType.EmptyStories);
-            int backgroundColorId = dataType == BrowseStoriesAdapter.DataType.EmptyStories
-                    ? R.color.greyLightest
-                    : R.color.transparent;
-            recyclerView.setBackgroundColor(StoryflowApplication.resources().getColor(backgroundColorId));
-        }
-
-        public void setDateRepresentation(String boldText, String formattedDate) {
-            dateTextView.setText(formattedDate);
-            boldDateTextView.setText(boldText);
         }
     }
 

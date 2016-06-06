@@ -32,167 +32,182 @@
         tools:text="2017"
         tools:textColor="@color/white"/>
 
-    <LinearLayout
-        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_container"
-        android:orientation="vertical"
+    <com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout
+        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
+        <com.thirdandloom.storyflow.views.LockedNotifyScrollView
+            android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view0"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+            <LinearLayout
+                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_container"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="@dimen/sizeTiny"
-            />
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view0"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_gravity="bottom"
-                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
-                android:maxLines="2"
-                android:layout_margin="@dimen/sizeMedium"
-                tools:text="Best party!"
-            />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </FrameLayout>
+                    <ImageView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view0"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginBottom="@dimen/sizeTiny"
+                    />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_gravity="bottom"
+                        android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                        android:maxLines="2"
+                        android:layout_margin="@dimen/sizeMedium"
+                        tools:text="Best party!"
+                    />
 
-            <ImageView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view1"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="@dimen/sizeTiny"
-            />
+                </FrameLayout>
 
-            <TextView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_gravity="bottom"
-                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
-                android:maxLines="2"
-                android:layout_margin="@dimen/sizeMedium"
-                tools:text="Best party!"
-            />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </FrameLayout>
+                    <ImageView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view1"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginBottom="@dimen/sizeTiny"
+                    />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_gravity="bottom"
+                        android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                        android:maxLines="2"
+                        android:layout_margin="@dimen/sizeMedium"
+                        tools:text="Best party!"
+                    />
 
-            <ImageView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view2"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="@dimen/sizeTiny"
-            />
+                </FrameLayout>
 
-            <TextView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_gravity="bottom"
-                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
-                android:maxLines="2"
-                android:layout_margin="@dimen/sizeMedium"
-                tools:text="Best party!"
-            />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </FrameLayout>
+                    <ImageView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view2"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginBottom="@dimen/sizeTiny"
+                    />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_gravity="bottom"
+                        android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                        android:maxLines="2"
+                        android:layout_margin="@dimen/sizeMedium"
+                        tools:text="Best party!"
+                    />
 
-            <ImageView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view3"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="@dimen/sizeTiny"
-            />
+                </FrameLayout>
 
-            <TextView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_gravity="bottom"
-                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
-                android:maxLines="2"
-                android:layout_margin="@dimen/sizeMedium"
-                tools:text="Best party!"
-            />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </FrameLayout>
+                    <ImageView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginBottom="@dimen/sizeTiny"
+                    />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_gravity="bottom"
+                        android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                        android:maxLines="2"
+                        android:layout_margin="@dimen/sizeMedium"
+                        tools:text="Best party!"
+                    />
 
-            <ImageView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view4"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="@dimen/sizeTiny"
-            />
+                </FrameLayout>
 
-            <TextView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_gravity="bottom"
-                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
-                android:maxLines="2"
-                android:layout_margin="@dimen/sizeMedium"
-                tools:text="Best party!"
-            />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </FrameLayout>
+                    <ImageView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view4"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginBottom="@dimen/sizeTiny"
+                    />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_gravity="bottom"
+                        android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                        android:maxLines="2"
+                        android:layout_margin="@dimen/sizeMedium"
+                        tools:text="Best party!"
+                    />
 
-            <ImageView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view5"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="@dimen/sizeTiny"
-            />
+                </FrameLayout>
 
-            <TextView
-                android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_gravity="bottom"
-                android:textAppearance="@style/TextAppearance.RoboBlackSmall"
-                android:maxLines="2"
-                android:layout_margin="@dimen/sizeMedium"
-                tools:text="Best party!"
-            />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </FrameLayout>
-    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view5"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginBottom="@dimen/sizeTiny"
+                    />
+
+                    <TextView
+                        android:id="@+id/adapter_recycler_item_browse_story_small_filled_content_date_bottom_story_description_view5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_gravity="bottom"
+                        android:textAppearance="@style/TextAppearance.RoboBlackSmall"
+                        android:maxLines="2"
+                        android:layout_margin="@dimen/sizeMedium"
+                        tools:text="Best party!"
+                    />
+
+                </FrameLayout>
+            </LinearLayout>
+
+        </com.thirdandloom.storyflow.views.LockedNotifyScrollView>
+
+    </com.thirdandloom.storyflow.views.OnSwipeStartNotifyRefreshLayout>
 
 </LinearLayout>

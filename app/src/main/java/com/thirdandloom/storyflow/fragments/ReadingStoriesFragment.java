@@ -52,6 +52,7 @@ public class ReadingStoriesFragment extends BaseFragment {
     public interface IStoryDetailFragmentDataSource {
         void setTakeScrollDelta(Action1<Float> takeScroll);
         View getBottomBar();
+        void onReadingStoriesDismissed();
     }
 
     private RecyclerView recyclerView;
@@ -248,6 +249,7 @@ public class ReadingStoriesFragment extends BaseFragment {
                     FragmentTransaction transaction = manager.beginTransaction();
                     transaction.remove(this);
                     transaction.commit();
+                    ((IStoryDetailFragmentDataSource)getActivity()).onReadingStoriesDismissed();
                 })
                 .start();
 
