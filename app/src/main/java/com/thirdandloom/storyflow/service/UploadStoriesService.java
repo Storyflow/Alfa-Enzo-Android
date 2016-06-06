@@ -125,18 +125,14 @@ public class UploadStoriesService extends Service {
     }
 
     private void sendUploadImageRequest(PendingStory story) {
-        StoryflowApplication.runOnUIThread(() -> {
+        StoryflowApplication.restClient().uploadImageSync(story, () -> {
+            storyCreationImpossible(story);
+        }, storyId -> {
+            getPendingStoriesManager().setStoryId(storyId.getId(), story);
+            sendCreateImageStoryRequest(story);
+        }, (errorMessage, errorType) -> {
             storyCreationFailed(story);
-        }, 3000);
-
-        //StoryflowApplication.restClient().uploadImageSync(story, () -> {
-        //    storyCreationImpossible(story);
-        //}, storyId -> {
-        //    getPendingStoriesManager().setStoryId(storyId.getId(), story);
-        //    sendCreateImageStoryRequest(story);
-        //}, (errorMessage, errorType) -> {
-        //    storyCreationFailed(story);
-        //});
+        });
     }
 
     private void sendCreateTextStoryRequest(PendingStory story) {

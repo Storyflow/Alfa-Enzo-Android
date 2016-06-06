@@ -104,8 +104,7 @@ public class StoryPreviewActivity extends BaseActivity {
                     overridePendingTransition(0, 0);
                 })
                 .setInterpolator(new DecelerateInterpolator());
-        imageView.animate().setDuration(300).alpha(0.f).setInterpolator(new AccelerateInterpolator());
-        contentView.animate().setDuration(300).alpha(0.f).setInterpolator(new AccelerateInterpolator());
+        contentView.animate().setDuration(300).alpha(0.f).setInterpolator(new DecelerateInterpolator());
     }
 
     private void prepareAppearAnimation() {
@@ -133,9 +132,7 @@ public class StoryPreviewActivity extends BaseActivity {
                 .withEndAction(this::initImageViewAttacher)
                 .setInterpolator(new DecelerateInterpolator());
 
-        imageView.setAlpha(0.f);
-        imageView.animate().setDuration(300).alphaBy(1).setInterpolator(new AccelerateInterpolator());
-        contentView.animate().setDuration(300).alphaBy(1).setInterpolator(new AccelerateInterpolator());
+        contentView.animate().setDuration(300).alphaBy(1).setInterpolator(new DecelerateInterpolator());
     }
 
     private void initImageViewAttacher() {

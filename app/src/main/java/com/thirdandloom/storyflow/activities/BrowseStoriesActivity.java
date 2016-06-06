@@ -43,6 +43,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -307,7 +308,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(StoryCreationFailedEvent event) {
-        getPeriodsAdapter().notifyItemChanged(pendingStoryPosition(event.getStory()));
+        getPeriodsAdapter().notifyItemChanged(getPeriodPosition(event.getStory().getDate()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -322,7 +323,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(StoryDeletePendingEvent event) {
-        getPeriodsAdapter().notifyItemChanged(pendingStoryPosition(event.getStory()));
+        getPeriodsAdapter().notifyItemChanged(getPeriodPosition(event.getStory().getDate()));
     }
 
     private final BrowsePeriodBaseHolder.Actions storyPreviewActions = new BrowsePeriodBaseHolder.Actions() {
@@ -417,8 +418,16 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CREATE_NEW_STORY:
+                    //PendingStory story = PostStoryActivity.extractResult(data);
+                    //getPeriodsAdapter().notifyItemChanged(getPeriodPosition(story));
+
                     PendingStory story = PostStoryActivity.extractResult(data);
-                    getPeriodsAdapter().notifyItemChanged(pendingStoryPosition(story));
+                    int pos = getPeriodPosition(story.getDate());
+                    snappyRecyclerView.smoothScrollToPosition(pos);
+                    StoryflowApplication.runOnUIThread(() -> {
+                        getPeriodsAdapter().notifyItemChanged(pos);
+                    }, 300);
+
                     break;
                 default:
                     break;
@@ -426,9 +435,9 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         }
     }
 
-    private int pendingStoryPosition(PendingStory story) {
+    private int getPeriodPosition(Date date) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(story.getDate());
+        calendar.setTime(date);
         return getPeriodsAdapter().getPosition(calendar);
     }
 

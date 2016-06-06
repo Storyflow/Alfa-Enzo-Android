@@ -76,7 +76,8 @@
 
         <activity android:name=".activities.MultiImageStoryPreviewActivity"
                   android:screenOrientation="portrait"
-                  android:theme="@style/NoTitleWhiteTransparent">
+                  android:theme="@style/NoTitleWhiteTransparent"
+                  android:hardwareAccelerated="true">
         </activity>
 
         <activity android:name=".activities.StoryPreviewActivity"
