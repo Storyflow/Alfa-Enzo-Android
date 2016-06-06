@@ -269,21 +269,21 @@ public class BrowsePeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmpty
 
     @NonNull
     private static Calendar updateDate(BrowsePeriodEmptyHolder holder, int position, int centerPosition, PeriodType periodType) {
-        Calendar calendar = getDateCalendar(position, centerPosition, periodType);
+        Calendar periodDate = getDateCalendar(position, centerPosition, periodType);
         switch (periodType) {
             case Daily:
-                DateUtils.getDailyRepresentation(calendar, holder::setDateRepresentation);
+                DateUtils.getDailyRepresentation(periodDate, holder::setDateRepresentation);
                 break;
             case Monthly:
-                DateUtils.getMonthlyRepresentation(calendar, holder::setDateRepresentation);
+                DateUtils.getMonthlyRepresentation(periodDate, holder::setDateRepresentation);
                 break;
             case Yearly:
-                DateUtils.getYearlyRepresentation(calendar, holder::setDateRepresentation);
+                DateUtils.getYearlyRepresentation(periodDate, holder::setDateRepresentation);
                 break;
             default:
                 throw new UnsupportedOperationException("unsupported itemType is using");
         }
-        return calendar;
+        return periodDate;
     }
 
     public static Calendar getDateCalendar(int position, int centerPosition, PeriodType periodType) {
@@ -335,12 +335,13 @@ public class BrowsePeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmpty
     @Override
     public void onBindViewHolder(BrowsePeriodEmptyHolder holder, int position) {
         ViewUtils.applyWidth(holder.itemView, getItemWidthPixel());
-        Calendar storyDate = updateDate(holder, position, centerPosition, periodType);
+        Calendar periodDate = updateDate(holder, position, centerPosition, periodType);
+        holder.setPeriodDate(periodDate);
         switch (getItemViewType(position)) {
             case POPULATED_LARGE:
             case POPULATED_SMALL:
             case POPULATED_SMALLEST:
-                Story.WrapList wrapList = storiesManager.getDisplayingStories(storyDate);
+                Story.WrapList wrapList = storiesManager.getDisplayingStories(periodDate);
                 BrowsePeriodSmallestPopulatedHolder populatedHolder = (BrowsePeriodSmallestPopulatedHolder) holder;
                 populatedHolder.setStories(wrapList.getStories(), context, getItemWidthPixel(), getItemType(), getParentHeightAction.call());
                 break;

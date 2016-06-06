@@ -77,7 +77,6 @@ public class BrowseStoriesAdapter extends RecyclerView.Adapter<BrowseStoriesAdap
         holder.initAuthorUi(context, story, authorViewType);
     }
 
-
     @Override
     public int getItemCount() {
         return dataType != DataType.PopulatedStories

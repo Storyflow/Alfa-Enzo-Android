@@ -22,5 +22,6 @@ public class BrowsePeriodPendingHolder extends BrowsePeriodEmptyHolder {
     protected void findViews() {
         dateTopTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_pendig_content_date_top_text_view);
         dateBottomTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_pending_content_date_bottom_text_view);
+        dataContainer = itemView.findViewById(R.id.adapter_recycler_item_browse_story_pending_content_progress_bar);
     }
 }

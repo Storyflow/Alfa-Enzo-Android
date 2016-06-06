@@ -19,6 +19,7 @@ import com.thirdandloom.storyflow.models.Mention;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.SpannableUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +41,8 @@ public class BrowsePeriodSmallPopulatedHolder extends BrowsePeriodSmallestPopula
     protected void findViews() {
         dateTopTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_small_filled_content_date_top_text_view);
         dateBottomTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_small_filled_content_date_bottom_text_view);
+        dataContainer = itemView.findViewById(R.id.adapter_recycler_item_browse_story_small_filled_content_container);
+
         imageViews = Arrays.asList((ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view0),
                 (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view1),
                 (ImageView)itemView.findViewById(R.id.adapter_recycler_item_browse_story_small_filled_content_date_bottom_image_view2),
@@ -98,7 +101,7 @@ public class BrowsePeriodSmallPopulatedHolder extends BrowsePeriodSmallestPopula
 
         @Override
         public void onClick(View textView) {
-
+            Timber.d("onClick :%s", mention);
         }
 
         @Override

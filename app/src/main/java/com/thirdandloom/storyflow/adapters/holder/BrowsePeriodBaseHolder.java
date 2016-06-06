@@ -21,15 +21,26 @@ public abstract class BrowsePeriodBaseHolder extends RecyclerView.ViewHolder {
     protected TextView dateTopTextView;
     protected TextView dateBottomTextView;
     protected Actions actions;
+    protected View dataContainer;
+
+    private Calendar periodDate;
 
     public BrowsePeriodBaseHolder(View itemView, Actions actions) {
         super(itemView);
+        this.actions = actions;
         findViews();
+        itemView.setOnClickListener(v -> {
+            BrowsePeriodBaseHolder.this.actions.onClick(dataContainer, periodDate);
+        });
     }
 
     public void setDateRepresentation(String topText, String bottomText) {
         dateTopTextView.setText(topText);
         dateBottomTextView.setText(bottomText);
+    }
+
+    public void setPeriodDate(Calendar periodDate) {
+        this.periodDate = periodDate;
     }
 
     protected abstract void findViews();

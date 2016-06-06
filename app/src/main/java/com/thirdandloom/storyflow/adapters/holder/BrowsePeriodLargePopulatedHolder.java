@@ -35,6 +35,7 @@ public class BrowsePeriodLargePopulatedHolder extends BrowsePeriodSmallPopulated
     protected void findViews() {
         dateTopTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_date_top_text_view);
         dateBottomTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_date_bottom_text_view);
+        dataContainer = itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_container);
 
         imageViews = Arrays.asList((ImageView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_image_view0),
                 (ImageView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_large_filled_content_image_view1),

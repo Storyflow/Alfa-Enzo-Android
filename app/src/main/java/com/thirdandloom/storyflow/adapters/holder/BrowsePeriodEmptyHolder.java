@@ -2,7 +2,6 @@ package com.thirdandloom.storyflow.adapters.holder;
 
 import com.thirdandloom.storyflow.R;
 
-import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ public class BrowsePeriodEmptyHolder extends BrowsePeriodBaseHolder {
     protected void findViews() {
         dateTopTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_content_date_top_text_view);
         dateBottomTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_browse_story_content_date_bottom_text_view);
+        dataContainer = itemView.findViewById(R.id.adapter_recycler_item_horizontal_no_stories_view);
     }
 
 }
