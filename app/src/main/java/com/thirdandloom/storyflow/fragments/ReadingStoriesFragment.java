@@ -352,6 +352,11 @@ public class ReadingStoriesFragment extends BaseFragment {
         if (recyclerView.computeVerticalScrollOffset() != 0) {
             LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
             linearLayoutManager.smoothScrollToPosition(recyclerView, null, 0);
+            StoryflowApplication.runOnUIThread(() -> {
+                if (recyclerView.computeVerticalScrollOffset() != 0) {
+                    linearLayoutManager.scrollToPosition(0);
+                }
+            }, 300);
         } else {
             dismiss();
         }
