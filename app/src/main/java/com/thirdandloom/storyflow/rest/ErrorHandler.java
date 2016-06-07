@@ -19,6 +19,7 @@ import rx.functions.Action2;
 import android.text.TextUtils;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -49,6 +50,17 @@ public class ErrorHandler {
 
         try {
             JsonElement jsonElement = new JsonParser().parse(errorBodyString);
+
+            if (jsonElement.getAsJsonObject().get("errors") instanceof JsonArray
+                    && jsonElement.getAsJsonObject().get("result") instanceof JsonPrimitive) {
+                CodeApiErrorResponse errorResponse = CodeApiErrorResponse.newInstance(errorBodyString);
+                if (errorResponse.isError()) {
+                    error.call(errorResponse.errors.get(0).description, Type.Backend);
+                } else {
+                    error.call(unknownServerErrorMessage(), Type.Unknown);
+                }
+                return;
+            }
 
             if (jsonElement.getAsJsonObject().get("errors") instanceof JsonArray) {
                 ApiError apiError = ApiError.newInstance(errorBodyString);
@@ -134,5 +146,33 @@ public class ErrorHandler {
 
             codes = Collections.unmodifiableMap(map);
         }
+    }
+
+    public static class CodeApiErrorResponse implements Serializable {
+        private static final long serialVersionUID = 1287568199847760206L;
+
+        private static final String ERROR = "error";
+
+        public static CodeApiErrorResponse newInstance(String responseBody) {
+            return new Gson().fromJson(responseBody, CodeApiErrorResponse.class);
+        }
+
+        public boolean isError() {
+            return ERROR.equals(result) && !ArrayUtils.isEmpty(errors);
+        }
+
+        @SerializedName("result")
+        private String result;
+        @SerializedName("errors")
+        private List<CodeApiError> errors;
+    }
+
+    public static class CodeApiError implements Serializable {
+        private static final long serialVersionUID = 3421883512295322744L;
+
+        @SerializedName("description")
+        private String description;
+        @SerializedName("code")
+        private int code;
     }
 }
