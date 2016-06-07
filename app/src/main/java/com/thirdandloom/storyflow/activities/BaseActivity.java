@@ -68,11 +68,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_INSTANCE_KEY) ) {
             restore.call(type.cast(savedInstanceState.getSerializable(SAVED_INSTANCE_KEY)));
         } else {
-            if (getInitState() == null) {
+            Serializable initIntentSerializable = getIntent().getSerializableExtra(SAVED_INSTANCE_KEY);
+            Serializable initState = getInitState();
+
+            if (initIntentSerializable != null) {
+                init.call(type.cast(initIntentSerializable));
+            } else if (initState != null) {
+                init.call(type.cast(initState));
+            } else {
                 throw new UnsupportedOperationException("You are using intent with null Serializable Extra, "
                         + "if you don't put SavedState, please override getInitState(){new SavedState();}");
             }
-            init.call(type.cast(getInitState()));
         }
     }
 

@@ -41,6 +41,14 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         return new Intent(StoryflowApplication.applicationContext, PostStoryActivity.class);
     }
 
+    public static Intent newInstance(String capturedPhotoPath) {
+        Intent intent = new Intent(StoryflowApplication.applicationContext, PostStoryActivity.class);
+        SavedState state = new SavedState();
+        state.capturedAbsolutePhotoPath = capturedPhotoPath;
+        putExtra(intent, state);
+        return intent;
+    }
+
     private PostStoryBar postStoryBar;
     private SizeNotifierFrameLayout sizeNotifierLayout;
     private View keyboardReplacerView;
@@ -57,14 +65,14 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         setContentView(R.layout.activity_post_story);
         setTitle(R.string.post_story);
         findViews();
-        initGui();
-        initListeners();
         restoreState(SavedState.class, savedInstanceState,
                 restored -> state = restored,
                 inited -> state = inited);
         ViewUtils.callOnPreDraw(scrollViewContainer, view -> {
             defaultScrollViewHeight = view.getHeight();
         });
+        initGui();
+        initListeners();
         if (savedInstanceState == null) keyboardController.openKeyboardInternal();
     }
 
@@ -104,6 +112,7 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
         keyboardController.setKeyboardWillAppear(this::onKeyboardWillAppear);
         postStoryBar.setActions(postStoryActions);
         sizeNotifierLayout.setActions(keyboardController);
+        initImage();
     }
 
     @Override
@@ -274,6 +283,12 @@ public class PostStoryActivity extends EmojiKeyboardActivity {
                     state.capturedAbsolutePhotoPath = data.getData().toString();
                     break;
             }
+            initImage();
+        }
+    }
+
+    private void initImage() {
+        if (!TextUtils.isEmpty(state.capturedAbsolutePhotoPath)) {
             ViewUtils.show(postStoryImageView, deletePostStoryImageView, enhancePostStoryImageView);
             Glide
                     .with(this)

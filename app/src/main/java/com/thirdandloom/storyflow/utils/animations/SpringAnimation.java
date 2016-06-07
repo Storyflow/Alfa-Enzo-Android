@@ -69,6 +69,7 @@ public class SpringAnimation {
 
     private void initDefaultOnTouch() {
         clickableView.setOnTouchListener((v, event) -> {
+            listener.setUserAction(event.getAction());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     listener.started = false;
@@ -80,6 +81,7 @@ public class SpringAnimation {
                     } else {
                         spring.setEndValue(END);
                     }
+                    listener.reset();
                     break;
             }
             return true;
@@ -89,7 +91,8 @@ public class SpringAnimation {
     public static class ViewSpringListener implements SpringListener {
 
         protected final List<View> animatedViewsList;
-        private final View clickableView;
+        protected int userAction;
+        protected final View clickableView;
         private final boolean visibleAfterClick;
 
         public boolean started;
@@ -98,6 +101,10 @@ public class SpringAnimation {
             this.animatedViewsList = animatedViewsList;
             this.clickableView = clickableView;
             this.visibleAfterClick = visibleAfterClick;
+        }
+
+        public void setUserAction(int userAction) {
+            this.userAction = userAction;
         }
 
         @Override
@@ -135,6 +142,10 @@ public class SpringAnimation {
             float value = (float) spring.getCurrentValue();
             float scale = START - (value * 0.3f);
             return scale;
+        }
+
+        protected void reset() {
+
         }
     }
 }

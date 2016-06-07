@@ -9,6 +9,7 @@ import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -22,6 +23,7 @@ public class TabBar extends LinearLayout {
         void postClicked();
         void profileClicked();
         void homeClicked();
+        void homeLongClicked();
     }
 
     private int scrollPosition;
@@ -76,12 +78,9 @@ public class TabBar extends LinearLayout {
         circlesContainer.setOnClickListener(v -> {
             actions.homeClicked();
         });
-        circlesContainer.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Timber.d("circlesContainer onLongClick called");
-                return false;
-            }
+        circlesContainer.setOnLongClickListener(v -> {
+            actions.homeLongClicked();
+            return true;
         });
 
         List<View> animatedViews = Arrays.asList(triangleView, flipCircleView);
@@ -116,15 +115,54 @@ public class TabBar extends LinearLayout {
 
     public class SpringAnimationListener extends SpringAnimation.ViewSpringListener {
 
+        private boolean performLongClick;
+
         public SpringAnimationListener(List<View> animatedViewsList, View clickableView, boolean visibleAfterClick) {
             super(animatedViewsList, clickableView, visibleAfterClick);
         }
 
         @Override
+        public void onSpringUpdate(Spring spring) {
+            super.onSpringUpdate(spring);
+            if ((userAction == MotionEvent.ACTION_DOWN || userAction == MotionEvent.ACTION_MOVE)
+                    && (float) spring.getCurrentValue() >= SpringAnimation.START) {
+                if (spring.getEndValue() == SpringAnimation.START) {
+                    performLongClick = true;
+                    spring.setEndValue(SpringAnimation.END);
+                }
+            }
+        }
+
+        @Override
         protected float getScaleValue(Spring spring) {
             float value = (float) spring.getCurrentValue();
-            float scale = SpringAnimation.START + (value * 0.5f);
+            float scale = performLongClick
+                                ? SpringAnimation.START - (value * 1.0f)
+                                : SpringAnimation.START + (value * 0.5f);
             return scale;
+        }
+
+        @Override
+        public void onSpringAtRest(Spring spring) {
+            super.onSpringAtRest(spring);
+
+            if (performLongClick && (userAction == MotionEvent.ACTION_DOWN || userAction == MotionEvent.ACTION_MOVE)) {
+                performLongClick = false;
+                clickableView.performLongClick();
+            }
+        }
+
+        @Override
+        public void onSpringEndStateChange(Spring spring) {
+            if (spring.getEndValue() == SpringAnimation.END && !performLongClick) {
+                clickableView.callOnClick();
+            }
+        }
+
+        @Override
+        protected void reset() {
+            super.reset();
+            performLongClick = false;
         }
     }
 }

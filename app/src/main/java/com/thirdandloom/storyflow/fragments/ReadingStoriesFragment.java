@@ -107,7 +107,7 @@ public class ReadingStoriesFragment extends BaseFragment {
 
             preDrawView.setPivotY(0);
             preDrawView.setPivotX(0);
-            getView().getBackground().setAlpha(0);
+            view.getBackground().setAlpha(0);
 
             updateViewScale(preDrawView, firstStartWidth/preDrawView.getWidth(), firstStartHeight/preDrawView.getHeight(), firstStartX, firstStartY);
             didDraw = true;
@@ -349,9 +349,8 @@ public class ReadingStoriesFragment extends BaseFragment {
     }
 
     public void onHomeClicked() {
-        LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
-        if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
-            recyclerView.smoothScrollToPosition(0);
+        if (recyclerView.computeVerticalScrollOffset() != 0) {
+            recyclerView.smoothScrollBy(0, -recyclerView.computeVerticalScrollOffset());
         } else {
             dismiss();
         }

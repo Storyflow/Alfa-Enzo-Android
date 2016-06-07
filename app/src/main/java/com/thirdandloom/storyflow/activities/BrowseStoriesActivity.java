@@ -9,16 +9,17 @@ import com.thirdandloom.storyflow.fragments.ReadingStoriesFragment;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.utils.ActivityUtils;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.utils.event.StoryCreationSuccessEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
+import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
 import com.thirdandloom.storyflow.views.TabBar;
 import com.thirdandloom.storyflow.views.recyclerview.DisableScrollLinearLayoutManager;
 import com.thirdandloom.storyflow.views.recyclerview.SnappyLinearLayoutManager;
@@ -28,6 +29,7 @@ import rx.functions.Action1;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -51,6 +53,7 @@ import java.util.List;
 
 public class BrowseStoriesActivity extends BaseActivity implements ReadingStoriesFragment.IStoryDetailFragmentDataSource {
     private static final int CREATE_NEW_STORY = 1;
+    private static final int CAPTURE_PHOTO = CREATE_NEW_STORY + 1;
 
     public static Intent newInstance(boolean continueAnimation) {
         Intent intent = new Intent(StoryflowApplication.applicationContext, BrowseStoriesActivity.class);
@@ -429,7 +432,29 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
                 snappyRecyclerView.smoothScrollToPosition(centerPosition);
             }
         }
+
+        @Override
+        public void homeLongClicked() {
+            PhotoFileUtils.checkStoragePermissionsAreGuaranteed(BrowseStoriesActivity.this, BrowseStoriesActivity.this::startCapturePhotoIntent);
+        }
     };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PhotoFileUtils.REQUEST_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startCapturePhotoIntent();
+                } else {
+                    showWarning(R.string.permissions_were_not_guaranteed);
+                }
+                break;
+        }
+    }
+
+    private void startCapturePhotoIntent() {
+        state.capturedAbsolutePhotoPath = ActivityUtils.capturePhoto(this, CAPTURE_PHOTO);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -443,6 +468,10 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
                     } else {
                         smoothScrollToCreatedStoryPeriod(story);
                     }
+                    break;
+                case CAPTURE_PHOTO:
+                    Intent intent = PostStoryActivity.newInstance(state.capturedAbsolutePhotoPath);
+                    startActivityForResult(intent, CREATE_NEW_STORY);
                     break;
                 default:
                     break;
@@ -512,5 +541,6 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         int currentPosition = ArrayUtils.EMPTY_POSITION;
         StoriesManager.RequestData savedRequestData;
         BrowsePeriodsAdapter.ItemType savedItemType = BrowsePeriodsAdapter.ItemType.Large;
+        String capturedAbsolutePhotoPath;
     }
 }
