@@ -350,7 +350,8 @@ public class ReadingStoriesFragment extends BaseFragment {
 
     public void onHomeClicked() {
         if (recyclerView.computeVerticalScrollOffset() != 0) {
-            recyclerView.smoothScrollBy(0, -recyclerView.computeVerticalScrollOffset());
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
+            linearLayoutManager.smoothScrollToPosition(recyclerView, null, 0);
         } else {
             dismiss();
         }
