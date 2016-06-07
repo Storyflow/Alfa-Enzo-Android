@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -272,11 +273,18 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            if (newState != RecyclerView.SCROLL_STATE_SETTLING) {
-                int first = getLayoutManager().findFirstVisibleItemPosition();
-                int last = getLayoutManager().findLastVisibleItemPosition();
-                fetchData(first, last);
+
+            switch (newState) {
+                case RecyclerView.SCROLL_STATE_SETTLING:
+                    break;
+                case RecyclerView.SCROLL_STATE_DRAGGING:
+                case RecyclerView.SCROLL_STATE_IDLE:
+                    int first = getLayoutManager().findFirstVisibleItemPosition();
+                    int last = getLayoutManager().findLastVisibleItemPosition();
+                    fetchData(first, last);
+                    break;
             }
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) notifyAddedStoriesPositions();
         }
     }
 
@@ -418,21 +426,33 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CREATE_NEW_STORY:
-                    //PendingStory story = PostStoryActivity.extractResult(data);
-                    //getPeriodsAdapter().notifyItemChanged(getPeriodPosition(story));
-
                     PendingStory story = PostStoryActivity.extractResult(data);
-                    int pos = getPeriodPosition(story.getDate());
-                    snappyRecyclerView.smoothScrollToPosition(pos);
-                    StoryflowApplication.runOnUIThread(() -> {
-                        getPeriodsAdapter().notifyItemChanged(pos);
-                    }, 300);
-
+                    if (storyDetailsFragment != null && storyDetailsFragment.isVisible()) {
+                        storyDetailsFragment.dismiss(() -> smoothScrollToCreatedStoryPeriod(story));
+                    } else {
+                        smoothScrollToCreatedStoryPeriod(story);
+                    }
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private void smoothScrollToCreatedStoryPeriod(PendingStory story) {
+        int pos = getPeriodPosition(story.getDate());
+        state.notifyItemsAddedList.add(pos);
+        snappyRecyclerView.smoothScrollToPosition(pos);
+    }
+
+    private void notifyAddedStoriesPositions() {
+        if (state.notifyItemsAddedList.isEmpty()) return;
+        StoryflowApplication.runOnUIThread(() -> {
+            for (int positionInAdapter : state.notifyItemsAddedList) {
+                getPeriodsAdapter().notifyItemChanged(positionInAdapter);
+            }
+            state.notifyItemsAddedList.clear();
+        }, 400);
     }
 
     private int getPeriodPosition(Date date) {
@@ -474,6 +494,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
 
         boolean continueAnimation;
         boolean choosePeriodIsVisible;
+        List<Integer> notifyItemsAddedList = new ArrayList<>();
 
         LinkedHashMap<Calendar, Story.WrapList> savedStore;
         List<Integer> savedFetchedPositions;

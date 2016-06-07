@@ -21,6 +21,7 @@ import com.thirdandloom.storyflow.views.recyclerview.decoration.GradientOnTopSti
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import rx.functions.Action0;
 import rx.functions.Action1;
 
 import android.content.Context;
@@ -225,7 +226,7 @@ public class ReadingStoriesFragment extends BaseFragment {
         if (velocity > AndroidUtils.minVelocityPxPerSecond() || absoluteScroll >= getFinishScrollValue()/2) {
             startFinishPresentAnimation(calculateAnimationDuration());
         } else {
-            startFinishDismissAnimation(MAX_PRESENT_ANIMATION_DURATION_MS - calculateAnimationDuration());
+            startFinishDismissAnimation(MAX_PRESENT_ANIMATION_DURATION_MS - calculateAnimationDuration(), null);
         }
     }
 
@@ -233,11 +234,15 @@ public class ReadingStoriesFragment extends BaseFragment {
         startFinishPresentAnimation(PRESENT_ANIMATION_DURATION_MS);
     }
 
-    public void dismiss() {
-        startFinishDismissAnimation(PRESENT_ANIMATION_DURATION_MS);
+    public void dismiss(Action0 complete) {
+        startFinishDismissAnimation(PRESENT_ANIMATION_DURATION_MS, complete);
     }
 
-    private void startFinishDismissAnimation(int animationDuration) {
+    public void dismiss() {
+        startFinishDismissAnimation(PRESENT_ANIMATION_DURATION_MS, null);
+    }
+
+    private void startFinishDismissAnimation(int animationDuration, Action0 complete) {
         if (footerHiderScrollListener != null) footerHiderScrollListener.showFooter();
         viewContainer.animate().setDuration(animationDuration)
                 .scaleX(firstStartWidth / featureWidth)
@@ -249,6 +254,7 @@ public class ReadingStoriesFragment extends BaseFragment {
                     FragmentTransaction transaction = manager.beginTransaction();
                     transaction.remove(this);
                     transaction.commit();
+                    if (complete != null) complete.call();
                     ((IStoryDetailFragmentDataSource)getActivity()).onReadingStoriesDismissed();
                 })
                 .start();
