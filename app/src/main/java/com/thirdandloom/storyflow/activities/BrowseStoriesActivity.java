@@ -13,6 +13,7 @@ import com.thirdandloom.storyflow.utils.AnimationUtils;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.RecyclerLayoutManagerUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
@@ -417,6 +418,16 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         public void profileClicked() {
             Intent intent = ProfileActivity.newInstance();
             startActivity(intent);
+        }
+
+        @Override
+        public void homeClicked() {
+            if (storyDetailsFragment != null && storyDetailsFragment.isVisible()) {
+                storyDetailsFragment.onHomeClicked();
+            } else {
+                int centerPosition = getPeriodsAdapter().getCenterPosition();
+                snappyRecyclerView.smoothScrollToPosition(centerPosition);
+            }
         }
     };
 

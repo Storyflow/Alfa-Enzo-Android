@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:minHeight="@dimen/tabBarHeight"
     android:paddingBottom="@dimen/sizeNormal"
     android:weightSum="5">
-
 
     <LinearLayout
         android:id="@+id/view_tab_bar_updates"
@@ -23,7 +23,7 @@
             android:gravity="center"
             android:scaleType="center"
             android:src="@drawable/ic_activities"
-            tools:text="Updates" />
+            tools:text="Updates"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -33,7 +33,7 @@
             android:text="@string/updates"
             android:textAppearance="@style/TextAppearance.RoboMediumTiny"
             android:textColor="@color/white"
-            tools:text="Updates" />
+            tools:text="Updates"/>
 
     </LinearLayout>
 
@@ -51,7 +51,7 @@
             android:gravity="center"
             android:scaleType="center"
             android:src="@drawable/ic_messages"
-            tools:text="Updates" />
+            tools:text="Updates"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -61,35 +61,38 @@
             android:text="@string/messages"
             android:textAppearance="@style/TextAppearance.RoboMediumTiny"
             android:textColor="@color/white"
-            tools:text="Messages" />
+            tools:text="Messages"/>
 
     </LinearLayout>
 
     <FrameLayout
-        android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:id="@+id/view_tab_bar_circles_container"
+        android:layout_width="40dp"
+        android:layout_height="90dp"
         android:layout_gravity="bottom"
         android:layout_weight="1">
 
         <com.thirdandloom.storyflow.views.RoundSquareImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="70dp"
             android:layout_gravity="center"
-            android:background="@drawable/shape_white_stroke_circle" />
+            android:background="@drawable/shape_white_stroke_circle"/>
 
         <com.thirdandloom.storyflow.views.RoundSquareImageView
             android:id="@+id/view_tab_bar_flippable_circle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="55dp"
             android:layout_gravity="center"
-            android:layout_margin="6dp"
-            android:background="@drawable/shape_white_stroke_circle" />
+            android:background="@drawable/shape_white_stroke_circle"/>
 
-        <ImageView android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:scaleType="center"
-                   android:src="@drawable/arrow_home"
-            />
+        <ImageView
+            android:id="@+id/view_tab_bar_triangle_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:background="@drawable/shape_radial_black_gradient"
+            android:src="@drawable/arrow_home"
+        />
 
     </FrameLayout>
 
@@ -107,7 +110,7 @@
             android:gravity="center"
             android:scaleType="center"
             android:src="@drawable/ic_post"
-            tools:text="Updates" />
+            tools:text="Updates"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -117,7 +120,7 @@
             android:text="@string/post"
             android:textAppearance="@style/TextAppearance.RoboMediumTiny"
             android:textColor="@color/white"
-            tools:text="Post" />
+            tools:text="Post"/>
 
     </LinearLayout>
 
@@ -135,7 +138,7 @@
             android:gravity="center"
             android:scaleType="center"
             android:src="@drawable/ic_profile"
-            tools:text="Updates" />
+            tools:text="Updates"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -145,8 +148,8 @@
             android:text="@string/profile"
             android:textAppearance="@style/TextAppearance.RoboMediumTiny"
             android:textColor="@color/white"
-            tools:text="Profile" />
+            tools:text="Profile"/>
 
     </LinearLayout>
 
-</merge>
+</LinearLayout>

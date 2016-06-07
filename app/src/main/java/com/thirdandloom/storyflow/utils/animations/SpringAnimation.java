@@ -9,16 +9,18 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class SpringAnimation {
-    private static final SpringConfig CONFIG = SpringConfig.fromOrigamiTensionAndFriction(150, 10);
-    private static final float END = 0.f;
-    private static final float START = 1.f;
-    private static final float CALL_CLICK_BARRIER = 0.2f;
+import java.util.Arrays;
+import java.util.List;
 
-    private final View animatedView;
-    private final Spring spring;
-    private final ViewSpringListener listener = new ViewSpringListener();
-    private final boolean visibleAfterClick;
+public class SpringAnimation {
+    public static final SpringConfig CONFIG = SpringConfig.fromOrigamiTensionAndFriction(150, 10);
+    public static final float END = 0.f;
+    public static final float START = 1.f;
+    public static final float CALL_CLICK_BARRIER = 0.2f;
+
+    private View clickableView;
+    private ViewSpringListener listener;
+    private Spring spring;
 
     public static SpringAnimation init(View view) {
         return new SpringAnimation(view, false);
@@ -28,22 +30,45 @@ public class SpringAnimation {
         return new SpringAnimation(view, true);
     }
 
+    public static SpringAnimation init(View clickableView, ViewSpringListener listener) {
+        return new SpringAnimation(clickableView, listener);
+    }
 
     public SpringAnimation(View view, boolean visible) {
-        if (!view.hasOnClickListeners()) {
+        this(Arrays.asList(view), view, visible);
+    }
+
+    public SpringAnimation(View clickableView, ViewSpringListener listener) {
+        if (!clickableView.hasOnClickListeners()) {
             throw new UnsupportedOperationException("SpringAnimation does not work without on click listeners");
         }
-        animatedView = view;
-        visibleAfterClick = visible;
+        initSpring(clickableView);
+        initListener(listener);
+    }
+
+    public SpringAnimation(List<View> animatedViews, View clickableView, boolean visible) {
+        if (!clickableView.hasOnClickListeners()) {
+            throw new UnsupportedOperationException("SpringAnimation does not work without on click listeners");
+        }
+        initSpring(clickableView);
+        initListener(new ViewSpringListener(animatedViews, clickableView, visible));
+    }
+
+    private void initSpring(View clickableView) {
+        this.clickableView = clickableView;
         spring = SpringSystem.create().createSpring();
         spring.setOvershootClampingEnabled(false);
         spring.setSpringConfig(CONFIG);
-        spring.addListener(listener);
-        init();
     }
 
-    private void init() {
-        animatedView.setOnTouchListener((v, event) -> {
+    private void initListener(ViewSpringListener listener) {
+        this.spring.addListener(listener);
+        this.listener = listener;
+        initDefaultOnTouch();
+    }
+
+    private void initDefaultOnTouch() {
+        clickableView.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     listener.started = false;
@@ -61,28 +86,38 @@ public class SpringAnimation {
         });
     }
 
-    public class ViewSpringListener implements SpringListener {
+    public static class ViewSpringListener implements SpringListener {
 
-        private boolean started;
+        protected final List<View> animatedViewsList;
+        private final View clickableView;
+        private final boolean visibleAfterClick;
+
+        public boolean started;
+
+        public ViewSpringListener(List<View> animatedViewsList, View clickableView, boolean visibleAfterClick) {
+            this.animatedViewsList = animatedViewsList;
+            this.clickableView = clickableView;
+            this.visibleAfterClick = visibleAfterClick;
+        }
 
         @Override
         public void onSpringUpdate(Spring spring) {
-            float value = (float) spring.getCurrentValue();
-            float scale = START - (value * 0.3f);
-            animatedView.setScaleX(scale);
-            animatedView.setScaleY(scale);
+            float scale = getScaleValue(spring);
 
-            if (!visibleAfterClick && started && value < CALL_CLICK_BARRIER && spring.getEndValue() == END) {
+            for (View animatedView : animatedViewsList) {
+                animatedView.setScaleX(scale);
+                animatedView.setScaleY(scale);
+            }
+
+            if (!visibleAfterClick && started && (float) spring.getCurrentValue() < CALL_CLICK_BARRIER && spring.getEndValue() == END) {
                 started = false;
-                animatedView.callOnClick();
+                clickableView.callOnClick();
                 spring.setCurrentValue(END);
             }
         }
 
         @Override
-        public void onSpringAtRest(Spring spring) {
-
-        }
+        public void onSpringAtRest(Spring spring) {}
 
         @Override
         public void onSpringActivate(Spring spring) {
@@ -92,8 +127,14 @@ public class SpringAnimation {
         @Override
         public void onSpringEndStateChange(Spring spring) {
             if (spring.getEndValue() == END && visibleAfterClick) {
-                animatedView.callOnClick();
+                clickableView.callOnClick();
             }
+        }
+
+        protected float getScaleValue(Spring spring) {
+            float value = (float) spring.getCurrentValue();
+            float scale = START - (value * 0.3f);
+            return scale;
         }
     }
 }

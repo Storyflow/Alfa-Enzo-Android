@@ -348,6 +348,15 @@ public class ReadingStoriesFragment extends BaseFragment {
         ((IStoryDetailFragmentDataSource)getActivity()).setTakeScrollDelta(onScroll);
     }
 
+    public void onHomeClicked() {
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
+        if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
+            recyclerView.smoothScrollToPosition(0);
+        } else {
+            dismiss();
+        }
+    }
+
     private View getBottomBar() {
         return ((IStoryDetailFragmentDataSource)getActivity()).getBottomBar();
     }
