@@ -82,7 +82,8 @@
 
         <activity android:name=".activities.StoryPreviewActivity"
                   android:screenOrientation="portrait"
-                  android:theme="@style/NoTitleWhiteTransparent">
+                  android:theme="@style/NoTitleWhiteTransparent"
+                  android:hardwareAccelerated="true">
         </activity>
 
         <meta-data
