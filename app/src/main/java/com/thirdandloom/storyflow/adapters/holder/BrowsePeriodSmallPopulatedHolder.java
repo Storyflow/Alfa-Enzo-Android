@@ -82,7 +82,7 @@ public class BrowsePeriodSmallPopulatedHolder extends BrowsePeriodSmallestPopula
         } else {
             for (Mention mention : story.getMentionsList()) {
                 String mentionName = mention.getMentionUserName();
-                storyDescription = storyDescription.replace(mentionName, mention.getFullName());
+                storyDescription = storyDescription.replaceAll(String.format("(?i)%s", mentionName), mention.getFullName());
             }
             SpannableString ss = new SpannableString(storyDescription);
             for (Mention mention : story.getMentionsList()) {

@@ -134,8 +134,8 @@ public class StoryPreviewActivity extends BaseActivity {
     }
 
     private void initImageViewAttacher() {
-        ViewUtils.applyMatchParent(imageView);
         photoViewAttacher = new PhotoViewAttacher(imageView);
+        photoViewAttacher.setScaleType(ImageView.ScaleType.CENTER_CROP);
     }
 
     @Override

@@ -340,7 +340,6 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             int height;
             int imageHeight;
             int imageWidth;
-            ImageView.ScaleType scaleType;
             switch (story.getType()) {
                 case Text:
                     imageUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
@@ -353,13 +352,11 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         imageHeight = AndroidUtils.dp(100);
                         imageWidth = AndroidUtils.dp(100);
                     }
-                    scaleType = ImageView.ScaleType.CENTER_CROP;
                     break;
                 case Image:
                     imageUrl = story.getImageData().getNormalSizedImage().url();
                     imageHeight = story.getImageData().getNormalSizedImage().size().height();
                     imageWidth = story.getImageData().getNormalSizedImage().size().width();
-                    scaleType = ImageView.ScaleType.FIT_XY;
 
                     //TODO
                     //this code should be removed after story.getImageData().getNormalSizedImage().size()
@@ -367,7 +364,6 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     if (imageHeight == 0 || imageWidth == 0) {
                         imageHeight = AndroidUtils.dp(100);
                         imageWidth = AndroidUtils.dp(100);
-                        scaleType = ImageView.ScaleType.CENTER_CROP;
                     }
 
                     break;
@@ -378,7 +374,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             float coef = MathUtils.calculateMaxScaleRatio(imageWidth, imageHeight, DeviceUtils.getDisplayWidth());
             height = Math.round(coef * imageHeight);
 
-            configureImage(context, imageUrl, height, scaleType);
+            configureImage(context, imageUrl, height);
             configurePendingActions(story.getPendingStatus());
         }
 
@@ -393,11 +389,10 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     .into(authorAvatarImageView);
         }
 
-        private void configureImage(Context context, String url, int height, ImageView.ScaleType scaleType) {
+        private void configureImage(Context context, String url, int height) {
             //TODO
             //scaleType be removed after story.getAuthor().getCroppedImageCover().getRect()
             //fixed: -180x106x735x391
-            imageView.setScaleType(scaleType);
             ViewUtils.applyHeight(imageView, height);
             int avatarHeight = context.getResources().getDimensionPixelOffset(R.dimen.avatarDiameterReadingStories);
             ViewUtils.applyHeight(storyImageContainer, height + avatarHeight/2);
