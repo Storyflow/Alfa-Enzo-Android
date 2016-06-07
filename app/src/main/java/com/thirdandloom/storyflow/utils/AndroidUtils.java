@@ -34,6 +34,10 @@ public class AndroidUtils extends BaseUtils {
         return viewConfiguration.getScaledMaximumFlingVelocity();
     }
 
+    public static int longPressTimeout() {
+        return viewConfiguration.getLongPressTimeout();
+    }
+
     public static void showKeyboard(View view) {
         if (view != null) {
             InputMethodManager inputManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -3,6 +3,7 @@ package com.thirdandloom.storyflow.views;
 import com.facebook.rebound.Spring;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 
 import android.content.Context;
@@ -74,6 +75,13 @@ public class TabBar extends LinearLayout {
         circlesContainer = findViewById(R.id.view_tab_bar_circles_container);
         circlesContainer.setOnClickListener(v -> {
             actions.homeClicked();
+        });
+        circlesContainer.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Timber.d("circlesContainer onLongClick called");
+                return false;
+            }
         });
 
         List<View> animatedViews = Arrays.asList(triangleView, flipCircleView);
