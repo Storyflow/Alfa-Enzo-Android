@@ -1,20 +1,17 @@
 package com.thirdandloom.storyflow.adapters;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.adapters.holder.ReadStoriesBaseViewHolder;
+import com.thirdandloom.storyflow.adapters.holder.ReadStoriesEmptyViewHolder;
+import com.thirdandloom.storyflow.adapters.holder.ReadStoriesHeaderViewHolder;
+import com.thirdandloom.storyflow.adapters.holder.ReadStoriesPendingViewHolder;
+import com.thirdandloom.storyflow.adapters.holder.ReadStoriesPopulatedViewHolder;
 import com.thirdandloom.storyflow.managers.StoriesManager.RequestData;
-import com.thirdandloom.storyflow.models.Author;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
-import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
 import com.thirdandloom.storyflow.utils.DateUtils;
-import com.thirdandloom.storyflow.utils.DeviceUtils;
-import com.thirdandloom.storyflow.utils.MathUtils;
-import com.thirdandloom.storyflow.utils.ViewUtils;
-import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
 import com.thirdandloom.storyflow.utils.models.Time;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.StickyHeaderAdapter;
 
@@ -23,19 +20,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
-        StickyHeaderAdapter<ReadStoriesAdapter.ReadingStoryHeaderHolder> {
+public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseViewHolder> implements StickyHeaderAdapter<ReadStoriesHeaderViewHolder> {
 
     public static final int FILLED_STORY = 0;
     private static final int EMPTY_STORY = FILLED_STORY + 1;
@@ -61,16 +54,10 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return storiesList.get(position);
     }
 
-    @NonNull
-    public List<Story> getStories() {
-        return storiesList;
-    }
-
-
     public View getFromView(int position, RecyclerView.ViewHolder holder) {
         switch (getItemViewType(position)) {
             case FILLED_STORY:
-                return ((ReadingStoryHolder)holder).imageView;
+                return ((ReadStoriesPopulatedViewHolder) holder).imageView;
             case LOADING:
                 return holder.itemView;
             case EMPTY_STORY:
@@ -90,7 +77,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             emptyStory.setDate(dateCalendar.getTime());
             storiesList.add(emptyStory);
             nextStoryDate = null;
-            notifyItemInserted(storiesList.size()-2);
+            notifyItemInserted(storiesList.size() - 2);
         } else {
             Story.WrapList storiesWrapList = new Story.WrapList();
             if (!pendingStories.isEmpty()) {
@@ -156,30 +143,26 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view;
+    public ReadStoriesBaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case FILLED_STORY:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_reading_stories_item, parent, false);
-                return new ReadingStoryHolder(view);
+                return ReadStoriesPopulatedViewHolder.newInstance(parent);
             case LOADING:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_reading_stories_progress, parent, false);
-                return new ReadingStoryProgressHolder(view);
+                return ReadStoriesPendingViewHolder.newInstance(parent);
             case EMPTY_STORY:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_reading_empty_stories, parent, false);
-                return new ReadingStoryEmptyHolder(view);
+                return ReadStoriesEmptyViewHolder.newInstance(parent);
             default:
                 throw new UnsupportedOperationException("You are using unsupported view type");
         }
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(ReadStoriesBaseViewHolder holder, int position) {
         switch (holder.getItemViewType()) {
             case FILLED_STORY:
                 holder.itemView.setPadding(0, getItemTopPadding(position), 0, 0);
                 Story story = storiesList.get(position);
-                ((ReadingStoryHolder)holder).configureUi(story, context);
+                holder.initGui(context, story);
                 break;
             case LOADING:
                 break;
@@ -218,13 +201,12 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public ReadingStoryHeaderHolder onCreateHeaderViewHolder(ViewGroup parent) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_reading_stories_header, parent, false);
-        return new ReadingStoryHeaderHolder(view);
+    public ReadStoriesHeaderViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+        return ReadStoriesHeaderViewHolder.newInstance(parent);
     }
 
     @Override
-    public void onBindHeaderViewHolder(ReadingStoryHeaderHolder headerHolder, int position) {
+    public void onBindHeaderViewHolder(ReadStoriesHeaderViewHolder headerHolder, int position) {
         Story story = storiesList.get(position);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(story.getDate());
@@ -294,167 +276,6 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
                 break;
             }
-        }
-    }
-
-    public static class ReadingStoryHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private TextView descriptionTextView;
-        View pendingActionsContainer;
-        View retryButton;
-        View deleteButton;
-        private String storyLocalUid;
-
-        private ImageView authorAvatarImageView;
-        private TextView authorFullNameTextView;
-        private TextView authorUserNameTextView;
-        private View storyImageContainer;
-
-        public ReadingStoryHolder(View itemView) {
-            super(itemView);
-            imageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_imageview);
-            descriptionTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_description);
-            pendingActionsContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_container);
-            retryButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_retry);
-            deleteButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_pending_delete);
-            authorAvatarImageView = (ImageView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_avatar_imageview);
-            authorFullNameTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_full_name_textview);
-            authorUserNameTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_user_name_textview);
-            storyImageContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_story_image_container);
-
-            retryButton.setOnClickListener(v -> {
-                StoryflowApplication.getPendingStoriesManager().retry(storyLocalUid);
-                ViewUtils.hide(pendingActionsContainer);
-            });
-            deleteButton.setOnClickListener(v -> {
-                StoryflowApplication.getPendingStoriesManager().remove(storyLocalUid);
-                ViewUtils.hide(pendingActionsContainer);
-            });
-        }
-
-        public void configureUi(Story story, Context context) {
-            configureAuthor(story.getAuthor(), context);
-            descriptionTextView.setText(story.getDescription());
-            storyLocalUid = story.getLocalUid();
-            String imageUrl;
-            int height;
-            int imageHeight;
-            int imageWidth;
-            switch (story.getType()) {
-                case Text:
-                    imageUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
-                    if (story.getAuthor().getCroppedImageCover().getRect() != null
-                            && story.getAuthor().getCroppedImageCover().getRect().height() != 0
-                            && story.getAuthor().getCroppedImageCover().getRect().width() != 0) {
-                        imageHeight = story.getAuthor().getCroppedImageCover().getRect().height();
-                        imageWidth = story.getAuthor().getCroppedImageCover().getRect().width();
-                    } else {
-                        imageHeight = AndroidUtils.dp(100);
-                        imageWidth = AndroidUtils.dp(100);
-                    }
-                    break;
-                case Image:
-                    imageUrl = story.getImageData().getNormalSizedImage().url();
-                    imageHeight = story.getImageData().getNormalSizedImage().size().height();
-                    imageWidth = story.getImageData().getNormalSizedImage().size().width();
-
-                    //TODO
-                    //this code should be removed after story.getImageData().getNormalSizedImage().size()
-                    //fixed: story.getImageData().getNormalSizedImage().size() = (0, 0)
-                    if (imageHeight == 0 || imageWidth == 0) {
-                        imageHeight = AndroidUtils.dp(100);
-                        imageWidth = AndroidUtils.dp(100);
-                    }
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unsupported story type.");
-            }
-
-            float coef = MathUtils.calculateMaxScaleRatio(imageWidth, imageHeight, DeviceUtils.getDisplayWidth());
-            height = Math.round(coef * imageHeight);
-
-            configureImage(context, imageUrl, height);
-            configurePendingActions(story.getPendingStatus());
-        }
-
-        private void configureAuthor(Author author, Context context) {
-            authorUserNameTextView.setText(author.getUserName());
-            authorFullNameTextView.setText(author.getFirstName() + " " + author.getLastName());
-            Glide
-                    .with(context)
-                    .load(author.getCroppedAvatar().getImageUrl())
-                    .bitmapTransform(new CropCircleTransformation(context))
-                    .dontAnimate()
-                    .into(authorAvatarImageView);
-        }
-
-        private void configureImage(Context context, String url, int height) {
-            //TODO
-            //scaleType be removed after story.getAuthor().getCroppedImageCover().getRect()
-            //fixed: -180x106x735x391
-            ViewUtils.applyHeight(imageView, height);
-            int avatarHeight = context.getResources().getDimensionPixelOffset(R.dimen.avatarDiameterReadingStories);
-            ViewUtils.applyHeight(storyImageContainer, height + avatarHeight/2);
-
-            Glide
-                    .with(context)
-                    .load(url)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .crossFade()
-                    .into(imageView);
-        }
-
-        private void configurePendingActions(PendingStory.Status pendingStatus) {
-            switch (pendingStatus) {
-                case WaitingForSend:
-                case OnServer:
-                case CreateSucceed:
-                case CreatingStory:
-                case ImageUploading:
-                    ViewUtils.hide(pendingActionsContainer);
-                    break;
-                case CreateFailed:
-                    ViewUtils.show(pendingActionsContainer);
-                    ViewUtils.show(retryButton);
-                    ViewUtils.show(deleteButton);
-                    break;
-                case CreateImpossible:
-                    ViewUtils.show(pendingActionsContainer);
-                    ViewUtils.show(deleteButton);
-                    break;
-                default:
-                    break;
-
-            }
-        }
-    }
-
-    public static class ReadingStoryHeaderHolder extends RecyclerView.ViewHolder {
-        public TextView dateTextView;
-        public TextView boldDateTextView;
-
-        public ReadingStoryHeaderHolder(View itemView) {
-            super(itemView);
-            boldDateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_reading_stories_header_bold_text);
-            dateTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_reading_stories_header_textview);
-        }
-
-        public void setDateRepresentation(String boldText, String formattedDate) {
-            dateTextView.setText(formattedDate);
-            boldDateTextView.setText(boldText);
-        }
-    }
-
-    public static class ReadingStoryProgressHolder extends RecyclerView.ViewHolder {
-        public ReadingStoryProgressHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
-    public static class ReadingStoryEmptyHolder extends RecyclerView.ViewHolder {
-        public ReadingStoryEmptyHolder(View itemView) {
-            super(itemView);
         }
     }
 }
