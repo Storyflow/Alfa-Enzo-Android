@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.activities;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -78,15 +79,18 @@ public class StoryPreviewActivity extends BaseActivity {
         Glide
                 .with(this)
                 .load(imageUrl)
+                .override(state.fromViewWidth, state.fromViewHeight)
+                .transform(new CenterCrop(this))
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(new SimpleTarget<GlideDrawable>() {
                     @Override
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
                         imageView.setImageDrawable(resource);
+                        photoViewAttacher = new PhotoViewAttacher(imageView);
                         if (isFirstStart) {
                             prepareAppearAnimation();
                         } else {
-                            initImageViewAttacher();
+                            applyMatchParentForImageView();
                         }
                     }
                 });
@@ -94,6 +98,9 @@ public class StoryPreviewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        if (photoViewAttacher != null) {
+            photoViewAttacher.setScale(photoViewAttacher.getMinimumScale(), true);
+        }
         imageView.animate().setDuration(300)
                 .scaleX(widthScale).scaleY(heightScale)
                 .translationX(leftDelta).translationY(topDelta)
@@ -127,15 +134,14 @@ public class StoryPreviewActivity extends BaseActivity {
         imageView.animate().setDuration(300)
                 .scaleX(1).scaleY(1)
                 .translationX(0).translationY(0)
-                .withEndAction(this::initImageViewAttacher)
+                .withEndAction(this::applyMatchParentForImageView)
                 .setInterpolator(new DecelerateInterpolator());
 
         contentView.animate().setDuration(300).alphaBy(1).setInterpolator(new DecelerateInterpolator());
     }
 
-    private void initImageViewAttacher() {
-        photoViewAttacher = new PhotoViewAttacher(imageView);
-        photoViewAttacher.setScaleType(ImageView.ScaleType.CENTER_CROP);
+    private void applyMatchParentForImageView() {
+        ViewUtils.applyMatchParent(imageView);
     }
 
     @Override
