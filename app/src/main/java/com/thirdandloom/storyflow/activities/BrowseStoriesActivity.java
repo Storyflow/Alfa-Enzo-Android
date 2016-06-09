@@ -21,6 +21,7 @@ import com.thirdandloom.storyflow.utils.event.StoryCreationSuccessEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.utils.image.PhotoFileUtils;
 import com.thirdandloom.storyflow.views.TabBar;
+import com.thirdandloom.storyflow.views.dialog.ChoseDateDialog;
 import com.thirdandloom.storyflow.views.recyclerview.DisableScrollLinearLayoutManager;
 import com.thirdandloom.storyflow.views.recyclerview.SnappyLinearLayoutManager;
 import com.thirdandloom.storyflow.views.recyclerview.SnappyRecyclerView;
@@ -430,6 +431,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
                 storyDetailsFragment.onHomeClicked();
             } else {
                 int centerPosition = getPeriodsAdapter().getCenterPosition();
+                snappyRecyclerView.scrollToPosition(centerPosition);
                 snappyRecyclerView.smoothScrollToPosition(centerPosition);
             }
         }
@@ -440,10 +442,42 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         }
 
         @Override
+        public void homeDraggingFinished() {
+            int position = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
+            Calendar calendar = getPeriodsAdapter().getDateCalendar(position, getPeriodsAdapter().getCenterPosition(), getPeriodsAdapter().getPeriodType());
+
+            ChoseDateDialog dialog = new ChoseDateDialog.Builder(BrowseStoriesActivity.this)
+                    .startCalendar(calendar)
+                    .onPositive((choseDialog, which) -> {
+                        Calendar pickedCalendar = ((ChoseDateDialog)choseDialog).getPickedDateCalendar();
+                        if (!pickedCalendar.equals(calendar)) {
+                            onNewCalendarDatePicked(pickedCalendar);
+                        }
+                    })
+                    .build();
+            dialog.show();
+        }
+
+        @Override
         public Window getWindow() {
             return BrowseStoriesActivity.this.getWindow();
         }
     };
+
+    private void onNewCalendarDatePicked(Calendar pickedCalendar) {
+        int newPosition = getPeriodsAdapter().getPosition(pickedCalendar);
+        int currentPosition = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
+        if (newPosition != currentPosition) {
+            snappyRecyclerView.scrollToPosition(newPosition);
+            snappyRecyclerView.smoothScrollToPosition(newPosition);
+
+            int first = getLayoutManager().findFirstVisibleItemPosition();
+            int last = getLayoutManager().findLastVisibleItemPosition();
+            int leftDelta = currentPosition - first;
+            int rightDelta = currentPosition + last;
+            fetchData(newPosition - leftDelta, newPosition + rightDelta);
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

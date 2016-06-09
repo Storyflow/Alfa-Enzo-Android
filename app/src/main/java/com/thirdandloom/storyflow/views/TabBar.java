@@ -174,7 +174,9 @@ public class TabBar extends LinearLayout {
                                 triangleView.setY(0);
                                 flipCircleView.setX(previousFlipCircleX);
                                 flipCircleView.setY(previousFlipCircleY);
-                                actions.homeDraggingFinished();
+                                ViewUtils.callOnPreDraw(flipCircleContainerView, v -> {
+                                    actions.homeDraggingFinished();
+                                });
                             });
                         }).start();
 
@@ -200,7 +202,7 @@ public class TabBar extends LinearLayout {
             previousFlipCircleX = flipCircleView.getX();
             previousLayoutParams = flipCircleContainerView.getLayoutParams();
             circlesContainer.removeView(flipCircleContainerView);
-            window.addContentView(flipCircleContainerView, ViewUtils.getWrapContentWindowLayoutParams());
+            window.addContentView(flipCircleContainerView, ViewUtils.getMatchParentWindowLayoutParams());
             startedX = triangleX;
             startedY = triangleY;
 

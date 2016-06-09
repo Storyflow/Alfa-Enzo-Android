@@ -70,19 +70,17 @@ public class ViewUtils extends BaseUtils{
         return layoutParams;
     }
 
-    public static WindowManager.LayoutParams getWrapContentWindowLayoutParams() {
-        //WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        //layoutParams.x = x;
-        //layoutParams.y = y;
-        //layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-        //layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-
+    public static WindowManager.LayoutParams getFullScreenCenterLayoutParams() {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        //layoutParams.gravity = Gravity.BOTTOM;
         layoutParams.x = 0;
         layoutParams.y = 0;
-        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        return layoutParams;
+    }
+
+    public static WindowManager.LayoutParams getMatchParentWindowLayoutParams() {
+        WindowManager.LayoutParams layoutParams = getFullScreenLayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         layoutParams.format = PixelFormat.OPAQUE;
         layoutParams.windowAnimations = 0;

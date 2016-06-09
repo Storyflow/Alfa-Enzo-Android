@@ -175,15 +175,15 @@ public class BrowsePeriodsAdapter extends RecyclerView.Adapter<BrowsePeriodEmpty
                 long todayTime = calendar.getTime().getTime();
                 long storyDateTime = storyDateCalendar.getTime().getTime();
                 long diffDays = TimeUnit.MILLISECONDS.toDays(todayTime - storyDateTime);
-                return (int) (centerPosition + diffDays);
+                return (int) (centerPosition - diffDays);
 
             case Monthly:
                 int diffYear = calendar.get(Calendar.YEAR) - storyDateCalendar.get(Calendar.YEAR);
                 int diffMonth = diffYear * 12 + calendar.get(Calendar.MONTH) - storyDateCalendar.get(Calendar.MONTH);
-                return (centerPosition + diffMonth);
+                return (centerPosition - diffMonth);
 
             case Yearly:
-                return (centerPosition + (calendar.get(Calendar.YEAR) - storyDateCalendar.get(Calendar.YEAR)));
+                return (centerPosition - (calendar.get(Calendar.YEAR) - storyDateCalendar.get(Calendar.YEAR)));
 
             default:
                 throw new UnsupportedOperationException("unsupported itemType is using");
