@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.utils.image;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.adapters.BrowsePeriodsAdapter;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
@@ -54,6 +55,7 @@ public class StoryflowImageUtils {
                     .with(context)
                     .load(imageUrl)
                     .override(itemWidthPx, height)
+                    .placeholder(R.color.yellowDark)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageView);
             return height;
@@ -92,6 +94,7 @@ public class StoryflowImageUtils {
                     .with(context)
                     .load(imageUrl)
                     .override(itemWidthPx, height)
+                    .placeholder(R.color.yellowDark)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageView);
             return height;

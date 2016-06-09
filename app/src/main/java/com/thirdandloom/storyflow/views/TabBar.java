@@ -4,6 +4,7 @@ import com.facebook.rebound.Spring;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.Timber;
+import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 
 import android.content.Context;
@@ -11,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.LinearLayout;
 
 import java.util.Arrays;
@@ -24,6 +27,7 @@ public class TabBar extends LinearLayout {
         void profileClicked();
         void homeClicked();
         void homeLongClicked();
+        Window getWindow();
     }
 
     private int scrollPosition;
@@ -32,7 +36,8 @@ public class TabBar extends LinearLayout {
     private OnScrollListener recyclerViewScrollListener = new OnScrollListener();
     private Actions actions;
     private View triangleView;
-    private View circlesContainer;
+    private ViewGroup circlesContainer;
+    private View flipCircleContainerView;
 
     public TabBar(Context context) {
         this(context, null);
@@ -57,6 +62,7 @@ public class TabBar extends LinearLayout {
         View messagesView = findViewById(R.id.view_tab_bar_messages);
         View postView = findViewById(R.id.view_tab_bar_post);
         View profileView = findViewById(R.id.view_tab_bar_profile);
+        flipCircleContainerView = findViewById(R.id.view_tab_bar_flip_ircles_container);
 
         updatesView.setOnClickListener(v -> actions.updatesClicked());
         messagesView.setOnClickListener(v -> actions.messagesClicked());
@@ -74,7 +80,7 @@ public class TabBar extends LinearLayout {
         flipCircleView.setCameraDistance(scale);
 
         triangleView = findViewById(R.id.view_tab_bar_triangle_image_view);
-        circlesContainer = findViewById(R.id.view_tab_bar_circles_container);
+        circlesContainer = (ViewGroup)findViewById(R.id.view_tab_bar_circles_container);
         circlesContainer.setOnClickListener(v -> {
             actions.homeClicked();
         });
@@ -85,7 +91,7 @@ public class TabBar extends LinearLayout {
 
         List<View> animatedViews = Arrays.asList(triangleView, flipCircleView);
         SpringAnimationListener springAnimationListener = new SpringAnimationListener(animatedViews, circlesContainer, true);
-        SpringAnimation.init(circlesContainer, springAnimationListener);
+        SpringAnimation.init(circlesContainer, springAnimationListener, new OnTouchCirclesListener());
     }
 
     public void setItemWidth(int itemWidth) {
@@ -110,6 +116,38 @@ public class TabBar extends LinearLayout {
             float fraction = (float)scrollPosition/itemWidth - integrate;
             float angle = fraction * 100 * 1.8f;
             flipCircleView.setRotationY(angle);
+        }
+    }
+
+    public class OnTouchCirclesListener extends SpringAnimation.ClickableOnTouchListener {
+
+        @Override
+        protected boolean onTouchView(View v, MotionEvent event) {
+            return super.onTouchView(v, event);
+            //switch (event.getAction()) {
+            //    case MotionEvent.ACTION_DOWN:
+            //        break;
+            //    case MotionEvent.ACTION_MOVE:
+            //        Timber.d("onTouchView action:%d, rawX: %.2f rawY: %.2f x:%.2f y:%.2f", event.getAction(), event.getRawX(), event.getRawY(), event.getX(), event.getY());
+            //        listener.breakAnyClick = true;
+            //
+            //
+            //        Window window = actions.getWindow();
+            //        if (circlesContainer.indexOfChild(flipCircleContainerView) >= 0) {
+            //            circlesContainer.removeView(flipCircleContainerView);
+            //            Timber.d("onTouchView removeFromParent flipCircleContainerView");
+            //        }
+            //        //start mooving
+            //        break;
+            //    case MotionEvent.ACTION_UP:
+            //        if (circlesContainer.indexOfChild(flipCircleContainerView) < 0) {
+            //            circlesContainer.addView(flipCircleContainerView);
+            //            Timber.d("onTouchView circlesContainer addView flipCircleContainerView");
+            //        }
+            //        //break mooving
+            //        break;
+            //}
+            //return true;
         }
     }
 
@@ -148,7 +186,7 @@ public class TabBar extends LinearLayout {
 
             if (performLongClick && (userAction == MotionEvent.ACTION_DOWN || userAction == MotionEvent.ACTION_MOVE)) {
                 performLongClick = false;
-                clickableView.performLongClick();
+                if (!breakAnyClick) clickableView.performLongClick();
             }
         }
 

@@ -21,6 +21,7 @@ public class SpringAnimation {
     private View clickableView;
     private ViewSpringListener listener;
     private Spring spring;
+    private ClickableOnTouchListener onTouchListener;
 
     public static SpringAnimation init(View view) {
         return new SpringAnimation(view, false);
@@ -30,20 +31,20 @@ public class SpringAnimation {
         return new SpringAnimation(view, true);
     }
 
-    public static SpringAnimation init(View clickableView, ViewSpringListener listener) {
-        return new SpringAnimation(clickableView, listener);
+    public static SpringAnimation init(View clickableView, ViewSpringListener listener, ClickableOnTouchListener onTouchListener) {
+        return new SpringAnimation(clickableView, listener, onTouchListener);
     }
 
     public SpringAnimation(View view, boolean visible) {
         this(Arrays.asList(view), view, visible);
     }
 
-    public SpringAnimation(View clickableView, ViewSpringListener listener) {
+    public SpringAnimation(View clickableView, ViewSpringListener listener, ClickableOnTouchListener onTouchListener) {
         if (!clickableView.hasOnClickListeners()) {
             throw new UnsupportedOperationException("SpringAnimation does not work without on click listeners");
         }
         initSpring(clickableView);
-        initListener(listener);
+        initListener(listener, onTouchListener);
     }
 
     public SpringAnimation(List<View> animatedViews, View clickableView, boolean visible) {
@@ -51,7 +52,9 @@ public class SpringAnimation {
             throw new UnsupportedOperationException("SpringAnimation does not work without on click listeners");
         }
         initSpring(clickableView);
-        initListener(new ViewSpringListener(animatedViews, clickableView, visible));
+        ViewSpringListener viewSpringListener = new ViewSpringListener(animatedViews, clickableView, visible);
+        ClickableOnTouchListener touchListener = new ClickableOnTouchListener();
+        initListener(viewSpringListener, touchListener);
     }
 
     private void initSpring(View clickableView) {
@@ -61,18 +64,39 @@ public class SpringAnimation {
         spring.setSpringConfig(CONFIG);
     }
 
-    private void initListener(ViewSpringListener listener) {
+    private void initListener(ViewSpringListener listener, ClickableOnTouchListener onTouchListener) {
         this.spring.addListener(listener);
         this.listener = listener;
-        initDefaultOnTouch();
+        this.onTouchListener = onTouchListener;
+        this.onTouchListener.setListener(listener);
+        this.onTouchListener.setSpring(spring);
+        clickableView.setOnTouchListener(onTouchListener);
     }
 
-    private void initDefaultOnTouch() {
-        clickableView.setOnTouchListener((v, event) -> {
+    public static class ClickableOnTouchListener implements View.OnTouchListener {
+
+        protected ViewSpringListener listener;
+        protected Spring spring;
+
+        public void setListener(ViewSpringListener listener) {
+            this.listener = listener;
+        }
+
+        public void setSpring(Spring spring) {
+            this.spring = spring;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
             listener.setUserAction(event.getAction());
+            return onTouchView(v, event);
+        }
+
+        protected boolean onTouchView(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     listener.started = false;
+                    listener.breakAnyClick = false;
                     spring.setEndValue(START);
                     break;
                 case MotionEvent.ACTION_UP:
@@ -85,7 +109,7 @@ public class SpringAnimation {
                     break;
             }
             return true;
-        });
+        }
     }
 
     public static class ViewSpringListener implements SpringListener {
@@ -96,6 +120,7 @@ public class SpringAnimation {
         private final boolean visibleAfterClick;
 
         public boolean started;
+        public boolean breakAnyClick;
 
         public ViewSpringListener(List<View> animatedViewsList, View clickableView, boolean visibleAfterClick) {
             this.animatedViewsList = animatedViewsList;
@@ -118,7 +143,7 @@ public class SpringAnimation {
 
             if (!visibleAfterClick && started && (float) spring.getCurrentValue() < CALL_CLICK_BARRIER && spring.getEndValue() == END) {
                 started = false;
-                clickableView.callOnClick();
+                if (!breakAnyClick) clickableView.callOnClick();
                 spring.setCurrentValue(END);
             }
         }
@@ -134,7 +159,7 @@ public class SpringAnimation {
         @Override
         public void onSpringEndStateChange(Spring spring) {
             if (spring.getEndValue() == END && visibleAfterClick) {
-                clickableView.callOnClick();
+                if (!breakAnyClick) clickableView.callOnClick();
             }
         }
 

@@ -40,6 +40,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -436,6 +437,11 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         @Override
         public void homeLongClicked() {
             PhotoFileUtils.checkStoragePermissionsAreGuaranteed(BrowseStoriesActivity.this, BrowseStoriesActivity.this::startCapturePhotoIntent);
+        }
+
+        @Override
+        public Window getWindow() {
+            return BrowseStoriesActivity.this.getWindow();
         }
     };
 
