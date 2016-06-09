@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -79,7 +79,7 @@
             android:background="@drawable/shape_white_stroke_circle"/>
 
         <FrameLayout
-            android:id="@+id/view_tab_bar_flip_ircles_container"
+            android:id="@+id/view_tab_bar_flip_circles_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -159,4 +159,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</merge>

@@ -3,8 +3,10 @@ package com.thirdandloom.storyflow.utils;
 import rx.functions.Action1;
 import rx.functions.Action2;
 
+import android.graphics.PixelFormat;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -65,6 +67,25 @@ public class ViewUtils extends BaseUtils{
         layoutParams.y = 0;
         layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
         layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        return layoutParams;
+    }
+
+    public static WindowManager.LayoutParams getWrapContentWindowLayoutParams() {
+        //WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        //layoutParams.x = x;
+        //layoutParams.y = y;
+        //layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+        //layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        //layoutParams.gravity = Gravity.BOTTOM;
+        layoutParams.x = 0;
+        layoutParams.y = 0;
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+        layoutParams.format = PixelFormat.OPAQUE;
+        layoutParams.windowAnimations = 0;
         return layoutParams;
     }
 

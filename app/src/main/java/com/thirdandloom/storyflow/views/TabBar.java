@@ -3,7 +3,7 @@ package com.thirdandloom.storyflow.views;
 import com.facebook.rebound.Spring;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
-import com.thirdandloom.storyflow.utils.Timber;
+import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 
@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.util.Arrays;
@@ -27,6 +28,7 @@ public class TabBar extends LinearLayout {
         void profileClicked();
         void homeClicked();
         void homeLongClicked();
+        void homeDraggingFinished();
         Window getWindow();
     }
 
@@ -35,7 +37,7 @@ public class TabBar extends LinearLayout {
     private View flipCircleView;
     private OnScrollListener recyclerViewScrollListener = new OnScrollListener();
     private Actions actions;
-    private View triangleView;
+    private ImageView triangleView;
     private ViewGroup circlesContainer;
     private View flipCircleContainerView;
 
@@ -62,7 +64,7 @@ public class TabBar extends LinearLayout {
         View messagesView = findViewById(R.id.view_tab_bar_messages);
         View postView = findViewById(R.id.view_tab_bar_post);
         View profileView = findViewById(R.id.view_tab_bar_profile);
-        flipCircleContainerView = findViewById(R.id.view_tab_bar_flip_ircles_container);
+        flipCircleContainerView = findViewById(R.id.view_tab_bar_flip_circles_container);
 
         updatesView.setOnClickListener(v -> actions.updatesClicked());
         messagesView.setOnClickListener(v -> actions.messagesClicked());
@@ -79,7 +81,7 @@ public class TabBar extends LinearLayout {
         float scale = getResources().getDisplayMetrics().density * distance;
         flipCircleView.setCameraDistance(scale);
 
-        triangleView = findViewById(R.id.view_tab_bar_triangle_image_view);
+        triangleView = (ImageView)findViewById(R.id.view_tab_bar_triangle_image_view);
         circlesContainer = (ViewGroup)findViewById(R.id.view_tab_bar_circles_container);
         circlesContainer.setOnClickListener(v -> {
             actions.homeClicked();
@@ -120,34 +122,95 @@ public class TabBar extends LinearLayout {
     }
 
     public class OnTouchCirclesListener extends SpringAnimation.ClickableOnTouchListener {
+        private ViewGroup.LayoutParams previousLayoutParams;
+        private float previousFlipCircleX;
+        private float previousFlipCircleY;
+        private boolean moveStarted;
+        private final int statusBarHeight = DeviceUtils.getStatusBarHeight();
+        private int startedX;
+        private int startedY;
 
         @Override
         protected boolean onTouchView(View v, MotionEvent event) {
-            return super.onTouchView(v, event);
-            //switch (event.getAction()) {
-            //    case MotionEvent.ACTION_DOWN:
-            //        break;
-            //    case MotionEvent.ACTION_MOVE:
-            //        Timber.d("onTouchView action:%d, rawX: %.2f rawY: %.2f x:%.2f y:%.2f", event.getAction(), event.getRawX(), event.getRawY(), event.getX(), event.getY());
-            //        listener.breakAnyClick = true;
-            //
-            //
-            //        Window window = actions.getWindow();
-            //        if (circlesContainer.indexOfChild(flipCircleContainerView) >= 0) {
-            //            circlesContainer.removeView(flipCircleContainerView);
-            //            Timber.d("onTouchView removeFromParent flipCircleContainerView");
-            //        }
-            //        //start mooving
-            //        break;
-            //    case MotionEvent.ACTION_UP:
-            //        if (circlesContainer.indexOfChild(flipCircleContainerView) < 0) {
-            //            circlesContainer.addView(flipCircleContainerView);
-            //            Timber.d("onTouchView circlesContainer addView flipCircleContainerView");
-            //        }
-            //        //break mooving
-            //        break;
-            //}
-            //return true;
+            super.onTouchView(v, event);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    listener.breakAnyClick = true;
+                    int displayWidth = DeviceUtils.getDisplayWidth();
+                    int displayHeight = DeviceUtils.getDisplayHeight() + DeviceUtils.getNavigationBarHeight();
+                    int flipX = (int)event.getRawX() - flipCircleView.getWidth()/2;
+                    int flipY = (int)event.getRawY() - flipCircleView.getHeight()/2 - statusBarHeight;
+                    int triangleX = (int)event.getRawX()-displayWidth/2;
+                    int triangleY = (int)event.getRawY()-displayHeight/2 - triangleView.getDrawable().getMinimumHeight()/2 + statusBarHeight;
+
+                    if (circlesContainer.indexOfChild(flipCircleContainerView) >= 0) {
+                        movingStarted(actions.getWindow(), triangleX, triangleY, flipX, flipY);
+                    } else {
+                        movingContinue(triangleX, triangleY, flipX, flipY);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    moveFinished();
+                    break;
+            }
+            return true;
+        }
+
+        private void moveFinished() {
+            if (circlesContainer.indexOfChild(flipCircleContainerView) < 0) {
+                triangleView.animate()
+                        .translationX(startedX)
+                        .translationY(startedY)
+                        .setDuration(150)
+                        .withEndAction(() -> {
+                            moveStarted = false;
+                            ViewUtils.removeFromParent(flipCircleContainerView);
+                            flipCircleContainerView.setLayoutParams(previousLayoutParams);
+                            circlesContainer.addView(flipCircleContainerView);
+                            ViewUtils.callOnPreDraw(circlesContainer, view -> {
+                                triangleView.setX(0);
+                                triangleView.setY(0);
+                                flipCircleView.setX(previousFlipCircleX);
+                                flipCircleView.setY(previousFlipCircleY);
+                                actions.homeDraggingFinished();
+                            });
+                        }).start();
+
+                flipCircleView.animate()
+                        .translationX(startedX)
+                        .translationY(startedY)
+                        .setDuration(150)
+                        .start();
+            }
+        }
+
+        private void movingContinue(int triangleX, int triangleY, int flipX, int flipY) {
+            if (moveStarted) {
+                triangleView.setX(triangleX);
+                triangleView.setY(triangleY);
+                flipCircleView.setX(flipX);
+                flipCircleView.setY(flipY);
+            }
+        }
+
+        private void movingStarted(Window window, int triangleX, int triangleY, int flipX, int flipY) {
+            previousFlipCircleY = flipCircleView.getY();
+            previousFlipCircleX = flipCircleView.getX();
+            previousLayoutParams = flipCircleContainerView.getLayoutParams();
+            circlesContainer.removeView(flipCircleContainerView);
+            window.addContentView(flipCircleContainerView, ViewUtils.getWrapContentWindowLayoutParams());
+            startedX = triangleX;
+            startedY = triangleY;
+
+            ViewUtils.callOnPreDraw(flipCircleContainerView, view -> {
+                triangleView.setX(triangleX);
+                triangleView.setY(triangleY);
+                flipCircleView.setX(flipX);
+                flipCircleView.setY(flipY);
+                moveStarted = true;
+            });
         }
     }
 
