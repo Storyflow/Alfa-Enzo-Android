@@ -4,7 +4,6 @@ import com.facebook.rebound.Spring;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
-import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 
@@ -89,6 +88,7 @@ public class TabBar extends LinearLayout {
         circlesContainer = (ViewGroup)findViewById(R.id.view_tab_bar_circles_container);
         circlesContainer.setOnClickListener(v -> {
             ableToFlipCircle = false;
+            scrollPosition = 0;
             flipCirclesWithScrollPosition(scrollPosition);
             ableToFlipCircle = actions.handleHomeClicked();
         });
@@ -107,6 +107,10 @@ public class TabBar extends LinearLayout {
         this.scrollPosition = 0;
     }
 
+    public void enableFlipCircleAnimation() {
+        ableToFlipCircle = true;
+    }
+
     public void setActions(Actions actions) {
         this.actions = actions;
     }
@@ -118,10 +122,6 @@ public class TabBar extends LinearLayout {
     private class OnScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                ableToFlipCircle = true;
-                scrollPosition = 0;
-            }
             if (!ableToFlipCircle) return;
             scrollPosition += dx;
             flipCirclesWithScrollPosition(scrollPosition);
@@ -147,7 +147,6 @@ public class TabBar extends LinearLayout {
         @Override
         protected boolean onTouchView(View v, MotionEvent event) {
             super.onTouchView(v, event);
-            Timber.d("tab bar onTouchView.get action: %d", event.getAction());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     startScrollPosition = event.getY();

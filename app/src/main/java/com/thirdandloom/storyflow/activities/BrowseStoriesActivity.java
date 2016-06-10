@@ -70,6 +70,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     private TabBar tabBar;
     private Action1<Float> takeScrollValue;
     private ReadingStoriesFragment storyDetailsFragment;
+    private boolean scrollToCenterRequested;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -285,6 +286,14 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
                     break;
                 case RecyclerView.SCROLL_STATE_DRAGGING:
                 case RecyclerView.SCROLL_STATE_IDLE:
+                    if (scrollToCenterRequested) {
+                        int centerPosition = getPeriodsAdapter().getCenterPosition();
+                        int currentPosition = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
+                        if (centerPosition == currentPosition) {
+                            tabBar.enableFlipCircleAnimation();
+                            scrollToCenterRequested = false;
+                        }
+                    }
                     int first = getLayoutManager().findFirstVisibleItemPosition();
                     int last = getLayoutManager().findLastVisibleItemPosition();
                     fetchData(first, last);
@@ -433,6 +442,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
             } else {
                 int centerPosition = getPeriodsAdapter().getCenterPosition();
                 int currentPosition = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
+                scrollToCenterRequested = true;
                 snappyRecyclerView.smoothScrollToPosition(centerPosition);
                 StoryflowApplication.runOnUIThread(() -> {
                     scrollToPosition(centerPosition);
