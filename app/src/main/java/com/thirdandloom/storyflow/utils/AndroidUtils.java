@@ -2,10 +2,12 @@ package com.thirdandloom.storyflow.utils;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
@@ -20,6 +22,12 @@ public class AndroidUtils extends BaseUtils {
         density = getResources().getDisplayMetrics().density;
         viewConfiguration = ViewConfiguration.get(getApplicationContext());
         checkDisplaySize();
+    }
+
+    public static Rect getWindowVisibleRect(Window window) {
+        Rect windowVisibleRect = new Rect();
+        window.getDecorView().getWindowVisibleDisplayFrame(windowVisibleRect);
+        return windowVisibleRect;
     }
 
     public static int minScrollPx() {

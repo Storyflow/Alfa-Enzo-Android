@@ -47,7 +47,19 @@ public class StoryflowImageUtils {
             int imageHeight;
             int imageWidth;
             String imageUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
-            imageHeight = AndroidUtils.dp(150);
+            switch (itemType) {
+                case Smallest:
+                    imageHeight = AndroidUtils.dp(50);
+                    break;
+                case Small:
+                    imageHeight = AndroidUtils.dp(100);
+                    break;
+                case Large:
+                    imageHeight = AndroidUtils.dp(150);
+                    break;
+                default:
+                    imageHeight = AndroidUtils.dp(150);
+            }
             imageWidth = itemWidthPx;
             int height = calculateHeight(imageWidth, imageHeight, itemWidthPx);
             ViewUtils.applyHeight(imageView, height);

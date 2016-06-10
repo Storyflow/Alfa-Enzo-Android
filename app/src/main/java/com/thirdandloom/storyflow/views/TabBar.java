@@ -3,11 +3,14 @@ package com.thirdandloom.storyflow.views;
 import com.facebook.rebound.Spring;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
+import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -138,29 +141,33 @@ public class TabBar extends LinearLayout {
         private float previousFlipCircleX;
         private float previousFlipCircleY;
         private boolean moveStarted;
-        private final int statusBarHeight = DeviceUtils.getStatusBarHeight();
         private int startedX;
         private int startedY;
+        private float startScrollPosition;
 
         @Override
         protected boolean onTouchView(View v, MotionEvent event) {
             super.onTouchView(v, event);
+            Timber.d("tab bar onTouchView.get action: %d", event.getAction());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    startScrollPosition = event.getY();
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    listener.breakAnyClick = true;
-                    int displayWidth = DeviceUtils.getDisplayWidth();
-                    int displayHeight = DeviceUtils.getDisplayHeight() + DeviceUtils.getNavigationBarHeight();
-                    int flipX = (int)event.getRawX() - flipCircleView.getWidth()/2;
-                    int flipY = (int)event.getRawY() - flipCircleView.getHeight()/2 - statusBarHeight;
-                    int triangleX = (int)event.getRawX()-displayWidth/2;
-                    int triangleY = (int)event.getRawY()-displayHeight/2 - triangleView.getDrawable().getMinimumHeight()/2 + statusBarHeight;
+                    float delta = startScrollPosition - event.getY();
+                    if (Math.abs(delta) > AndroidUtils.minScrollPx()) {
+                        listener.breakAnyClick = true;
+                        Rect windowVisibleRect = AndroidUtils.getWindowVisibleRect(actions.getWindow());
+                        int triangleX = (int)event.getRawX()-windowVisibleRect.width()/2;
+                        int triangleY = (int)event.getRawY()-windowVisibleRect.height()/2 - triangleView.getDrawable().getMinimumHeight()/2;
+                        int flipX = triangleX + windowVisibleRect.width()/2 - flipCircleView.getWidth()/2;
+                        int flipY = triangleY + windowVisibleRect.height()/2 - flipCircleView.getHeight()/2;
 
-                    if (circlesContainer.indexOfChild(flipCircleContainerView) >= 0) {
-                        movingStarted(actions.getWindow(), triangleX, triangleY, flipX, flipY);
-                    } else {
-                        movingContinue(triangleX, triangleY, flipX, flipY);
+                        if (circlesContainer.indexOfChild(flipCircleContainerView) >= 0) {
+                            movingStarted(actions.getWindow(), triangleX, triangleY, flipX, flipY);
+                        } else {
+                            movingContinue(triangleX, triangleY, flipX, flipY);
+                        }
                     }
                     break;
                 case MotionEvent.ACTION_UP:
