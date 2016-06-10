@@ -87,6 +87,7 @@ public class BrowsePeriodSmallestPopulatedHolder extends BrowsePeriodEmptyHolder
         switch (story.getType()) {
             case Text:
                 return StoryflowImageUtils.Config.with(context, imageView)
+                        .itemType(itemType)
                         .itemWidthPx(itemWidthPixels)
                         .story(story)
                         .showText();

@@ -426,15 +426,18 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         }
 
         @Override
-        public void homeClicked() {
+        public boolean handleHomeClicked() {
             if (storyDetailsFragment != null && storyDetailsFragment.isVisible()) {
                 storyDetailsFragment.onHomeClicked();
+                return true;
             } else {
                 int centerPosition = getPeriodsAdapter().getCenterPosition();
+                int currentPosition = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
                 snappyRecyclerView.smoothScrollToPosition(centerPosition);
                 StoryflowApplication.runOnUIThread(() -> {
                     scrollToPosition(centerPosition);
                 }, 100);
+                return centerPosition == currentPosition;
             }
         }
 

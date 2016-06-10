@@ -4,7 +4,6 @@ import com.facebook.rebound.Spring;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
-import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.animations.SpringAnimation;
@@ -29,7 +28,7 @@ public class TabBar extends LinearLayout {
         void messagesClicked();
         void postClicked();
         void profileClicked();
-        void homeClicked();
+        boolean handleHomeClicked();
         void homeLongClicked();
         void homeDraggingFinished();
         Window getWindow();
@@ -91,7 +90,7 @@ public class TabBar extends LinearLayout {
         circlesContainer.setOnClickListener(v -> {
             ableToFlipCircle = false;
             flipCirclesWithScrollPosition(scrollPosition);
-            actions.homeClicked();
+            ableToFlipCircle = actions.handleHomeClicked();
         });
         circlesContainer.setOnLongClickListener(v -> {
             actions.homeLongClicked();
