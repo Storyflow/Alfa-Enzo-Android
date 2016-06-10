@@ -3,7 +3,6 @@ package com.thirdandloom.storyflow.views.recyclerview;
 import android.content.Context;
 import android.graphics.PointF;
 import android.hardware.SensorManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -80,23 +79,34 @@ public class SnappyLinearLayoutManager extends DisableScrollLinearLayoutManager 
         int firstPosition = findFirstVisibleItemPosition();
         int lastPosition = findLastVisibleItemPosition();
         int visibleItemsCount = lastPosition - firstPosition;
-        boolean isThreeAndMoreItemVisible = visibleItemsCount > 1;
+        boolean twoAndMoreItemsVisible = visibleItemsCount >= 2;
 
-        if (isThreeAndMoreItemVisible) {
-            position = velocity < 0 ? position + ((DeviceUtils.getDisplayWidth()/childSize - 1)) : position;
+        int minPerPixelVelocity = AndroidUtils.minVelocityPxPerSecond()*4;
+
+        if (twoAndMoreItemsVisible) {
+            if (velocity < 0) {
+                position = position + ((DeviceUtils.getDisplayWidth()/childSize - 1));
+            }
             if (MathUtils.isValuesBetween(lastPosition, firstPosition, (int)position)) {
-                position = Math.abs(velocity) > AndroidUtils.minVelocityPxPerSecond()*4
-                        ? velocity > 0
-                            ? firstPosition + DeviceUtils.getDisplayWidth()/childSize
-                            : firstPosition
-                        : firstPosition + (DeviceUtils.getDisplayWidth()/childSize - 1);
+                if (Math.abs(velocity) > minPerPixelVelocity) {
+                    if (velocity > 0) {
+                        position = firstPosition + DeviceUtils.getDisplayWidth()/childSize;
+                    } else {
+                        position = firstPosition;
+                    }
+                } else {
+                    position = firstPosition + (DeviceUtils.getDisplayWidth()/childSize - 1);
+                }
             }
         } else {
             if (position == currPos) {
                 position = velocity > 0 ? position + 1 : position;
-            }
-            if (velocity < 0 && currPos - position == 1) {
-                position = position + 1;
+            } else {
+                if (velocity < 0) {
+                    position = currPos - position >= 2
+                                    ? position + 2
+                                    : position + 1;
+                }
             }
         }
 
