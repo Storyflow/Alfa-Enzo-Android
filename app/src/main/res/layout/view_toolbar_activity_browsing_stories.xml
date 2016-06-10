@@ -37,7 +37,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="bottom"
-            android:textColor="@color/greyDarkName"
+            android:textColor="@color/greyLightDarkness"
             android:textAppearance="@style/TextAppearance.RoboMediumNormal"
             tools:text="Full name"
             />
@@ -47,7 +47,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="top"
-            android:textColor="@color/greyDarkSubName"
+            android:textColor="@color/greyLightDark"
             android:textAppearance="@style/TextAppearance.RoboMediumTiny"
             tools:text="\@User"
             />

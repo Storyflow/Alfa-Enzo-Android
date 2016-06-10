@@ -67,7 +67,7 @@ public class StoryflowImageUtils {
                     .with(context)
                     .load(imageUrl)
                     .override(itemWidthPx, height)
-                    .placeholder(R.color.yellowDark)
+                    .placeholder(R.color.yellow)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageView);
             return height;
@@ -106,7 +106,7 @@ public class StoryflowImageUtils {
                     .with(context)
                     .load(imageUrl)
                     .override(itemWidthPx, height)
-                    .placeholder(R.color.yellowDark)
+                    .placeholder(R.color.yellow)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageView);
             return height;

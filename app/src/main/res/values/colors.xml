@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="yellow">#FFCD00</color>
+    <color name="yellow">#FECF17</color>
     <color name="yellowDark">#CA9400</color>
 
     <color name="grey">#1A2025</color>
     <color name="greyDark">#111418</color>
-    <color name="greyLightDark">#4D5053</color>
+    <color name="greyLightDarkness">#262728</color>
+    <color name="greyLightDark">#5B5B5B</color>
     <color name="greyLight">#999999</color>
     <color name="greyLighter">#8B9197</color>
     <color name="greyXLighter">#E0E0E0</color>
@@ -13,12 +14,8 @@
     <color name="greyMostLightest">#EBEBEB</color>
     <color name="greyWhite">#F7F8F8</color>
 
-    <!-- new design colors-->
-    <color name="greyDarkName">#262728</color>
-    <color name="greyDarkSubName">#5B5B5B</color>
     <color name="blackTransparent">#51000000</color>
     <color name="blackLowTransparent">#77000000</color>
-
 
     <color name="white">#FFFFFF</color>
     <color name="whiteTransparent">#CCFFFFFF</color>
