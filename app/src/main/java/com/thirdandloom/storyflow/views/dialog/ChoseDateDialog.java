@@ -1,7 +1,9 @@
 package com.thirdandloom.storyflow.views.dialog;
 
+import com.adobe.creativesdk.aviary.internal.utils.DateTimeUtils;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.thirdandloom.storyflow.R;
+import com.thirdandloom.storyflow.utils.DateUtils;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -35,7 +37,7 @@ public class ChoseDateDialog extends MaterialDialog {
 
     @NonNull
     public Calendar getPickedDateCalendar() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = DateUtils.todayCalendar();
         calendar.set(Calendar.DAY_OF_MONTH, selectedDayOfMonth);
         calendar.set(Calendar.MONTH, selectedMonthOfYear);
         calendar.set(Calendar.YEAR, selectedYear);

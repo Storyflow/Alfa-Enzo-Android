@@ -431,8 +431,10 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
                 storyDetailsFragment.onHomeClicked();
             } else {
                 int centerPosition = getPeriodsAdapter().getCenterPosition();
-                snappyRecyclerView.scrollToPosition(centerPosition);
                 snappyRecyclerView.smoothScrollToPosition(centerPosition);
+                StoryflowApplication.runOnUIThread(() -> {
+                    scrollToPosition(centerPosition);
+                }, 100);
             }
         }
 
@@ -444,7 +446,7 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         @Override
         public void homeDraggingFinished() {
             int position = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
-            Calendar calendar = getPeriodsAdapter().getDateCalendar(position, getPeriodsAdapter().getCenterPosition(), getPeriodsAdapter().getPeriodType());
+            Calendar calendar = BrowsePeriodsAdapter.getDateCalendar(position, getPeriodsAdapter().getCenterPosition(), getPeriodsAdapter().getPeriodType());
 
             ChoseDateDialog dialog = new ChoseDateDialog.Builder(BrowseStoriesActivity.this)
                     .startCalendar(calendar)
@@ -468,15 +470,20 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
         int newPosition = getPeriodsAdapter().getPosition(pickedCalendar);
         int currentPosition = RecyclerLayoutManagerUtils.getCenterVisiblePosition((LinearLayoutManager) snappyRecyclerView.getLayoutManager());
         if (newPosition != currentPosition) {
-            snappyRecyclerView.scrollToPosition(newPosition);
-            snappyRecyclerView.smoothScrollToPosition(newPosition);
-
             int first = getLayoutManager().findFirstVisibleItemPosition();
             int last = getLayoutManager().findLastVisibleItemPosition();
-            int leftDelta = currentPosition - first;
-            int rightDelta = currentPosition + last;
+            int leftDelta = currentPosition - Math.max(first, 1);
+            int rightDelta = last - currentPosition;
             fetchData(newPosition - leftDelta, newPosition + rightDelta);
+            scrollToPosition(newPosition);
         }
+    }
+
+    private void scrollToPosition(int position) {
+        snappyRecyclerView.scrollToPosition(position);
+        StoryflowApplication.runOnUIThread(() -> {
+            getLayoutManager().smoothScrollToPosition(snappyRecyclerView, null, position);
+        }, 150);
     }
 
     @Override

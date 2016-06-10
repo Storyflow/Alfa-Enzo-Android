@@ -40,6 +40,7 @@ public class TabBar extends LinearLayout {
     private ImageView triangleView;
     private ViewGroup circlesContainer;
     private View flipCircleContainerView;
+    private boolean ableToFlipCircle;
 
     public TabBar(Context context) {
         this(context, null);
@@ -65,6 +66,7 @@ public class TabBar extends LinearLayout {
         View postView = findViewById(R.id.view_tab_bar_post);
         View profileView = findViewById(R.id.view_tab_bar_profile);
         flipCircleContainerView = findViewById(R.id.view_tab_bar_flip_circles_container);
+        ableToFlipCircle = true;
 
         updatesView.setOnClickListener(v -> actions.updatesClicked());
         messagesView.setOnClickListener(v -> actions.messagesClicked());
@@ -84,6 +86,8 @@ public class TabBar extends LinearLayout {
         triangleView = (ImageView)findViewById(R.id.view_tab_bar_triangle_image_view);
         circlesContainer = (ViewGroup)findViewById(R.id.view_tab_bar_circles_container);
         circlesContainer.setOnClickListener(v -> {
+            ableToFlipCircle = false;
+            flipCirclesWithScrollPosition(scrollPosition);
             actions.homeClicked();
         });
         circlesContainer.setOnLongClickListener(v -> {
@@ -112,13 +116,21 @@ public class TabBar extends LinearLayout {
     private class OnScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                ableToFlipCircle = true;
+                scrollPosition = 0;
+            }
+            if (!ableToFlipCircle) return;
             scrollPosition += dx;
-
-            int integrate = (int)Math.floor(scrollPosition/itemWidth);
-            float fraction = (float)scrollPosition/itemWidth - integrate;
-            float angle = fraction * 100 * 1.8f;
-            flipCircleView.setRotationY(angle);
+            flipCirclesWithScrollPosition(scrollPosition);
         }
+    }
+
+    private void flipCirclesWithScrollPosition(int pos) {
+        int integrate = (int)Math.floor(pos/itemWidth);
+        float fraction = (float)pos/itemWidth - integrate;
+        float angle = fraction * 100 * 1.8f;
+        flipCircleView.setRotationY(angle);
     }
 
     public class OnTouchCirclesListener extends SpringAnimation.ClickableOnTouchListener {
@@ -159,13 +171,13 @@ public class TabBar extends LinearLayout {
         }
 
         private void moveFinished() {
+            moveStarted = false;
             if (circlesContainer.indexOfChild(flipCircleContainerView) < 0) {
                 triangleView.animate()
                         .translationX(startedX)
                         .translationY(startedY)
                         .setDuration(150)
                         .withEndAction(() -> {
-                            moveStarted = false;
                             ViewUtils.removeFromParent(flipCircleContainerView);
                             flipCircleContainerView.setLayoutParams(previousLayoutParams);
                             circlesContainer.addView(flipCircleContainerView);
@@ -201,6 +213,7 @@ public class TabBar extends LinearLayout {
             previousFlipCircleY = flipCircleView.getY();
             previousFlipCircleX = flipCircleView.getX();
             previousLayoutParams = flipCircleContainerView.getLayoutParams();
+
             circlesContainer.removeView(flipCircleContainerView);
             window.addContentView(flipCircleContainerView, ViewUtils.getMatchParentWindowLayoutParams());
             startedX = triangleX;
@@ -257,7 +270,7 @@ public class TabBar extends LinearLayout {
 
         @Override
         public void onSpringEndStateChange(Spring spring) {
-            if (spring.getEndValue() == SpringAnimation.END && !performLongClick) {
+            if (!breakAnyClick && spring.getEndValue() == SpringAnimation.END && !performLongClick) {
                 clickableView.callOnClick();
             }
         }
