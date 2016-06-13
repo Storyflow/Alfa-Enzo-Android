@@ -64,6 +64,7 @@
     <string name="story_should_contain_at_least_one_character">Story should contains at least one character or image.</string>
     <string name="private_string">Private</string>
     <string name="select_date">Select date</string>
+    <string name="image_will_be_saved_immediately">The image will be saved immediately.</string>
 
     <string name="daily">DAILY</string>
     <string name="monthly">MONTHLY</string>

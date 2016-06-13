@@ -1,7 +1,5 @@
 package com.thirdandloom.storyflow.utils.event;
 
-import com.thirdandloom.storyflow.rest.ErrorHandler;
-
 public class ShowErrorEvent {
     private String errorMessage;
 

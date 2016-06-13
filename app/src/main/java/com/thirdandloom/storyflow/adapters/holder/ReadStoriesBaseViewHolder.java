@@ -8,6 +8,9 @@ import android.view.View;
 
 public abstract class ReadStoriesBaseViewHolder extends RecyclerView.ViewHolder {
 
+    protected Context context;
+    protected Story story;
+
     public ReadStoriesBaseViewHolder(View itemView) {
         super(itemView);
         init();
@@ -16,6 +19,7 @@ public abstract class ReadStoriesBaseViewHolder extends RecyclerView.ViewHolder 
     protected abstract void init();
 
     public void initGui(Context context, Story story) {
-
+        this.context = context;
+        this.story = story;
     }
 }

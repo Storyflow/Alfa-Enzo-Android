@@ -11,8 +11,10 @@ import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
+import com.thirdandloom.storyflow.utils.event.ShowWarningEvent;
 import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
 import com.thirdandloom.storyflow.utils.image.StoryflowImageUtils;
+import org.greenrobot.eventbus.EventBus;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -34,6 +36,7 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
     private ImageView authorAvatarImageView;
     private TextView authorFullNameTextView;
     private TextView authorUserNameTextView;
+    private View saveButton;
     private View storyImageContainer;
 
     public static ReadStoriesPopulatedViewHolder newInstance(ViewGroup parent) {
@@ -56,6 +59,7 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         authorFullNameTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_full_name_textview);
         authorUserNameTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_user_name_textview);
         storyImageContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_story_image_container);
+        saveButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_save);
 
         retryButton.setOnClickListener(v -> {
             StoryflowApplication.getPendingStoriesManager().retry(storyLocalUid);
@@ -64,6 +68,10 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         deleteButton.setOnClickListener(v -> {
             StoryflowApplication.getPendingStoriesManager().remove(storyLocalUid);
             ViewUtils.hide(pendingActionsContainer);
+        });
+        saveButton.setOnClickListener(v -> {
+            EventBus.getDefault().post(new ShowWarningEvent(R.string.image_will_be_saved_immediately));
+            StoryflowImageUtils.saveImage(context, story.getSavedImageUrl());
         });
     }
 

@@ -6,6 +6,7 @@ import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.connectivity.NetworkReceiver;
 import com.thirdandloom.storyflow.utils.event.HideProgressEvent;
 import com.thirdandloom.storyflow.utils.event.ShowProgressEvent;
+import com.thirdandloom.storyflow.utils.event.ShowWarningEvent;
 import com.thirdandloom.storyflow.views.alert.QuickAlertController;
 import com.thirdandloom.storyflow.views.alert.QuickAlertView;
 import com.thirdandloom.storyflow.views.progress.ProgressBarController;
@@ -140,6 +141,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         hideProgress();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ShowWarningEvent event) {
+        showWarning(event.getMessageResId());
+    }
+
     protected void initQuickAlertController() {
         quickAlert = new QuickAlertController(getWindow(), getStatusBarColorResourceId());
     }
@@ -161,7 +167,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void setTitle(int titleId) {
         if (hasToolBar() && toolbar instanceof BaseToolBar) {
-            ((BaseToolBar)toolbar).setTitleText(titleId);
+            (toolbar).setTitleText(titleId);
         } else {
             super.setTitle(titleId);
         }

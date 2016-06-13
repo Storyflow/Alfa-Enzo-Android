@@ -48,7 +48,7 @@ public class PhotoFileUtils extends BaseUtils {
         return new File(storageDir, originalName);
     }
 
-    private static String generateImageUniqueName() {
+    public static String generateImageUniqueName() {
         String uniqueCode = FileUtils.generateUniqueName();
         return IMAGE + uniqueCode + FileUtils.Extension.JPG;
     }

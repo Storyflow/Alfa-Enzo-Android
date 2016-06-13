@@ -2,6 +2,8 @@ package com.thirdandloom.storyflow.models;
 
 import com.google.gson.annotations.SerializedName;
 import com.thirdandloom.storyflow.utils.DateUtils;
+import com.thirdandloom.storyflow.utils.DeviceUtils;
+import com.thirdandloom.storyflow.utils.image.StoryflowImageUtils;
 import com.thirdandloom.storyflow.utils.models.Time;
 
 import java.io.Serializable;
@@ -128,6 +130,17 @@ public class Story extends BaseModel {
 
     public List<Mention> getMentionsList() {
         return mentionsList;
+    }
+
+    public String getSavedImageUrl() {
+        switch (getType()) {
+            case Text:
+                return getAuthor().getCroppedImageCover().getImageUrl();
+            case Image:
+                return getImageData().getNormalSizedImage().url();
+            default:
+                throw new UnsupportedOperationException("Unsupported story type.");
+        }
     }
 
     public enum Type { Text, Image }
