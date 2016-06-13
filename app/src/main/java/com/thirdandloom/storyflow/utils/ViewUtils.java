@@ -100,6 +100,13 @@ public class ViewUtils extends BaseUtils{
         view.setLayoutParams(params);
     }
 
+    public static void applyViewSize(View view, int width, int height) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = height;
+        params.width = width;
+        view.setLayoutParams(params);
+    }
+
     public static void applyWrapContentHeight(View view) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;

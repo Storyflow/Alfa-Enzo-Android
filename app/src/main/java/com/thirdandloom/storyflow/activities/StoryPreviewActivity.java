@@ -9,6 +9,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -39,6 +40,7 @@ public class StoryPreviewActivity extends BaseActivity {
 
     private ImageView imageView;
     private View contentView;
+    private View botView;
     private PhotoViewAttacher photoViewAttacher;
 
     private int leftDelta;
@@ -60,6 +62,7 @@ public class StoryPreviewActivity extends BaseActivity {
     private void findViews() {
         imageView = (ImageView)findViewById(R.id.activity_story_preview_image_view);
         contentView = findViewById(R.id.activity_story_preview_content);
+        botView = findViewById(R.id.activity_story_preview_bot_view);
     }
 
     private void initGui(boolean isFirstStart) {
@@ -75,7 +78,7 @@ public class StoryPreviewActivity extends BaseActivity {
                 imageUrl = null;
         }
         if (imageUrl == null) return;
-        contentView.setAlpha(isFirstStart ? 0.f : 1.f);
+        contentView.setAlpha(isFirstStart ? .3f : 1.f);
         Glide
                 .with(this)
                 .load(imageUrl)
@@ -92,8 +95,18 @@ public class StoryPreviewActivity extends BaseActivity {
                         } else {
                             applyMatchParentForImageView();
                         }
+                        initBotView();
                     }
                 });
+    }
+
+    private void initBotView() {
+        ViewUtils.show(botView);
+        ViewUtils.callOnPreDraw(botView, view -> {
+            botView.setX(state.fromViewX);
+            botView.setY(state.fromViewY - DeviceUtils.getStatusBarHeight());
+            ViewUtils.applyViewSize(botView, state.fromViewWidth, state.fromViewHeight);
+        });
     }
 
     @Override

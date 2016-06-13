@@ -2,13 +2,25 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+             xmlns:tools="http://schemas.android.com/tools"
              android:background="@color/transparent">
+
+    <View
+        android:id="@+id/activity_story_preview_bot_view"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:background="@color/greyMostLightest"
+        android:visibility="gone"
+        android:alpha=".8"
+        tools:visibility="visible"
+    />
 
     <View
         android:id="@+id/activity_story_preview_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black"
+        tools:alpha="0.5"
         />
 
     <ImageView
