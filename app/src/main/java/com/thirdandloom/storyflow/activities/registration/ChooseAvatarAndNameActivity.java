@@ -155,7 +155,6 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
             } else {
                 startBrowsing();
             }
-
         }, (errorMessage, type) -> {
             showError(errorMessage);
         });

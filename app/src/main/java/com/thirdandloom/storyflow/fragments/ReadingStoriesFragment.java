@@ -16,6 +16,7 @@ import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
 import com.thirdandloom.storyflow.views.recyclerview.RecyclerItemClickListener;
+import com.thirdandloom.storyflow.views.recyclerview.animator.ChangeLikesContainerHeightAnimator;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.GradientOnTopStickyHeaderDecoration;
 import org.greenrobot.eventbus.EventBus;
@@ -134,7 +135,7 @@ public class ReadingStoriesFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(divider);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setItemAnimator(new ChangeLikesContainerHeightAnimator());
 
         readStoriesAdapter = new ReadStoriesAdapter(stories, dateCalendar, requestData, getActivity());
         GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(readStoriesAdapter, true);
@@ -147,14 +148,14 @@ public class ReadingStoriesFragment extends BaseFragment {
                 loadMoreStories();
             }
         });
-        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (viewHolder, position) -> {
-            if (readStoriesAdapter.getItemViewType(position) == ReadStoriesAdapter.FILLED_STORY) {
-                Intent intent = StoryPreviewActivity.newInstance(readStoriesAdapter.getStory(position),
-                        readStoriesAdapter.getFromView(position, viewHolder));
-                getActivity().startActivity(intent);
-                getActivity().overridePendingTransition(0, 0);
-            }
-        }));
+        //recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (viewHolder, position) -> {
+        //    if (readStoriesAdapter.getItemViewType(position) == ReadStoriesAdapter.FILLED_STORY) {
+        //        Intent intent = StoryPreviewActivity.newInstance(readStoriesAdapter.getStory(position),
+        //                readStoriesAdapter.getFromView(position, viewHolder));
+        //        getActivity().startActivity(intent);
+        //        getActivity().overridePendingTransition(0, 0);
+        //    }
+        //}));
         footerHiderScrollListener = FooterHiderScrollListener.init(recyclerView, getBottomBar());
     }
 

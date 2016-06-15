@@ -65,14 +65,17 @@ public class ErrorHandler {
             if (jsonElement.getAsJsonObject().get("errors") instanceof JsonArray) {
                 ApiError apiError = ApiError.newInstance(errorBodyString);
                 error.call(ApiError.getMessage(apiError), Type.Backend);
+                return;
             } else if (jsonElement.getAsJsonObject().get("errors") instanceof JsonPrimitive) {
                 // TODO temp solution, should be removed after backend fixes:
                 // https://www.pivotaltracker.com/story/show/117060705
                 JsonPrimitive primitive = (JsonPrimitive) jsonElement.getAsJsonObject().get("errors");
                 error.call(primitive.getAsString(), Type.Backend);
+                return;
             } else if (jsonElement.getAsJsonObject().get("error") instanceof JsonArray) {
                 ApiError apiError = ApiError.newInstance(errorBodyString);
                 error.call(ApiError.getMessage(apiError), Type.Backend);
+                return;
             } else if (jsonElement.getAsJsonObject().get("error") instanceof JsonPrimitive) {
                 // TODO temp solution, should be removed after backend fixes:
                 // https://www.pivotaltracker.com/story/show/117060705
@@ -84,6 +87,7 @@ public class ErrorHandler {
                     int resId = ApiErrors.codes.get(errorCodeString);
                     error.call(StoryflowApplication.resources().getString(resId), Type.Backend);
                 }
+                return;
             }
 
         } catch (JsonSyntaxException e) {

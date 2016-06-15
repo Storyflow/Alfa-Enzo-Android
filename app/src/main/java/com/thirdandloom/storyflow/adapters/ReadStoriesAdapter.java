@@ -146,7 +146,12 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
     public ReadStoriesBaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case FILLED_STORY:
-                return ReadStoriesPopulatedViewHolder.newInstance(parent);
+                return ReadStoriesPopulatedViewHolder.newInstance(parent, new ReadStoriesPopulatedViewHolder.Actions() {
+                    @Override
+                    public void onStarClicked(int adapterPosition) {
+                        notifyItemChanged(adapterPosition);
+                    }
+                });
             case LOADING:
                 return ReadStoriesPendingViewHolder.newInstance(parent);
             case EMPTY_STORY:

@@ -66,6 +66,13 @@
     <string name="select_date">Select date</string>
     <string name="image_will_be_saved_immediately">The image will be saved immediately.</string>
 
+    <!--Stars/Likes-->
+    <string name="you_marked_this_story">You marked this story.</string>
+    <string name="ss_marked_this_story">%1$s marked this story.</string>
+    <string name="you_and_ss_marked_this_story">You and %1$s marked this story.</string>
+    <string name="you_ss_and_count_others_marked_this_story">You, %1$s and %2$d others marked this story.</string>
+    <string name="ss_and_count_others_marked_this_story">%1$s and %2$d others marked this story.</string>
+
     <string name="daily">DAILY</string>
     <string name="monthly">MONTHLY</string>
     <string name="yearly">YEARLY</string>

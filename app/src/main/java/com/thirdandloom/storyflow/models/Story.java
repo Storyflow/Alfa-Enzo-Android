@@ -37,8 +37,8 @@ public class Story extends BaseModel {
     private StoryImageModel imageData;
     @SerializedName("mentions")
     private List<Mention> mentionsList;
-    //@SerializedName("likes")
-    //private likes likes;
+    @SerializedName("likes")
+    private Likes likes;
 
     public enum FillType {
         Filled, Empty
@@ -66,6 +66,10 @@ public class Story extends BaseModel {
 
     public Date getCreatedAt() {
         return new Time(createdAt).convertToDate();
+    }
+
+    public Likes getLikes() {
+        return likes;
     }
 
     public int getPrivacyId() {

@@ -1,15 +1,14 @@
 package com.thirdandloom.storyflow.adapters.holder;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.models.Author;
+import com.thirdandloom.storyflow.models.Likes;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
-import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.event.ShowWarningEvent;
 import com.thirdandloom.storyflow.utils.glide.CropCircleTransformation;
@@ -25,6 +24,10 @@ import android.widget.TextView;
 
 public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
 
+    public interface Actions {
+        void onStarClicked(int adapterPosition);
+    }
+
     public ImageView imageView;
 
     private TextView descriptionTextView;
@@ -37,11 +40,22 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
     private TextView authorFullNameTextView;
     private TextView authorUserNameTextView;
     private View saveButton;
+    private View starButton;
     private View storyImageContainer;
 
-    public static ReadStoriesPopulatedViewHolder newInstance(ViewGroup parent) {
+    public View starsContainer;
+    private ImageView starsFirstAvatar;
+    private ImageView starsSecondAvatar;
+    private TextView starsTextView;
+    private boolean containerIsVisible;
+
+    private Actions actions;
+
+    public static ReadStoriesPopulatedViewHolder newInstance(ViewGroup parent, Actions actions) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_reading_stories_item, parent, false);
-        return new ReadStoriesPopulatedViewHolder(itemView);
+        ReadStoriesPopulatedViewHolder holder = new ReadStoriesPopulatedViewHolder(itemView);
+        holder.actions = actions;
+        return holder;
     }
 
     public ReadStoriesPopulatedViewHolder(View itemView) {
@@ -61,6 +75,16 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         storyImageContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_story_image_container);
         saveButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_save);
 
+        starsContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_stars_container);
+        starsFirstAvatar = (ImageView) itemView.findViewById(R.id.adapter_recycler_item_reading_stories_stars_ava1);
+        starsSecondAvatar = (ImageView) itemView.findViewById(R.id.adapter_recycler_item_reading_stories_stars_ava2);
+        starsTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_reading_stories_stars_text_view);
+        starButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_star);
+
+        initListeners();
+    }
+
+    private void initListeners() {
         retryButton.setOnClickListener(v -> {
             StoryflowApplication.getPendingStoriesManager().retry(storyLocalUid);
             ViewUtils.hide(pendingActionsContainer);
@@ -73,6 +97,18 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
             EventBus.getDefault().post(new ShowWarningEvent(R.string.image_will_be_saved_immediately));
             StoryflowImageUtils.saveImage(context, story.getSavedImageUrl());
         });
+        starButton.setOnClickListener(v -> {
+            actions.onStarClicked(getAdapterPosition());
+            containerIsVisible = !containerIsVisible;
+        });
+    }
+
+    public int getPostLayoutContainerHeight() {
+        return containerIsVisible ? AndroidUtils.dp(44) : 0;
+    }
+
+    public int getPreLayoutContainerHeight() {
+        return !containerIsVisible ? AndroidUtils.dp(44) : 0;
     }
 
     @Override
@@ -83,6 +119,7 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         descriptionTextView.setText(story.getDescription());
         configureAuthor(story.getAuthor(), context);
         configurePendingActions(story.getPendingStatus());
+        configureLikers();
         switch (story.getType()) {
             case Text:
                 StoryflowImageUtils.Config.with(context, imageView)
@@ -101,15 +138,69 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         }
     }
 
+    private void configureLikers() {
+        resetStarsViews();
+        Likes likes = story.getLikes();
+        if (likes == null || (!likes.containsCurrentUserLike() && likes.getCount() == 0)) {
+            return;
+        }
+        if (likes.containsCurrentUserLike()) {
+            initIncludedCurrentUserLike(likes.getCount(), likes.getLastLikeAuthor());
+        } else {
+            initExcludedUserLike(likes.getCount(), likes.getLastLikeAuthor());
+        }
+        ViewUtils.show(starsContainer);
+        containerIsVisible = true;
+        //starsContainer.getLayoutParams().height = AndroidUtils.dp(44);
+        //starsContainer.requestLayout();
+    }
+
+    private void initExcludedUserLike(int likesCount, Author lastLiked) {
+        showAvatar(context, starsFirstAvatar, lastLiked.getCroppedAvatar().getImageUrl());
+        if (likesCount == 1) {
+            starsTextView.setText(context.getString(R.string.ss_marked_this_story, lastLiked.getFullName()));
+        } else {
+            starsTextView.setText(context.getString(R.string.ss_and_count_others_marked_this_story, lastLiked.getFullName(), likesCount));
+        }
+    }
+
+    private void initIncludedCurrentUserLike(int likesCount, Author lastLiked) {
+        String userAvatarUrl = StoryflowApplication.account().getUser().getProfileImage().getImageUrl();
+        showAvatar(context, starsFirstAvatar, userAvatarUrl);
+        if (likesCount <= 1) {
+            starsTextView.setText(R.string.you_marked_this_story);
+        } else {
+            ViewUtils.show(starsSecondAvatar);
+            showAvatar(context, starsSecondAvatar, lastLiked.getCroppedAvatar().getImageUrl());
+            if (likesCount == 2) {
+                starsTextView.setText(context.getString(R.string.you_and_ss_marked_this_story, lastLiked.getFullName()));
+            } else {
+                starsTextView.setText(context.getString(R.string.you_ss_and_count_others_marked_this_story, lastLiked.getFullName(), likesCount));
+            }
+        }
+    }
+
+    private void resetStarsViews() {
+        starsFirstAvatar.setImageDrawable(null);
+        starsSecondAvatar.setImageDrawable(null);
+        ViewUtils.hide(starsContainer, starsSecondAvatar);
+        starsTextView.setText("");
+        containerIsVisible = false;
+    }
+
     private void configureAuthor(Author author, Context context) {
         authorUserNameTextView.setText(author.getUserName());
         authorFullNameTextView.setText(author.getFullName());
+        showAvatar(context, authorAvatarImageView, author.getCroppedAvatar().getImageUrl());
+    }
+
+    private void showAvatar(Context context, ImageView imageView, String url) {
         Glide
                 .with(context)
-                .load(author.getCroppedAvatar().getImageUrl())
+                .load(url)
                 .bitmapTransform(new CropCircleTransformation(context))
                 .dontAnimate()
-                .into(authorAvatarImageView);
+                .into(imageView);
     }
 
     private void configurePendingActions(PendingStory.Status pendingStatus) {
