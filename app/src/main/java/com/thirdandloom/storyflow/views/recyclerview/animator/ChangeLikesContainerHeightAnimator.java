@@ -81,11 +81,13 @@ public class ChangeLikesContainerHeightAnimator extends DefaultItemAnimator  {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                dispatchAnimationFinished(newHolder);
-                animatorMap.remove(newHolder);
+                viewHolder.animationFinished();
+                dispatchAnimationFinished(viewHolder);
+                animatorMap.remove(viewHolder);
             }
         });
         itemViewHeightAnimator.setTarget(newHolder.itemView);
+        viewHolder.animationStarted(oldHeight);
         itemViewHeightAnimator.start();
 
         AnimatorInfo runningAnimInfo = new AnimatorInfo(itemViewHeightAnimator);

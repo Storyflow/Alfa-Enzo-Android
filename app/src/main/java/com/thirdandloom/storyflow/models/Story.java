@@ -72,6 +72,10 @@ public class Story extends BaseModel {
         return likes;
     }
 
+    public void setLikes(Likes likes) {
+        this.likes = likes;
+    }
+
     public int getPrivacyId() {
         return privacyId;
     }

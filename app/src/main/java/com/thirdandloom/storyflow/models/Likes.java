@@ -23,4 +23,14 @@ public class Likes extends BaseModel {
     public boolean containsCurrentUserLike() {
         return containsCurrentUserLike;
     }
+
+    public Likes switchCurrentUserLike() {
+        containsCurrentUserLike = !containsCurrentUserLike;
+        if (containsCurrentUserLike) {
+            count += 1;
+        } else {
+            count -= 1;
+        }
+        return this;
+    }
 }

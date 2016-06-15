@@ -8,6 +8,7 @@ import com.thirdandloom.storyflow.adapters.holder.ReadStoriesHeaderViewHolder;
 import com.thirdandloom.storyflow.adapters.holder.ReadStoriesPendingViewHolder;
 import com.thirdandloom.storyflow.adapters.holder.ReadStoriesPopulatedViewHolder;
 import com.thirdandloom.storyflow.managers.StoriesManager.RequestData;
+import com.thirdandloom.storyflow.models.Likes;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.ArrayUtils;
@@ -31,8 +32,9 @@ import java.util.List;
 public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseViewHolder> implements StickyHeaderAdapter<ReadStoriesHeaderViewHolder> {
 
     public static final int FILLED_STORY = 0;
-    private static final int EMPTY_STORY = FILLED_STORY + 1;
-    private static final int LOADING = EMPTY_STORY + 1;
+    public static final int FILLED_STORY_WITH_HEADER = FILLED_STORY + 1;
+    public static final int EMPTY_STORY_WITH_HEADER = FILLED_STORY_WITH_HEADER + 1;
+    private static final int LOADING = EMPTY_STORY_WITH_HEADER + 1;
 
     private LinkedList<Story> storiesList = new LinkedList<>();
     private ArrayList<Story> displayedPendingStories = new ArrayList<>();
@@ -60,7 +62,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
                 return ((ReadStoriesPopulatedViewHolder) holder).imageView;
             case LOADING:
                 return holder.itemView;
-            case EMPTY_STORY:
+            case EMPTY_STORY_WITH_HEADER:
                 return holder.itemView;
             default:
                 throw new UnsupportedOperationException("You are using unsupported item view type");
@@ -146,16 +148,16 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
     public ReadStoriesBaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case FILLED_STORY:
-                return ReadStoriesPopulatedViewHolder.newInstance(parent, new ReadStoriesPopulatedViewHolder.Actions() {
-                    @Override
-                    public void onStarClicked(int adapterPosition) {
-                        notifyItemChanged(adapterPosition);
-                    }
-                });
+                return ReadStoriesPopulatedViewHolder.newInstance(parent, populatedHolderActions);
+            case FILLED_STORY_WITH_HEADER:
+                ReadStoriesPopulatedViewHolder holderWithHeader = ReadStoriesPopulatedViewHolder.newInstance(parent, populatedHolderActions);
+                holderWithHeader.itemView.setPadding(0, StoryflowApplication.resources().getDimensionPixelSize(R.dimen.headerHeight), 0, 0);
+                return holderWithHeader;
             case LOADING:
                 return ReadStoriesPendingViewHolder.newInstance(parent);
-            case EMPTY_STORY:
+            case EMPTY_STORY_WITH_HEADER:
                 return ReadStoriesEmptyViewHolder.newInstance(parent);
+
             default:
                 throw new UnsupportedOperationException("You are using unsupported view type");
         }
@@ -165,14 +167,12 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
     public void onBindViewHolder(ReadStoriesBaseViewHolder holder, int position) {
         switch (holder.getItemViewType()) {
             case FILLED_STORY:
-                holder.itemView.setPadding(0, getItemTopPadding(position), 0, 0);
+            case FILLED_STORY_WITH_HEADER:
                 Story story = storiesList.get(position);
                 holder.initGui(context, story);
                 break;
             case LOADING:
-                break;
-            case EMPTY_STORY:
-                holder.itemView.setPadding(0, getItemTopPadding(position), 0, 0);
+            case EMPTY_STORY_WITH_HEADER:
                 break;
             default:
                 throw new UnsupportedOperationException("You are using unsupported view type");
@@ -187,7 +187,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
 
     @Override
     public long getHeaderId(int position) {
-        if (getItemViewType(position) == LOADING) {
+        if (isLoadingPosition(position)) {
             position = position - 1;
         }
         Story story = storiesList.get(position);
@@ -232,29 +232,25 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
 
     @Override
     public int getItemViewType(int position) {
-        if (position == getItemCount() - 1) {
+        if (isLoadingPosition(position)) {
             return LOADING;
         } else {
             Story story = storiesList.get(position);
             switch (story.getFillType()) {
                 case Filled:
-                    return FILLED_STORY;
+                    return position != 0 && getHeaderId(position) != getHeaderId(position - 1)
+                                    ? FILLED_STORY_WITH_HEADER
+                                    : FILLED_STORY;
                 case Empty:
-                    return EMPTY_STORY;
+                    return EMPTY_STORY_WITH_HEADER;
                 default:
                     throw new UnsupportedOperationException("You are using unsupported Fill Story type");
             }
         }
     }
 
-    private int getItemTopPadding(int position) {
-        if (position == 0) {
-            return 0;
-        }
-        return getHeaderId(position) != getHeaderId(position - 1)
-                ? StoryflowApplication.resources().getDimensionPixelSize(R.dimen.headerHeight)
-                : 0;
-
+    private boolean isLoadingPosition(int position) {
+        return position == getItemCount() - 1;
     }
 
     public void onStoryCreationFailed(PendingStory pendingStory) {
@@ -283,4 +279,20 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
             }
         }
     }
+
+    private final ReadStoriesPopulatedViewHolder.Actions populatedHolderActions = new ReadStoriesPopulatedViewHolder.Actions() {
+        @Override
+        public Likes onStarClicked(int adapterPosition) {
+            Story story = storiesList.get(adapterPosition);
+            if (story.getLikes() == null) {
+                story.setLikes(new Likes());
+            }
+            return story.getLikes().switchCurrentUserLike();
+        }
+
+        @Override
+        public void notifyItemChanged(int adapterPosition) {
+            ReadStoriesAdapter.this.notifyItemChanged(adapterPosition);
+        }
+    };
 }

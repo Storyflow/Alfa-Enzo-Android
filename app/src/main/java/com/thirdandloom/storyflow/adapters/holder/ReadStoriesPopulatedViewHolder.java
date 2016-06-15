@@ -25,7 +25,8 @@ import android.widget.TextView;
 public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
 
     public interface Actions {
-        void onStarClicked(int adapterPosition);
+        Likes onStarClicked(int adapterPosition);
+        void notifyItemChanged(int adapterPosition);
     }
 
     public ImageView imageView;
@@ -48,6 +49,7 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
     private ImageView starsSecondAvatar;
     private TextView starsTextView;
     private boolean containerIsVisible;
+    private boolean startViewHolderAnimation;
 
     private Actions actions;
 
@@ -98,8 +100,13 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
             StoryflowImageUtils.saveImage(context, story.getSavedImageUrl());
         });
         starButton.setOnClickListener(v -> {
-            actions.onStarClicked(getAdapterPosition());
-            containerIsVisible = !containerIsVisible;
+            Likes storyLikesAfterAction = actions.onStarClicked(getAdapterPosition());
+            startViewHolderAnimation = shouldStartAnimateViewHolderChanges(storyLikesAfterAction);
+            if (startViewHolderAnimation) {
+                actions.notifyItemChanged(getAdapterPosition());
+            } else {
+                configureLikes();
+            }
         });
     }
 
@@ -108,7 +115,7 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
     }
 
     public int getPreLayoutContainerHeight() {
-        return !containerIsVisible ? AndroidUtils.dp(44) : 0;
+        return containerIsVisible ? AndroidUtils.dp(44) : 0;
     }
 
     @Override
@@ -119,7 +126,7 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         descriptionTextView.setText(story.getDescription());
         configureAuthor(story.getAuthor(), context);
         configurePendingActions(story.getPendingStatus());
-        configureLikers();
+        configureLikes();
         switch (story.getType()) {
             case Text:
                 StoryflowImageUtils.Config.with(context, imageView)
@@ -138,21 +145,21 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         }
     }
 
-    private void configureLikers() {
-        resetStarsViews();
+    private void configureLikes() {
         Likes likes = story.getLikes();
         if (likes == null || (!likes.containsCurrentUserLike() && likes.getCount() == 0)) {
+            containerIsVisible = false;
+            if (!startViewHolderAnimation) resetStarsViews();
             return;
         }
+        ViewUtils.setHidden(starsSecondAvatar, likes.getCount() <= 1);
         if (likes.containsCurrentUserLike()) {
             initIncludedCurrentUserLike(likes.getCount(), likes.getLastLikeAuthor());
         } else {
             initExcludedUserLike(likes.getCount(), likes.getLastLikeAuthor());
         }
-        ViewUtils.show(starsContainer);
+        if (!startViewHolderAnimation) ViewUtils.show(starsContainer);
         containerIsVisible = true;
-        //starsContainer.getLayoutParams().height = AndroidUtils.dp(44);
-        //starsContainer.requestLayout();
     }
 
     private void initExcludedUserLike(int likesCount, Author lastLiked) {
@@ -170,7 +177,6 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         if (likesCount <= 1) {
             starsTextView.setText(R.string.you_marked_this_story);
         } else {
-            ViewUtils.show(starsSecondAvatar);
             showAvatar(context, starsSecondAvatar, lastLiked.getCroppedAvatar().getImageUrl());
             if (likesCount == 2) {
                 starsTextView.setText(context.getString(R.string.you_and_ss_marked_this_story, lastLiked.getFullName()));
@@ -183,9 +189,8 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
     private void resetStarsViews() {
         starsFirstAvatar.setImageDrawable(null);
         starsSecondAvatar.setImageDrawable(null);
-        ViewUtils.hide(starsContainer, starsSecondAvatar);
         starsTextView.setText("");
-        containerIsVisible = false;
+        ViewUtils.hide(starsContainer);
     }
 
     private void configureAuthor(Author author, Context context) {
@@ -221,9 +226,25 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
                 ViewUtils.show(pendingActionsContainer);
                 ViewUtils.show(deleteButton);
                 break;
+
             default:
                 break;
-
         }
+    }
+
+
+    public void animationFinished() {
+        startViewHolderAnimation = false;
+    }
+
+    public void animationStarted(int startedHeight) {
+        ViewUtils.show(starsContainer);
+        starsContainer.getLayoutParams().height = startedHeight;
+        starsContainer.requestLayout();
+    }
+
+    private boolean shouldStartAnimateViewHolderChanges(Likes afterActionLikes) {
+        return afterActionLikes == null || afterActionLikes.getCount() == 0
+                || (afterActionLikes.getCount() == 1 && afterActionLikes.containsCurrentUserLike());
     }
 }
