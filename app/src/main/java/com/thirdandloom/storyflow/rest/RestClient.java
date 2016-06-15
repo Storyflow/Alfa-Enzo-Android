@@ -206,6 +206,11 @@ public class RestClient implements IRestClient {
         sendSync(apiService.uploadImage(model), new ResponseCallback<>(success, failure));
     }
 
+    @Override
+    public void logout(ResponseCallback.ISuccess success, ResponseCallback.IFailure failure) {
+        sendAsync(apiService.logout(), new ResponseCallback<>(success, failure));
+    }
+
     public static <T> void sendAsync(Call<T> call, Callback<T> responseCallback) {
         call.enqueue(responseCallback);
     }

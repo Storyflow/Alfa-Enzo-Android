@@ -20,13 +20,21 @@ public class ProfileActivity extends BaseActivity {
         setContentView(R.layout.activity_profile);
         setTitle(R.string.user_profile);
         findViewById(R.id.activity_logout_continue).setOnClickListener(v -> {
+            logout();
+        });
+    }
+
+    private void logout() {
+        showProgress();
+        StoryflowApplication.restClient().logout((responseBody) -> {
+            hideProgress();
             StoryflowApplication.restClient().clearCookies();
             StoryflowApplication.account().resetAccount();
             StoryflowApplication.getPendingStoriesManager().clearAll();
             Intent intent = WelcomeActivity.newInstance();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-        });
+        }, (errorMessage, type) -> showError(errorMessage));
     }
 
     @Override
