@@ -48,6 +48,8 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
     private ImageView starsFirstAvatar;
     private ImageView starsSecondAvatar;
     private TextView starsTextView;
+    private TextView starsCountTextView;
+    private TextView commentsCountTextView;
     private boolean containerIsVisible;
     private boolean startViewHolderAnimation;
 
@@ -76,6 +78,8 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         authorUserNameTextView = (TextView)itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_user_name_textview);
         storyImageContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_story_image_container);
         saveButton = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_item_save);
+        commentsCountTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_reading_stories_comments_count_text_view);
+        starsCountTextView = (TextView) itemView.findViewById(R.id.adapter_recycler_item_reading_stories_stars_count_text_view);
 
         starsContainer = itemView.findViewById(R.id.adapter_recycler_item_reading_stories_stars_container);
         starsFirstAvatar = (ImageView) itemView.findViewById(R.id.adapter_recycler_item_reading_stories_stars_ava1);
@@ -124,6 +128,7 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
 
         storyLocalUid = story.getLocalUid();
         descriptionTextView.setText(story.getDescription());
+        commentsCountTextView.setText(context.getResources().getQuantityString(R.plurals.plurals_dd_comments, story.getCommentsCount(), story.getCommentsCount()));
         configureAuthor(story.getAuthor(), context);
         configurePendingActions(story.getPendingStatus());
         configureLikes();
@@ -147,16 +152,19 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
 
     private void configureLikes() {
         Likes likes = story.getLikes();
-        if (likes == null || (!likes.containsCurrentUserLike() && likes.getCount() == 0)) {
+        int likesCount = likes.getCount();
+        starsCountTextView.setText(context.getResources().getQuantityString(R.plurals.plurals_dd_stars, likesCount, likesCount));
+
+        if (!likes.containsCurrentUserLike() && likesCount == 0) {
             containerIsVisible = false;
             if (!startViewHolderAnimation) resetStarsViews();
             return;
         }
-        ViewUtils.setHidden(starsSecondAvatar, likes.getCount() <= 1);
+        ViewUtils.setHidden(starsSecondAvatar, likesCount <= 1);
         if (likes.containsCurrentUserLike()) {
-            initIncludedCurrentUserLike(likes.getCount(), likes.getLastLikeAuthor());
+            initIncludedCurrentUserLike(likesCount, likes.getLastLikeAuthor());
         } else {
-            initExcludedUserLike(likes.getCount(), likes.getLastLikeAuthor());
+            initExcludedUserLike(likesCount, likes.getLastLikeAuthor());
         }
         if (!startViewHolderAnimation) ViewUtils.show(starsContainer);
         containerIsVisible = true;
