@@ -160,10 +160,11 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
             if (!startViewHolderAnimation) resetStarsViews();
             return;
         }
-        ViewUtils.setHidden(starsSecondAvatar, likesCount <= 1);
         if (likes.containsCurrentUserLike()) {
+            ViewUtils.setHidden(starsSecondAvatar, likesCount <= 1);
             initIncludedCurrentUserLike(likesCount, likes.getLastLikeAuthor());
         } else {
+            ViewUtils.hide(starsSecondAvatar);
             initExcludedUserLike(likesCount, likes.getLastLikeAuthor());
         }
         if (!startViewHolderAnimation) ViewUtils.show(starsContainer);
