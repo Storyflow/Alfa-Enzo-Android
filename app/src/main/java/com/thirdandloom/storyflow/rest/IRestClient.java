@@ -22,6 +22,7 @@ import com.thirdandloom.storyflow.utils.image.Size;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -71,6 +72,10 @@ public interface IRestClient {
     void uploadImageSync(PendingStory pendingStory, Action0 uploadImpossible,
                          RestClient.ResponseCallback.ISuccess<StoryId> success,
                          RestClient.ResponseCallback.IFailure failure);
+
+
+    void logout(RestClient.ResponseCallback.ISuccess success,
+            RestClient.ResponseCallback.IFailure failure);
 
     void clearCookies();
 
@@ -132,5 +137,11 @@ public interface IRestClient {
         })
         @POST("/swan/stories/upload")
         Call<StoryId> uploadImage(@Body UploadImageRequestModel uploadImageWrapper);
+
+        @Headers({
+                "Accept: */*",
+        })
+        @DELETE("/swan_user/sign_out")
+        Call<ResponseBody> logout();
     }
 }
