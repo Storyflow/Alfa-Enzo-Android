@@ -10,6 +10,7 @@ import com.thirdandloom.storyflow.adapters.BrowsePeriodsAdapter;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.BaseUtils;
+import com.thirdandloom.storyflow.utils.DateUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -143,7 +144,7 @@ public class StoryflowImageUtils extends BaseUtils {
             .asBitmap()
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .fitCenter().atMost().override(2000, 2000)
+            .fitCenter().atMost().override(2500, 2500)
             .into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -178,8 +179,11 @@ public class StoryflowImageUtils extends BaseUtils {
         values.put(MediaStore.Images.Media.DISPLAY_NAME, title);
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
         // Add the date meta data to ensure the image is added at the front of the gallery
-        values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis()/1000);
-        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis()/1000);
+
+        double currentTimeSec = DateUtils.millisToSeconds(System.currentTimeMillis());
+        values.put(MediaStore.Images.Media.DATE_ADDED, currentTimeSec);
+        values.put(MediaStore.Images.Media.DATE_TAKEN, currentTimeSec);
+        values.put(MediaStore.Images.Media.DATE_MODIFIED, currentTimeSec);
 
         Uri url = null;
         String stringUrl = null;    /* value to be returned */
