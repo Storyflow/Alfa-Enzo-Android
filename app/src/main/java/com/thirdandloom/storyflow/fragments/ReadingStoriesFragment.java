@@ -66,7 +66,7 @@ public class ReadingStoriesFragment extends BaseFragment {
     private HashMap<Story, LikeAction> storiesLikesActions = new HashMap<>();
 
     private RecyclerView recyclerView;
-    private View viewContainer;
+    private ViewGroup viewContainer;
     private View backgroundView;
 
     private boolean canResize;
@@ -91,7 +91,7 @@ public class ReadingStoriesFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_story_details, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.fragment_story_details_recycler_view);
-        viewContainer = view.findViewById(R.id.fragment_story_details_recycler_view_container);
+        viewContainer = (ViewGroup) view.findViewById(R.id.fragment_story_details_recycler_view_container);
         backgroundView = view.findViewById(R.id.fragment_story_details_background);
 
         requestData = getState().requestData;
@@ -307,7 +307,6 @@ public class ReadingStoriesFragment extends BaseFragment {
     }
 
     private void onParentScroll(Float dy) {
-        recyclerView.scrollBy(0, Math.round(dy));
         if (!canResize) return;
         absoluteScroll += dy;
 
@@ -336,8 +335,12 @@ public class ReadingStoriesFragment extends BaseFragment {
         Point alphaEnd = new Point(largestValueFinish, FINISH_ALPHA);
         float currentAlpha = MathUtils.getPointY(alphaStart, alphaEnd, currentValue);
 
-        updateViewScale(viewContainer, widthScale, heightScale, leftDelta, currentValue);
-        backgroundView.setAlpha(currentAlpha);
+        if (widthScale*MAX_SCALE == MAX_SCALE && heightScale*MAX_SCALE == MAX_SCALE) {
+            recyclerView.scrollBy(0, Math.round(dy));
+        } else {
+            updateViewScale(viewContainer, widthScale, heightScale, leftDelta, currentValue);
+            backgroundView.setAlpha(currentAlpha);
+        }
     }
 
     private int getCurrentValue() {
