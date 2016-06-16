@@ -22,4 +22,12 @@ public abstract class ReadStoriesBaseViewHolder extends RecyclerView.ViewHolder 
         this.context = context;
         this.story = story;
     }
+
+    public int getPostLayoutContainerHeight() {
+        return 0;
+    }
+
+    public int getPreLayoutContainerHeight() {
+        return 0;
+    }
 }

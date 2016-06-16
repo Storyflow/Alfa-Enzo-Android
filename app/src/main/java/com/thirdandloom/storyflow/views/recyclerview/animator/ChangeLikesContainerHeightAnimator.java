@@ -1,5 +1,6 @@
 package com.thirdandloom.storyflow.views.recyclerview.animator;
 
+import com.thirdandloom.storyflow.adapters.holder.ReadStoriesBaseViewHolder;
 import com.thirdandloom.storyflow.adapters.holder.ReadStoriesPopulatedViewHolder;
 import com.thirdandloom.storyflow.utils.animations.AnimatorListener;
 
@@ -28,7 +29,7 @@ public class ChangeLikesContainerHeightAnimator extends DefaultItemAnimator  {
     public ItemHolderInfo recordPreLayoutInformation(@NonNull RecyclerView.State state, @NonNull RecyclerView.ViewHolder viewHolder, int changeFlags, @NonNull List<Object> payloads) {
         HeightItemInfo info = (HeightItemInfo) super.recordPreLayoutInformation(state, viewHolder,
                 changeFlags, payloads);
-        final ReadStoriesPopulatedViewHolder readStoryHolder = (ReadStoriesPopulatedViewHolder) viewHolder;
+        final ReadStoriesBaseViewHolder readStoryHolder = (ReadStoriesBaseViewHolder) viewHolder;
         info.height = readStoryHolder.getPreLayoutContainerHeight();
 
         return info;
@@ -39,7 +40,7 @@ public class ChangeLikesContainerHeightAnimator extends DefaultItemAnimator  {
     public ItemHolderInfo recordPostLayoutInformation(@NonNull RecyclerView.State state,
             @NonNull RecyclerView.ViewHolder viewHolder) {
         HeightItemInfo info = (HeightItemInfo) super.recordPostLayoutInformation(state, viewHolder);
-        final ReadStoriesPopulatedViewHolder readStoryHolder = (ReadStoriesPopulatedViewHolder) viewHolder;
+        final ReadStoriesBaseViewHolder readStoryHolder = (ReadStoriesBaseViewHolder) viewHolder;
         info.height = readStoryHolder.getPostLayoutContainerHeight();
 
         return info;
@@ -52,7 +53,7 @@ public class ChangeLikesContainerHeightAnimator extends DefaultItemAnimator  {
 
     @Override
     public boolean animateChange(@NonNull RecyclerView.ViewHolder oldHolder, @NonNull RecyclerView.ViewHolder newHolder, @NonNull ItemHolderInfo preInfo, @NonNull ItemHolderInfo postInfo) {
-        if (oldHolder != newHolder) {
+        if (oldHolder != newHolder || !(newHolder instanceof ReadStoriesBaseViewHolder)) {
             return super.animateChange(oldHolder, newHolder, preInfo, postInfo);
         }
 

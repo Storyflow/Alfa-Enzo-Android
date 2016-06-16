@@ -175,10 +175,12 @@ public class ChooseAvatarAndNameActivity extends BaseActivity {
     }
 
     private void startBrowsing() {
-        hideProgress();
-        Intent browsingActivityIntent = BrowseStoriesActivity.newInstance(false);
-        browsingActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(browsingActivityIntent);
+        StoryflowApplication.runOnUIThread(() -> {
+            hideProgress();
+            Intent browsingActivityIntent = BrowseStoriesActivity.newInstance(false);
+            browsingActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(browsingActivityIntent);
+        }, 5000);
     }
 
     @Override

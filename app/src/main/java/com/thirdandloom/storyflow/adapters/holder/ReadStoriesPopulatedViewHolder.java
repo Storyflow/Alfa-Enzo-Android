@@ -114,10 +114,12 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
         });
     }
 
+    @Override
     public int getPostLayoutContainerHeight() {
         return containerIsVisible ? AndroidUtils.dp(44) : 0;
     }
 
+    @Override
     public int getPreLayoutContainerHeight() {
         return containerIsVisible ? AndroidUtils.dp(44) : 0;
     }
@@ -152,10 +154,13 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
 
     private void configureLikes() {
         Likes likes = story.getLikes();
-        int likesCount = likes.getCount();
+        boolean likesAreNull = likes == null;
+        int likesCount = !likesAreNull
+                            ? likes.getCount()
+                            : 0;
         starsCountTextView.setText(context.getResources().getQuantityString(R.plurals.plurals_dd_stars, likesCount, likesCount));
 
-        if (!likes.containsCurrentUserLike() && likesCount == 0) {
+        if (likesAreNull || (!likes.containsCurrentUserLike() && likesCount == 0)) {
             containerIsVisible = false;
             if (!startViewHolderAnimation) resetStarsViews();
             return;
