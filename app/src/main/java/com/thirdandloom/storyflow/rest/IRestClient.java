@@ -10,6 +10,7 @@ import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.models.StoryId;
 import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.rest.requestmodels.CheckEmailRequestModel;
+import com.thirdandloom.storyflow.rest.requestmodels.LikeStoryActionRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.PostImageStoryRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.PostTextStoryRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.ProfileImageRequestModel;
@@ -75,6 +76,14 @@ public interface IRestClient {
 
 
     void logout(RestClient.ResponseCallback.ISuccess success,
+            RestClient.ResponseCallback.IFailure failure);
+
+    void likeStory(String storyId,
+            RestClient.ResponseCallback.ISuccess success,
+            RestClient.ResponseCallback.IFailure failure);
+
+    void dislikeStory(String storyId,
+            RestClient.ResponseCallback.ISuccess success,
             RestClient.ResponseCallback.IFailure failure);
 
     void clearCookies();
@@ -143,5 +152,17 @@ public interface IRestClient {
         })
         @DELETE("/swan_user/sign_out")
         Call<ResponseBody> logout();
+
+        @Headers({
+                "Accept: */*",
+        })
+        @POST("swan/like/likes/")
+        Call<ResponseBody> like(@Body LikeStoryActionRequestModel likeStoryActionRequestModel);
+
+        @Headers({
+                "Accept: */*",
+        })
+        @DELETE("/swan/like/likes/{item_id}")
+        Call<ResponseBody> dislike(@Path("item_id") String storyId, @Query("type") String type);
     }
 }

@@ -16,6 +16,7 @@ import com.thirdandloom.storyflow.rest.cookies.JavaNetCookieJar;
 import com.thirdandloom.storyflow.rest.cookies.PersistentCookieStore;
 import com.thirdandloom.storyflow.rest.gson.GsonConverterFactory;
 import com.thirdandloom.storyflow.rest.requestmodels.CheckEmailRequestModel;
+import com.thirdandloom.storyflow.rest.requestmodels.LikeStoryActionRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.PostImageStoryRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.PostTextStoryRequestModel;
 import com.thirdandloom.storyflow.rest.requestmodels.ProfileImageRequestModel;
@@ -209,6 +210,16 @@ public class RestClient implements IRestClient {
     @Override
     public void logout(ResponseCallback.ISuccess success, ResponseCallback.IFailure failure) {
         sendAsync(apiService.logout(), new ResponseCallback<>(success, failure));
+    }
+
+    @Override
+    public void likeStory(String storyId, ResponseCallback.ISuccess success, ResponseCallback.IFailure failure) {
+        sendAsync(apiService.like(new LikeStoryActionRequestModel(storyId)), new ResponseCallback<>(success, failure));
+    }
+
+    @Override
+    public void dislikeStory(String storyId, ResponseCallback.ISuccess success, ResponseCallback.IFailure failure) {
+        sendAsync(apiService.dislike(storyId, "story"), new ResponseCallback<>(success, failure));
     }
 
     public static <T> void sendAsync(Call<T> call, Callback<T> responseCallback) {

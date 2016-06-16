@@ -25,7 +25,7 @@ import android.widget.TextView;
 public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
 
     public interface Actions {
-        Likes onStarClicked(int adapterPosition);
+        Likes onStarClicked(int adapterPosition, ReadStoriesPopulatedViewHolder holder);
         void notifyItemChanged(int adapterPosition);
         void onImageClicked(int adapterPosition, View view);
     }
@@ -105,17 +105,20 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
             StoryflowImageUtils.saveImage(context, story.getSavedImageUrl());
         });
         starButton.setOnClickListener(v -> {
-            Likes storyLikesAfterAction = actions.onStarClicked(getAdapterPosition());
-            startViewHolderAnimation = shouldStartAnimateViewHolderChanges(storyLikesAfterAction);
-            if (startViewHolderAnimation) {
-                actions.notifyItemChanged(getAdapterPosition());
-            } else {
-                configureLikes();
-            }
+            onStoryLikesChanged(actions.onStarClicked(getAdapterPosition(), this));
         });
         imageView.setOnClickListener(v -> {
             actions.onImageClicked(getAdapterPosition(), v);
         });
+    }
+
+    public void onStoryLikesChanged(Likes storyLikesAfterAction) {
+        startViewHolderAnimation = shouldStartAnimateViewHolderChanges(storyLikesAfterAction);
+        if (startViewHolderAnimation) {
+            actions.notifyItemChanged(getAdapterPosition());
+        } else {
+            configureLikes();
+        }
     }
 
     @Override

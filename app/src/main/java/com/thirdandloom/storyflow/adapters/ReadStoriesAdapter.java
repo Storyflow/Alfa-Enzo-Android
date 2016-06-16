@@ -38,7 +38,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
 
     public interface Actions {
         void startPreview(Story story, View fromView);
-        void likeClicked(Story story, Likes likes);
+        void likeClicked(Story story, Likes likes, ReadStoriesPopulatedViewHolder holder);
     }
 
     private LinkedList<Story> storiesList = new LinkedList<>();
@@ -269,15 +269,26 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
         }
     }
 
+    public void likeActionFailed(Story story, ReadStoriesPopulatedViewHolder holder) {
+        Likes newLikes = switchStoryLikes(story);
+        if (holder.getStory().equals(story)) {
+            holder.onStoryLikesChanged(newLikes);
+        }
+    }
+
+    private Likes switchStoryLikes(Story story) {
+        if (story.getLikes() == null) {
+            story.setLikes(new Likes());
+        }
+        return story.getLikes().switchCurrentUserLike();
+    }
+
     private final ReadStoriesPopulatedViewHolder.Actions populatedHolderActions = new ReadStoriesPopulatedViewHolder.Actions() {
         @Override
-        public Likes onStarClicked(int adapterPosition) {
+        public Likes onStarClicked(int adapterPosition, ReadStoriesPopulatedViewHolder holder) {
             Story story = storiesList.get(adapterPosition);
-            if (story.getLikes() == null) {
-                story.setLikes(new Likes());
-            }
-            Likes newLikes = story.getLikes().switchCurrentUserLike();
-            actions.likeClicked(story, newLikes);
+            Likes newLikes = switchStoryLikes(story);
+            actions.likeClicked(story, newLikes, holder);
             return newLikes;
         }
 

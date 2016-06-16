@@ -30,4 +30,8 @@ public abstract class ReadStoriesBaseViewHolder extends RecyclerView.ViewHolder 
     public int getPreLayoutContainerHeight() {
         return 0;
     }
+
+    public Story getStory() {
+        return story;
+    }
 }

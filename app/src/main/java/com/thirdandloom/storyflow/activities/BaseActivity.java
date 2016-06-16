@@ -5,6 +5,7 @@ import com.thirdandloom.storyflow.Theme;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.connectivity.NetworkReceiver;
 import com.thirdandloom.storyflow.utils.event.HideProgressEvent;
+import com.thirdandloom.storyflow.utils.event.ShowErrorEvent;
 import com.thirdandloom.storyflow.utils.event.ShowProgressEvent;
 import com.thirdandloom.storyflow.utils.event.ShowWarningEvent;
 import com.thirdandloom.storyflow.views.alert.QuickAlertController;
@@ -144,6 +145,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ShowWarningEvent event) {
         showWarning(event.getMessageResId());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ShowErrorEvent event) {
+        showWarning(event.getErrorMessage());
     }
 
     protected void initQuickAlertController() {

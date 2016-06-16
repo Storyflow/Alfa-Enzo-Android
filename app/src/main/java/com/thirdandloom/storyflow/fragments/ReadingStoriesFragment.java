@@ -4,9 +4,12 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.activities.StoryPreviewActivity;
 import com.thirdandloom.storyflow.adapters.ReadStoriesAdapter;
+import com.thirdandloom.storyflow.adapters.holder.ReadStoriesPopulatedViewHolder;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Likes;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.rest.IRestClient;
+import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
@@ -56,6 +59,11 @@ public class ReadingStoriesFragment extends BaseFragment {
         View getBottomBar();
         void onReadingStoriesDismissed();
     }
+
+    enum LikeAction {
+        Like, Dislike;
+    }
+    private HashMap<Story, LikeAction> storiesLikesActions = new HashMap<>();
 
     private RecyclerView recyclerView;
     private View viewContainer;
@@ -376,34 +384,61 @@ public class ReadingStoriesFragment extends BaseFragment {
         }
 
         @Override
-        public void likeClicked(Story story, Likes likes) {
-            LikeAction likeAction = LikeAction.Like;
-            if (!likes.containsCurrentUserLike()) {
-                likeAction = LikeAction.Dislike;
-            }
+        public void likeClicked(Story story, Likes likes, ReadStoriesPopulatedViewHolder holder) {
+            LikeAction likeAction = likes.containsCurrentUserLike()
+                                            ? LikeAction.Like
+                                            : LikeAction.Dislike;
 
             if (!storiesLikesActions.containsKey(story)) {
-                Timber.d("Like storiesLikesActions do NOT contains story");
                 storiesLikesActions.put(story, likeAction);
                 if (likeAction == LikeAction.Like) {
-                    //send like
-                    Timber.d("Like send request for LikeAction.Like");
+                    likeStory(story, (errorMessage) -> {
+                        showError(errorMessage);
+                        readStoriesAdapter.likeActionFailed(story, holder);
+                    });
                 } else {
-                    //send dislike
-                    Timber.d("Like send request for LikeAction.Dislike");
+                    dislikeStory(story, (errorMessage) ->  {
+                        showError(errorMessage);
+                        readStoriesAdapter.likeActionFailed(story, holder);
+                    });
                 }
             } else {
                 storiesLikesActions.put(story, likeAction);
-                Timber.d("Like storiesLikesActions contains story latest user action: %s", storiesLikesActions.get(story));
             }
-
         }
     };
 
-    enum LikeAction {
-        Like, Dislike;
+    private void likeStory(Story story, Action1<String> actionFailed) {
+        StoryflowApplication.restClient().likeStory(story.getId(), (response) -> {
+            lastUserLikeAction(story, () -> {
+                storiesLikesActions.remove(story);
+            }, () -> dislikeStory(story, actionFailed));
+        },((errorMessage, errorType) -> {
+            lastUserLikeAction(story,() -> actionFailed.call(errorMessage) , () -> {
+                //do nothing, last users action was dislike story
+            });
+            storiesLikesActions.remove(story);
+        }));
     }
-    private HashMap<Story, LikeAction> storiesLikesActions = new HashMap<>();
+
+    private void dislikeStory(Story story, Action1<String> actionFailed) {
+        StoryflowApplication.restClient().dislikeStory(story.getId(), (response) -> {
+            lastUserLikeAction(story, () -> {
+                likeStory(story, actionFailed);
+            } , () -> storiesLikesActions.remove(story));
+        },((errorMessage, errorType) -> {
+            lastUserLikeAction(story, () -> {
+                //do nothing, last users action was like story
+            }, () -> actionFailed.call(errorMessage));
+            storiesLikesActions.remove(story);
+        }));
+    }
+
+    private void lastUserLikeAction(Story story, Action0 likeAction, Action0 dislikeAction) {
+        LikeAction lastUserLikeAction = storiesLikesActions.get(story);
+        if (lastUserLikeAction == LikeAction.Like) likeAction.call();
+        if (lastUserLikeAction == LikeAction.Dislike) dislikeAction.call();
+    }
 
     @Nullable
     @Override

@@ -169,6 +169,18 @@ public class Story extends BaseModel {
         stringFromType = Collections.unmodifiableMap(map);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Story)) {
+            return false;
+        }
+        Story that = (Story) o;
+        return this.id.equals(that.id);
+    }
+
     public static class WrapList implements Serializable {
         private static final long serialVersionUID = 2232982624031951655L;
         @SerializedName("stories")
