@@ -50,7 +50,7 @@ public class ForgotPasswordDialog extends MaterialDialog {
             customView(R.layout.dialog_forgot_password, true);
         }
 
-        public Builder onPositive(SingleButtonCallback callback) {
+        public Builder onPositive(@NonNull SingleButtonCallback callback) {
             super.onPositive(callback);
             return this;
         }

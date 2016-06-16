@@ -53,7 +53,7 @@ public class ChoseDateDialog extends MaterialDialog {
             customView(R.layout.date_picker, true);
         }
 
-        public Builder onPositive(MaterialDialog.SingleButtonCallback callback) {
+        public Builder onPositive(@NonNull MaterialDialog.SingleButtonCallback callback) {
             super.onPositive(callback);
             return this;
         }

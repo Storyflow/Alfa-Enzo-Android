@@ -17,14 +17,14 @@ import io.fabric.sdk.android.Fabric;
 import rx.functions.Action1;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
+import android.support.multidex.MultiDexApplication;
 
 import java.util.concurrent.Future;
 
-public class StoryflowApplication extends Application implements IAviaryClientCredentials {
+public class StoryflowApplication extends MultiDexApplication implements IAviaryClientCredentials {
     private static volatile Handler applicationHandler;
     private static volatile SimpleExecutor<Runnable> backgroundThreadExecutor;
 
