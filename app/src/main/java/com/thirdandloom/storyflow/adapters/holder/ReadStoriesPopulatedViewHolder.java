@@ -27,6 +27,7 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
     public interface Actions {
         Likes onStarClicked(int adapterPosition);
         void notifyItemChanged(int adapterPosition);
+        void onImageClicked(int adapterPosition, View view);
     }
 
     public ImageView imageView;
@@ -111,6 +112,9 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
             } else {
                 configureLikes();
             }
+        });
+        imageView.setOnClickListener(v -> {
+            actions.onImageClicked(getAdapterPosition(), v);
         });
     }
 

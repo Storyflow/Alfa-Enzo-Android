@@ -36,6 +36,11 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
     public static final int EMPTY_STORY_WITH_HEADER = FILLED_STORY_WITH_HEADER + 1;
     private static final int LOADING = EMPTY_STORY_WITH_HEADER + 1;
 
+    public interface Actions {
+        void startPreview(Story story, View fromView);
+        void likeClicked(Story story, Likes likes);
+    }
+
     private LinkedList<Story> storiesList = new LinkedList<>();
     private ArrayList<Story> displayedPendingStories = new ArrayList<>();
 
@@ -43,30 +48,14 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
     private final int limit;
     private final RequestData.Period.Type period;
     private final Context context;
+    private final ReadStoriesAdapter.Actions actions;
 
-    public ReadStoriesAdapter(Story.WrapList stories, Calendar dateCalendar, RequestData requestData, Context context) {
+    public ReadStoriesAdapter(Context context, Story.WrapList stories, Calendar dateCalendar, RequestData requestData, ReadStoriesAdapter.Actions actions) {
         this.limit = requestData.getLimit();
         this.period = requestData.getPeriodType();
         this.context = context;
+        this.actions = actions;
         addNewStories(stories, dateCalendar);
-    }
-
-    @NonNull
-    public Story getStory(int position) {
-        return storiesList.get(position);
-    }
-
-    public View getFromView(int position, RecyclerView.ViewHolder holder) {
-        switch (getItemViewType(position)) {
-            case FILLED_STORY:
-                return ((ReadStoriesPopulatedViewHolder) holder).imageView;
-            case LOADING:
-                return holder.itemView;
-            case EMPTY_STORY_WITH_HEADER:
-                return holder.itemView;
-            default:
-                throw new UnsupportedOperationException("You are using unsupported item view type");
-        }
     }
 
     public void addNewStories(Story.WrapList stories, Calendar dateCalendar) {
@@ -287,12 +276,19 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
             if (story.getLikes() == null) {
                 story.setLikes(new Likes());
             }
-            return story.getLikes().switchCurrentUserLike();
+            Likes newLikes = story.getLikes().switchCurrentUserLike();
+            actions.likeClicked(story, newLikes);
+            return newLikes;
         }
 
         @Override
         public void notifyItemChanged(int adapterPosition) {
             ReadStoriesAdapter.this.notifyItemChanged(adapterPosition);
+        }
+
+        @Override
+        public void onImageClicked(int adapterPosition, View view) {
+            actions.startPreview(storiesList.get(adapterPosition), view);
         }
     };
 }

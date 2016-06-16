@@ -5,6 +5,7 @@ import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.activities.StoryPreviewActivity;
 import com.thirdandloom.storyflow.adapters.ReadStoriesAdapter;
 import com.thirdandloom.storyflow.managers.StoriesManager;
+import com.thirdandloom.storyflow.models.Likes;
 import com.thirdandloom.storyflow.models.Story;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
@@ -15,7 +16,6 @@ import com.thirdandloom.storyflow.utils.animations.FooterHiderScrollListener;
 import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
-import com.thirdandloom.storyflow.views.recyclerview.RecyclerItemClickListener;
 import com.thirdandloom.storyflow.views.recyclerview.animator.ChangeLikesContainerHeightAnimator;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.GradientOnTopStickyHeaderDecoration;
@@ -32,7 +32,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,6 +40,7 @@ import android.view.ViewGroup;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class ReadingStoriesFragment extends BaseFragment {
     private static final int MAX_SCALE = 100;
@@ -137,7 +137,7 @@ public class ReadingStoriesFragment extends BaseFragment {
         recyclerView.addItemDecoration(divider);
         recyclerView.setItemAnimator(new ChangeLikesContainerHeightAnimator());
 
-        readStoriesAdapter = new ReadStoriesAdapter(stories, dateCalendar, requestData, getActivity());
+        readStoriesAdapter = new ReadStoriesAdapter(getActivity(), stories, dateCalendar, requestData, readStoriesActions);
         GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(readStoriesAdapter, true);
         setHasOptionsMenu(true);
         recyclerView.setAdapter(readStoriesAdapter);
@@ -148,14 +148,6 @@ public class ReadingStoriesFragment extends BaseFragment {
                 loadMoreStories();
             }
         });
-        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), (viewHolder, position) -> {
-            if (readStoriesAdapter.getItemViewType(position) == ReadStoriesAdapter.FILLED_STORY) {
-                Intent intent = StoryPreviewActivity.newInstance(readStoriesAdapter.getStory(position),
-                        readStoriesAdapter.getFromView(position, viewHolder));
-                getActivity().startActivity(intent);
-                getActivity().overridePendingTransition(0, 0);
-            }
-        }));
         footerHiderScrollListener = FooterHiderScrollListener.init(recyclerView, getBottomBar());
     }
 
@@ -374,6 +366,44 @@ public class ReadingStoriesFragment extends BaseFragment {
             throw new UnsupportedOperationException("activity should be instanceof IStoryDetailFragmentDataSource");
         }
     }
+
+    private final ReadStoriesAdapter.Actions readStoriesActions = new ReadStoriesAdapter.Actions() {
+        @Override
+        public void startPreview(Story story, View fromView) {
+            Intent intent = StoryPreviewActivity.newInstance(story, fromView);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(0, 0);
+        }
+
+        @Override
+        public void likeClicked(Story story, Likes likes) {
+            LikeAction likeAction = LikeAction.Like;
+            if (!likes.containsCurrentUserLike()) {
+                likeAction = LikeAction.Dislike;
+            }
+
+            if (!storiesLikesActions.containsKey(story)) {
+                Timber.d("Like storiesLikesActions do NOT contains story");
+                storiesLikesActions.put(story, likeAction);
+                if (likeAction == LikeAction.Like) {
+                    //send like
+                    Timber.d("Like send request for LikeAction.Like");
+                } else {
+                    //send dislike
+                    Timber.d("Like send request for LikeAction.Dislike");
+                }
+            } else {
+                storiesLikesActions.put(story, likeAction);
+                Timber.d("Like storiesLikesActions contains story latest user action: %s", storiesLikesActions.get(story));
+            }
+
+        }
+    };
+
+    enum LikeAction {
+        Like, Dislike;
+    }
+    private HashMap<Story, LikeAction> storiesLikesActions = new HashMap<>();
 
     @Nullable
     @Override
