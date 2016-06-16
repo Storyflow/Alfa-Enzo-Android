@@ -7,6 +7,7 @@ import com.thirdandloom.storyflow.models.Author;
 import com.thirdandloom.storyflow.models.Likes;
 import com.thirdandloom.storyflow.models.PendingStory;
 import com.thirdandloom.storyflow.models.Story;
+import com.thirdandloom.storyflow.models.User;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.ViewUtils;
@@ -186,23 +187,24 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
     private void initExcludedUserLike(int likesCount, Author lastLiked) {
         showAvatar(context, starsFirstAvatar, lastLiked.getCroppedAvatar().getImageUrl());
         if (likesCount == 1) {
-            starsTextView.setText(context.getString(R.string.ss_marked_this_story, lastLiked.getFullName()));
+            starsTextView.setText(lastLiked.getFullName());
         } else {
-            starsTextView.setText(context.getString(R.string.ss_and_count_others_marked_this_story, lastLiked.getFullName(), likesCount));
+            starsTextView.setText(context.getString(R.string.ss_and_count_others, lastLiked.getFullName(), likesCount));
         }
     }
 
     private void initIncludedCurrentUserLike(int likesCount, Author lastLiked) {
-        String userAvatarUrl = StoryflowApplication.account().getUser().getProfileImage().getImageUrl();
+        User currentUser = StoryflowApplication.account().getUser();
+        String userAvatarUrl = currentUser.getProfileImage().getImageUrl();
         showAvatar(context, starsFirstAvatar, userAvatarUrl);
         if (likesCount <= 1) {
-            starsTextView.setText(R.string.you_marked_this_story);
+            starsTextView.setText(currentUser.getFullUserName());
         } else {
             showAvatar(context, starsSecondAvatar, lastLiked.getCroppedAvatar().getImageUrl());
             if (likesCount == 2) {
-                starsTextView.setText(context.getString(R.string.you_and_ss_marked_this_story, lastLiked.getFullName()));
+                starsTextView.setText(context.getString(R.string.you_and_ss, lastLiked.getFullName()));
             } else {
-                starsTextView.setText(context.getString(R.string.you_ss_and_count_others_marked_this_story, lastLiked.getFullName(), likesCount));
+                starsTextView.setText(context.getString(R.string.you_comma_ss_and_count_others, lastLiked.getFullName(), likesCount));
             }
         }
     }

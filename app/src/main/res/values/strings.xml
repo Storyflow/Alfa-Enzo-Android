@@ -67,11 +67,9 @@
     <string name="image_will_be_saved_immediately">The image will be saved immediately.</string>
 
     <!--Stars/Likes-->
-    <string name="you_marked_this_story">You marked this story.</string>
-    <string name="ss_marked_this_story">%1$s marked this story.</string>
-    <string name="you_and_ss_marked_this_story">You and %1$s marked this story.</string>
-    <string name="you_ss_and_count_others_marked_this_story">You, %1$s and %2$d others marked this story.</string>
-    <string name="ss_and_count_others_marked_this_story">%1$s and %2$d others marked this story.</string>
+    <string name="you_and_ss">You and %1$s.</string>
+    <string name="you_comma_ss_and_count_others">You, %1$s and %2$d others.</string>
+    <string name="ss_and_count_others">%1$s and %2$d others.</string>
 
     <plurals name="plurals_dd_stars">
         <item quantity="one">%d Star</item>
