@@ -118,7 +118,7 @@ public class ReadingStoriesFragment extends BaseFragment {
             preDrawView.setPivotX(0);
             view.getBackground().setAlpha(0);
 
-            updateViewScale(preDrawView, firstStartWidth/preDrawView.getWidth(), firstStartHeight/preDrawView.getHeight(), firstStartX, firstStartY);
+            //updateViewScale(preDrawView, firstStartWidth/preDrawView.getWidth(), firstStartHeight/preDrawView.getHeight(), firstStartX, firstStartY);
             didDraw = true;
             if (state.startPresentAnimation || startPresentAnimationAfterDraw) {
                 present();
@@ -142,14 +142,15 @@ public class ReadingStoriesFragment extends BaseFragment {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(divider);
+        //recyclerView.addItemDecoration(divider);
         recyclerView.setItemAnimator(new ChangeLikesContainerHeightAnimator());
 
         readStoriesAdapter = new ReadStoriesAdapter(getActivity(), stories, dateCalendar, requestData, readStoriesActions);
         GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(readStoriesAdapter, true);
         setHasOptionsMenu(true);
         recyclerView.setAdapter(readStoriesAdapter);
-        recyclerView.addItemDecoration(decor, 1);
+        //recyclerView.addItemDecoration(decor, 1);
+        recyclerView.addItemDecoration(decor);
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
             @Override
             public void onLoadMore() {
@@ -338,7 +339,30 @@ public class ReadingStoriesFragment extends BaseFragment {
         if (widthScale*MAX_SCALE == MAX_SCALE && heightScale*MAX_SCALE == MAX_SCALE) {
             recyclerView.scrollBy(0, Math.round(dy));
         } else {
-            updateViewScale(viewContainer, widthScale, heightScale, leftDelta, currentValue);
+
+            //updateViewScale(viewContainer, widthScale, heightScale, leftDelta, currentValue);
+
+            //viewContainer.setTranslationY(currentValue);
+            //viewContainer.setTranslationX(leftDelta);
+
+            for (int i = 0; i < recyclerView.getChildCount(); i++) {
+
+                View childView = recyclerView.getChildAt(i);
+                int childWidth = childView.getWidth();
+                int childHeight = childView.getHeight();
+                childView.setPivotY(0.f);
+
+                childView.setScaleX(widthScale);
+                int newWidthAfterScale = (int)(childWidth*widthScale);
+                float scaleHeightCoef = newWidthAfterScale/(float)childWidth;
+                childView.setScaleY(scaleHeightCoef);
+
+                if (i == 0) {
+                    childView.setTranslationY(currentValue);
+                }
+            }
+            //view.setScaleX(widthScale);
+            //view.setScaleY(heightScale);
             backgroundView.setAlpha(currentAlpha);
         }
     }

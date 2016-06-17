@@ -44,7 +44,7 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
     private TextView authorUserNameTextView;
     private View saveButton;
     private View starButton;
-    private View storyImageContainer;
+    public View storyImageContainer;
 
     public View starsContainer;
     private ImageView starsFirstAvatar;
