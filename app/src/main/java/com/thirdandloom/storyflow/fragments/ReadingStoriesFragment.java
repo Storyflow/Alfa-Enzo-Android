@@ -8,14 +8,13 @@ import com.thirdandloom.storyflow.adapters.holder.ReadStoriesPopulatedViewHolder
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Likes;
 import com.thirdandloom.storyflow.models.Story;
-import com.thirdandloom.storyflow.rest.IRestClient;
-import com.thirdandloom.storyflow.rest.RestClient;
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.DeviceUtils;
 import com.thirdandloom.storyflow.utils.MathUtils;
 import com.thirdandloom.storyflow.utils.Timber;
 import com.thirdandloom.storyflow.utils.ViewUtils;
 import com.thirdandloom.storyflow.utils.animations.FooterHiderScrollListener;
+import com.thirdandloom.storyflow.utils.animations.SimpleAnimatorListener;
 import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
@@ -28,6 +27,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -118,7 +119,7 @@ public class ReadingStoriesFragment extends BaseFragment {
             preDrawView.setPivotX(0);
             view.getBackground().setAlpha(0);
 
-            //updateViewScale(preDrawView, firstStartWidth/preDrawView.getWidth(), firstStartHeight/preDrawView.getHeight(), firstStartX, firstStartY);
+            updateRecyclerScale(firstStartWidth/preDrawView.getWidth(), firstStartY);
             didDraw = true;
             if (state.startPresentAnimation || startPresentAnimationAfterDraw) {
                 present();
@@ -228,7 +229,7 @@ public class ReadingStoriesFragment extends BaseFragment {
         if (velocity > AndroidUtils.minVelocityPxPerSecond() || absoluteScroll >= getFinishScrollValue()/2) {
             startFinishPresentAnimation(calculateAnimationDuration());
         } else {
-            startFinishDismissAnimation(MAX_PRESENT_ANIMATION_DURATION_MS - calculateAnimationDuration(), null);
+            startFinishDismissAnimation(MAX_PRESENT_ANIMATION_DURATION_MS - calculateAnimationDuration(), null, getCurrentValue());
         }
     }
 
@@ -245,22 +246,27 @@ public class ReadingStoriesFragment extends BaseFragment {
     }
 
     private void startFinishDismissAnimation(int animationDuration, Action0 complete) {
-        if (footerHiderScrollListener != null) footerHiderScrollListener.showFooter();
-        viewContainer.animate().setDuration(animationDuration)
-                .scaleX(firstStartWidth / featureWidth)
-                .scaleY(firstStartHeight / featureHeight)
-                .translationX(firstStartX)
-                .translationY(firstStartY)
-                .withEndAction(() -> {
-                    FragmentManager manager = getFragmentManager();
-                    FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.remove(this);
-                    transaction.commit();
-                    if (complete != null) complete.call();
-                    ((IStoryDetailFragmentDataSource)getActivity()).onReadingStoriesDismissed();
-                })
-                .start();
+        startFinishDismissAnimation(animationDuration, complete, 0);
+    }
 
+    private void startFinishDismissAnimation(int animationDuration, Action0 complete, int currentValue) {
+        if (footerHiderScrollListener != null) footerHiderScrollListener.showFooter();
+
+        ValueAnimator animator = createRecyclerViewAnimator(true, currentValue);
+        animator.addListener(new SimpleAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (complete != null) complete.call();
+                FragmentManager manager = getFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.remove(ReadingStoriesFragment.this);
+                transaction.commit();
+                ((IStoryDetailFragmentDataSource)getActivity()).onReadingStoriesDismissed();
+            }
+        });
+        animator.setDuration(animationDuration);
+        animator.start();
         backgroundView.animate().setDuration(animationDuration)
                 .alpha(START_ALPHA)
                 .start();
@@ -276,17 +282,25 @@ public class ReadingStoriesFragment extends BaseFragment {
         } else if (isAdded() && !didDraw) {
             startPresentAnimationAfterDraw = true;
         } else {
-            viewContainer.animate().setDuration(animationDuration)
-                    .scaleX(1)
-                    .scaleY(1)
-                    .translationX(0)
-                    .translationY(0)
-                    .start();
-
+            ValueAnimator animator = createRecyclerViewAnimator(false, getCurrentValue());
+            animator.setDuration(animationDuration);
+            animator.start();
             backgroundView.animate().setDuration(animationDuration)
                     .alpha(FINISH_ALPHA)
                     .start();
         }
+    }
+
+    private ValueAnimator createRecyclerViewAnimator(boolean dismiss, int currentValue) {
+        int finishPosition = dismiss
+                                ? firstStartY
+                                : FINISH_POSITION;
+        ValueAnimator animator = ValueAnimator.ofInt(currentValue, finishPosition);
+        animator.addUpdateListener(animation -> {
+            int animatedValue = (Integer)animation.getAnimatedValue();
+            updateRecyclerScale(calculateWidthScale(animatedValue), animatedValue);
+        });
+        return animator;
     }
 
     private int calculateAnimationDuration() {
@@ -300,71 +314,73 @@ public class ReadingStoriesFragment extends BaseFragment {
         return Math.round(firstStartY);
     }
 
-    private void updateViewScale(View view, float widthScale, float heightScale, float leftDelta, float topDelta) {
-        view.setScaleX(widthScale);
-        view.setScaleY(heightScale);
-        view.setTranslationX(leftDelta);
-        view.setTranslationY(topDelta);
+    private void updateRecyclerScale(float widthScale, int currentValue) {
+        float previousItemHeightUnderhead = 0;
+        for (int i = 0; i < recyclerView.getChildCount(); i++) {
+
+            View childView = recyclerView.getChildAt(i);
+            int childWidth = childView.getWidth();
+            int childHeight = childView.getHeight();
+
+            int newWidthAfterScale = (int)(childWidth*widthScale);
+            float scaleHeight = newWidthAfterScale/(float)childWidth;
+            int newHeightAfterScale = (int)(childHeight*scaleHeight);
+            float heightUnderHead = (childHeight - newHeightAfterScale)/2;
+            previousItemHeightUnderhead -= heightUnderHead;
+
+            if (i == 0) {
+                float defaultPivotY = childView.getPivotY();
+                float deltaPivotY = defaultPivotY - (float)currentValue;
+                float redundantOverhead = newHeightAfterScale/2 - deltaPivotY;
+                childView.setTranslationY(redundantOverhead);
+                previousItemHeightUnderhead += redundantOverhead;
+            } else {
+                childView.setTranslationY(previousItemHeightUnderhead);
+            }
+
+            childView.setScaleX(widthScale);
+            childView.setScaleY(scaleHeight);
+        }
     }
 
     private void onParentScroll(Float dy) {
         if (!canResize) return;
         absoluteScroll += dy;
 
+        int currentValue = getCurrentValue();
+        float widthScale = calculateWidthScale(currentValue);
+        if (widthScale*MAX_SCALE == MAX_SCALE || recyclerView.computeVerticalScrollOffset() != 0 ) {
+            recyclerView.scrollBy(0, Math.round(dy));
+            ViewUtils.resetChildScale(recyclerView);
+        } else {
+            updateRecyclerScale(widthScale, currentValue);
+            backgroundView.setAlpha(calculateCurrentAlpha(currentValue));
+        }
+    }
+
+    private float calculateCurrentAlpha(int currentValue) {
         float topDelta = firstStartY;
-        float leftDelta = firstStartX;
-        float widthScale = firstStartWidth / featureWidth;
-        float heightScale = firstStartHeight / featureHeight;
 
         int largestValueStart = Math.round(topDelta);
         int largestValueFinish = FINISH_POSITION;
 
-        int currentValue = getCurrentValue();
-        Point pointEnd = new Point(largestValueFinish, MAX_SCALE); // largest changing value
-
-        Point heightPoint = new Point(largestValueStart, Math.round(heightScale * MAX_SCALE));
-        heightScale = MathUtils.getPointY(heightPoint, pointEnd, currentValue) / MAX_SCALE;
-
-        Point widthPoint = new Point(largestValueStart, Math.round(widthScale * MAX_SCALE));
-        widthScale = MathUtils.getPointY(widthPoint, pointEnd, currentValue) / MAX_SCALE;
-
-        pointEnd = new Point(FINISH_POSITION, FINISH_POSITION);
-        Point leftDeltaPoint = new Point(largestValueStart, Math.round(leftDelta));
-        leftDelta = MathUtils.getPointY(leftDeltaPoint, pointEnd, currentValue);
-
         Point alphaStart = new Point(largestValueStart, START_ALPHA);
         Point alphaEnd = new Point(largestValueFinish, FINISH_ALPHA);
         float currentAlpha = MathUtils.getPointY(alphaStart, alphaEnd, currentValue);
+        return currentAlpha;
+    }
 
-        if (widthScale*MAX_SCALE == MAX_SCALE && heightScale*MAX_SCALE == MAX_SCALE) {
-            recyclerView.scrollBy(0, Math.round(dy));
-        } else {
+    private float calculateWidthScale(int currentValue) {
+        float topDelta = firstStartY;
+        float widthScale = firstStartWidth / featureWidth;
 
-            //updateViewScale(viewContainer, widthScale, heightScale, leftDelta, currentValue);
+        int largestValueStart = Math.round(topDelta);
+        int largestValueFinish = FINISH_POSITION;
 
-            //viewContainer.setTranslationY(currentValue);
-            //viewContainer.setTranslationX(leftDelta);
-
-            for (int i = 0; i < recyclerView.getChildCount(); i++) {
-
-                View childView = recyclerView.getChildAt(i);
-                int childWidth = childView.getWidth();
-                int childHeight = childView.getHeight();
-                childView.setPivotY(0.f);
-
-                childView.setScaleX(widthScale);
-                int newWidthAfterScale = (int)(childWidth*widthScale);
-                float scaleHeightCoef = newWidthAfterScale/(float)childWidth;
-                childView.setScaleY(scaleHeightCoef);
-
-                if (i == 0) {
-                    childView.setTranslationY(currentValue);
-                }
-            }
-            //view.setScaleX(widthScale);
-            //view.setScaleY(heightScale);
-            backgroundView.setAlpha(currentAlpha);
-        }
+        Point pointEnd = new Point(largestValueFinish, MAX_SCALE); // largest changing value
+        Point widthPoint = new Point(largestValueStart, Math.round(widthScale * MAX_SCALE));
+        widthScale = MathUtils.getPointY(widthPoint, pointEnd, currentValue) / MAX_SCALE;
+        return widthScale;
     }
 
     private int getCurrentValue() {

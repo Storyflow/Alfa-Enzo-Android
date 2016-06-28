@@ -6,7 +6,6 @@ import rx.functions.Action2;
 import android.graphics.PixelFormat;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -147,6 +146,17 @@ public class ViewUtils extends BaseUtils{
 
     public static int getScrollViewContentHeight(ScrollView view) {
         return view.getChildAt(0).getHeight();
+    }
+
+    public static void resetChildScale(@Nullable ViewGroup viewGroup) {
+        if (viewGroup == null) return;
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View childView = viewGroup.getChildAt(i);
+            childView.setTranslationY(0.f);
+            childView.setTranslationX(0.f);
+            childView.setScaleX(1.f);
+            childView.setScaleY(1.f);
+        }
     }
 
     /**
