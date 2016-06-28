@@ -268,4 +268,10 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sizeNormal"
+        android:background="@color/greyMostLightest"
+        />
+
 </LinearLayout>

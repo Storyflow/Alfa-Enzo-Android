@@ -4,6 +4,7 @@ import com.thirdandloom.storyflow.R;
 import com.thirdandloom.storyflow.StoryflowApplication;
 import com.thirdandloom.storyflow.activities.StoryPreviewActivity;
 import com.thirdandloom.storyflow.adapters.ReadStoriesAdapter;
+import com.thirdandloom.storyflow.adapters.holder.ReadStoriesBaseViewHolder;
 import com.thirdandloom.storyflow.adapters.holder.ReadStoriesPopulatedViewHolder;
 import com.thirdandloom.storyflow.managers.StoriesManager;
 import com.thirdandloom.storyflow.models.Likes;
@@ -19,7 +20,6 @@ import com.thirdandloom.storyflow.utils.event.StoryCreationFailedEvent;
 import com.thirdandloom.storyflow.utils.event.StoryDeletePendingEvent;
 import com.thirdandloom.storyflow.views.recyclerview.EndlessRecyclerOnScrollListener;
 import com.thirdandloom.storyflow.views.recyclerview.animator.ChangeLikesContainerHeightAnimator;
-import com.thirdandloom.storyflow.views.recyclerview.decoration.DividerDecoration;
 import com.thirdandloom.storyflow.views.recyclerview.decoration.GradientOnTopStickyHeaderDecoration;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -136,21 +136,15 @@ public class ReadingStoriesFragment extends BaseFragment {
     }
 
     private void initRecyclerView() {
-        final DividerDecoration divider = new DividerDecoration.Builder(this.getActivity())
-                .setHeight(R.dimen.sizeNormal)
-                .setColorResource(R.color.greyMostLightest)
-                .build();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        //recyclerView.addItemDecoration(divider);
         recyclerView.setItemAnimator(new ChangeLikesContainerHeightAnimator());
 
         readStoriesAdapter = new ReadStoriesAdapter(getActivity(), stories, dateCalendar, requestData, readStoriesActions);
         GradientOnTopStickyHeaderDecoration decor = new GradientOnTopStickyHeaderDecoration(readStoriesAdapter, true);
         setHasOptionsMenu(true);
         recyclerView.setAdapter(readStoriesAdapter);
-        //recyclerView.addItemDecoration(decor, 1);
         recyclerView.addItemDecoration(decor);
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
             @Override
@@ -284,6 +278,13 @@ public class ReadingStoriesFragment extends BaseFragment {
         } else {
             ValueAnimator animator = createRecyclerViewAnimator(false, getCurrentValue());
             animator.setDuration(animationDuration);
+            animator.addListener(new SimpleAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    recyclerView.requestLayout();
+                }
+            });
             animator.start();
             backgroundView.animate().setDuration(animationDuration)
                     .alpha(FINISH_ALPHA)
@@ -338,6 +339,17 @@ public class ReadingStoriesFragment extends BaseFragment {
                 childView.setTranslationY(previousItemHeightUnderhead);
             }
 
+            ReadStoriesBaseViewHolder holder = (ReadStoriesBaseViewHolder)recyclerView.getChildViewHolder(childView);
+            if (holder instanceof ReadStoriesPopulatedViewHolder) {
+                ReadStoriesPopulatedViewHolder populatedViewHolder = (ReadStoriesPopulatedViewHolder) holder;
+                float startDelta = newHeightAfterScale - populatedViewHolder.imageView.getHeight()*scaleHeight;
+
+                Point start = new Point(firstStartY, (int)startDelta);
+                Point end = new Point(FINISH_POSITION, 0);
+                float currentDelta = MathUtils.getPointY(start, end, currentValue);
+                previousItemHeightUnderhead -= currentDelta;
+            }
+
             childView.setScaleX(widthScale);
             childView.setScaleY(scaleHeight);
         }
@@ -352,6 +364,7 @@ public class ReadingStoriesFragment extends BaseFragment {
         if (widthScale*MAX_SCALE == MAX_SCALE || recyclerView.computeVerticalScrollOffset() != 0 ) {
             recyclerView.scrollBy(0, Math.round(dy));
             ViewUtils.resetChildScale(recyclerView);
+            recyclerView.requestLayout();
         } else {
             updateRecyclerScale(widthScale, currentValue);
             backgroundView.setAlpha(calculateCurrentAlpha(currentValue));
