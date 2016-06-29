@@ -253,9 +253,11 @@ public class ReadingStoriesFragment extends BaseFragment {
                 super.onAnimationEnd(animation);
                 if (complete != null) complete.call();
                 FragmentManager manager = getFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                transaction.remove(ReadingStoriesFragment.this);
-                transaction.commit();
+                if (manager != null) {
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.remove(ReadingStoriesFragment.this);
+                    transaction.commit();
+                }
                 ((IStoryDetailFragmentDataSource)getActivity()).onReadingStoriesDismissed();
             }
         });
@@ -343,7 +345,7 @@ public class ReadingStoriesFragment extends BaseFragment {
             if (holder instanceof ReadStoriesPopulatedViewHolder) {
                 ReadStoriesPopulatedViewHolder populatedViewHolder = (ReadStoriesPopulatedViewHolder) holder;
                 float startDelta = newHeightAfterScale - populatedViewHolder.imageView.getHeight()*scaleHeight;
-
+                startDelta -= AndroidUtils.getDimensionPixelSize(R.dimen.sizeTiniest);
                 Point start = new Point(firstStartY, (int)startDelta);
                 Point end = new Point(FINISH_POSITION, 0);
                 float currentDelta = MathUtils.getPointY(start, end, currentValue);

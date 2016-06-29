@@ -7,13 +7,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:descendantFocusability="afterDescendants"
-    android:background="@color/black">
+    android:background="@color/white">
 
     <FrameLayout
         android:id="@+id/adapter_recycler_item_reading_stories_item_story_image_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:descendantFocusability="afterDescendants"
         android:paddingBottom="@dimen/sizeNormal">
 
@@ -132,7 +131,6 @@
         android:id="@+id/adapter_recycler_item_reading_stories_item_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:textSize="@dimen/textSizeNormal"
         android:minHeight="24dp"
         android:textColor="@color/grey"
@@ -144,7 +142,6 @@
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:background="@color/white"
                   android:paddingBottom="@dimen/sizeNormal"
                   android:orientation="horizontal">
 
@@ -178,7 +175,6 @@
         android:id="@+id/adapter_recycler_item_reading_stories_stars_container"
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:background="@color/white"
         android:animateLayoutChanges="true"
         android:orientation="horizontal">
 
@@ -228,7 +224,6 @@
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:minHeight="44dp"
-                  android:background="@color/white"
                   android:orientation="horizontal">
         <TextView
             android:id="@+id/adapter_recycler_item_reading_stories_item_star"

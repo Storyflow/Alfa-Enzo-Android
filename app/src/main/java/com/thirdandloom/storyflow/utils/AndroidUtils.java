@@ -3,6 +3,7 @@ package com.thirdandloom.storyflow.utils;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.annotation.DimenRes;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -60,6 +61,10 @@ public class AndroidUtils extends BaseUtils {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }
+    }
+
+    public static int getDimensionPixelSize(@DimenRes int id) {
+        return getResources().getDimensionPixelSize(id);
     }
 
     public static int dp(float value) {
