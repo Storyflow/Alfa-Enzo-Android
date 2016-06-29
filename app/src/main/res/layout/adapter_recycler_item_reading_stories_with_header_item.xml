@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:descendantFocusability="afterDescendants"
+    android:background="@color/white">
+
+    <View android:layout_width="match_parent"
+          android:layout_height="@dimen/headerHeight"
+          android:background="@color/black"
+    />
+
+    <include layout="@layout/adapter_recycler_item_reading_stories_item"/>
+
+</LinearLayout>

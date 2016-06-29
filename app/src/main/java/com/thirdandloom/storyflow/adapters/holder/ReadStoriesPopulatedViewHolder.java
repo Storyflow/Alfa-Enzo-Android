@@ -59,6 +59,15 @@ public class ReadStoriesPopulatedViewHolder extends ReadStoriesBaseViewHolder {
 
     public static ReadStoriesPopulatedViewHolder newInstance(ViewGroup parent, Actions actions) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_reading_stories_item, parent, false);
+        return createHolder(itemView, actions);
+    }
+
+    public static ReadStoriesPopulatedViewHolder newInstanceWithHeader(ViewGroup parent, Actions actions) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recycler_item_reading_stories_with_header_item, parent, false);
+        return createHolder(itemView, actions);
+    }
+
+    private static ReadStoriesPopulatedViewHolder createHolder(View itemView, Actions actions) {
         ReadStoriesPopulatedViewHolder holder = new ReadStoriesPopulatedViewHolder(itemView);
         holder.actions = actions;
         return holder;

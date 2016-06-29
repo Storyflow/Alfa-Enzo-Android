@@ -139,9 +139,7 @@ public class ReadStoriesAdapter extends RecyclerView.Adapter<ReadStoriesBaseView
             case FILLED_STORY:
                 return ReadStoriesPopulatedViewHolder.newInstance(parent, populatedHolderActions);
             case FILLED_STORY_WITH_HEADER:
-                ReadStoriesPopulatedViewHolder holderWithHeader = ReadStoriesPopulatedViewHolder.newInstance(parent, populatedHolderActions);
-                holderWithHeader.itemView.setPadding(0, StoryflowApplication.resources().getDimensionPixelSize(R.dimen.headerHeight), 0, 0);
-                return holderWithHeader;
+                return ReadStoriesPopulatedViewHolder.newInstanceWithHeader(parent, populatedHolderActions);
             case LOADING:
                 return ReadStoriesPendingViewHolder.newInstance(parent);
             case EMPTY_STORY_WITH_HEADER:
