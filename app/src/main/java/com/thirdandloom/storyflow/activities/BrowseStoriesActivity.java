@@ -542,7 +542,9 @@ public class BrowseStoriesActivity extends BaseActivity implements ReadingStorie
     private void smoothScrollToCreatedStoryPeriod(PendingStory story) {
         int pos = getPeriodPosition(story.getDate());
         state.notifyItemsAddedList.add(pos);
-        snappyRecyclerView.smoothScrollToPosition(pos);
+        if (snappyRecyclerView.isAttachedToWindow()) {
+            snappyRecyclerView.smoothScrollToPosition(pos);
+        }
     }
 
     private void notifyAddedStoriesPositions() {

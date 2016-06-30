@@ -94,17 +94,17 @@ public class StoryflowImageUtils extends BaseUtils {
             int imageHeight;
             int imageWidth;
             switch (itemType) {
-                case Small:
                 case Smallest:
                 default:
                     imageUrl = story.getImageData().getCollapsedSizedImage().url();
                     imageHeight = story.getImageData().getCollapsedSizedImage().size().height();
                     imageWidth = story.getImageData().getCollapsedSizedImage().size().width();
                     break;
+                case Small:
                 case Large:
-                    imageUrl = story.getImageData().getNormalSizedImage().url();
-                    imageHeight = story.getImageData().getNormalSizedImage().size().height();
-                    imageWidth = story.getImageData().getNormalSizedImage().size().width();
+                    imageUrl = story.getImageData().getExpandedSizedImage().url();
+                    imageHeight = story.getImageData().getExpandedSizedImage().size().height();
+                    imageWidth = story.getImageData().getExpandedSizedImage().size().width();
                     break;
             }
 
@@ -136,7 +136,7 @@ public class StoryflowImageUtils extends BaseUtils {
             .asBitmap()
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .fitCenter().atMost().override(2500, 2500)
+            .fitCenter()
             .into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -173,8 +173,8 @@ public class StoryflowImageUtils extends BaseUtils {
         // Add the date meta data to ensure the image is added at the front of the gallery
 
         double currentTimeSec = DateUtils.millisToSeconds(System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.DATE_ADDED, currentTimeSec);
-        values.put(MediaStore.Images.Media.DATE_TAKEN, currentTimeSec);
+        values.put(MediaStore.Images.Media.DATE_ADDED, currentTimeSec*1000);
+        values.put(MediaStore.Images.Media.DATE_TAKEN, currentTimeSec*1000);
         values.put(MediaStore.Images.Media.DATE_MODIFIED, currentTimeSec);
 
         Uri url = null;
