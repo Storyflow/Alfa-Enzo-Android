@@ -2,6 +2,7 @@ package com.thirdandloom.storyflow.utils.animations;
 
 import com.thirdandloom.storyflow.utils.AndroidUtils;
 import com.thirdandloom.storyflow.utils.AnimationUtils;
+import com.thirdandloom.storyflow.utils.ViewUtils;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,10 +15,11 @@ public class FooterHiderScrollListener extends RecyclerView.OnScrollListener {
 
     private final View footer;
     private int currentScroll;
-    private boolean footerIsVisible = true;
+    private boolean footerIsVisible;
 
     public FooterHiderScrollListener (RecyclerView recyclerView, View view) {
         this.footer = view;
+        this.footerIsVisible = ViewUtils.isVisible(view);
         recyclerView.addOnScrollListener(this);
     }
 
@@ -37,8 +39,8 @@ public class FooterHiderScrollListener extends RecyclerView.OnScrollListener {
         }
     }
 
-    public void showFooter() {
-        startShowFooterAnimated();
+    public void showFooterOnDismiss() {
+        if (!ViewUtils.isVisible(footer)) AnimationUtils.showFooter(footer);
     }
 
     private void startShowFooterAnimated() {

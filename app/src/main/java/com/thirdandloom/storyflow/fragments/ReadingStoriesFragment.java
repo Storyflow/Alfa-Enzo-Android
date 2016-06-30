@@ -244,7 +244,7 @@ public class ReadingStoriesFragment extends BaseFragment {
     }
 
     private void startFinishDismissAnimation(int animationDuration, Action0 complete, int currentValue) {
-        if (footerHiderScrollListener != null) footerHiderScrollListener.showFooter();
+        if (footerHiderScrollListener != null) footerHiderScrollListener.showFooterOnDismiss();
 
         ValueAnimator animator = createRecyclerViewAnimator(true, currentValue);
         animator.addListener(new SimpleAnimatorListener() {
@@ -258,7 +258,9 @@ public class ReadingStoriesFragment extends BaseFragment {
                     transaction.remove(ReadingStoriesFragment.this);
                     transaction.commit();
                 }
-                ((IStoryDetailFragmentDataSource)getActivity()).onReadingStoriesDismissed();
+                if (getActivity() != null) {
+                    ((IStoryDetailFragmentDataSource)getActivity()).onReadingStoriesDismissed();
+                }
             }
         });
         animator.setDuration(animationDuration);

@@ -136,6 +136,10 @@ public class ViewUtils extends BaseUtils{
         });
     }
 
+    public static boolean isVisible(View view) {
+        return view.getVisibility() == View.VISIBLE;
+    }
+
     public static void getLocationInWindow(View view, Action2<Integer, Integer> action) {
         int[] location = new int[2];
         view.getLocationInWindow(location);

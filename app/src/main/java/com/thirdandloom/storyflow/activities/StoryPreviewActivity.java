@@ -79,6 +79,11 @@ public class StoryPreviewActivity extends BaseActivity {
         }
         if (imageUrl == null) return;
         contentView.setAlpha(isFirstStart ? .3f : 1.f);
+
+        //TODO this code:
+        //.override(state.fromViewWidth, state.fromViewHeight)
+        //.transform(new CenterCrop(this))
+        //is hardcode for make iOS like behaviour. Should be removed after removing hardcode from iOS application
         Glide
                 .with(this)
                 .load(imageUrl)
