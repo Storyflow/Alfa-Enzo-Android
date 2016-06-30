@@ -63,7 +63,6 @@ public class StoryflowImageUtils extends BaseUtils {
 
         public int showText() {
             int imageHeight;
-            int imageWidth;
             String imageUrl = story.getAuthor().getCroppedImageCover().getImageUrl();
             switch (itemType) {
                 case Smallest:
@@ -78,8 +77,7 @@ public class StoryflowImageUtils extends BaseUtils {
                 default:
                     imageHeight = AndroidUtils.dp(150);
             }
-            imageWidth = itemWidthPx;
-            int height = calculateHeight(imageWidth, imageHeight, itemWidthPx);
+            int height = calculateHeight(itemWidthPx, imageHeight, itemWidthPx);
             ViewUtils.applyHeight(imageView, height);
             Glide
                     .with(context)

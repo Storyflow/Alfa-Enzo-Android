@@ -318,42 +318,40 @@ public class ReadingStoriesFragment extends BaseFragment {
     }
 
     private void updateRecyclerScale(float widthScale, int currentValue) {
-        float previousItemHeightUnderhead = 0;
+        float previousItemBottomPoint = 0;
         for (int i = 0; i < recyclerView.getChildCount(); i++) {
-
             View childView = recyclerView.getChildAt(i);
-            int childWidth = childView.getWidth();
-            int childHeight = childView.getHeight();
-
-            int newWidthAfterScale = (int)(childWidth*widthScale);
-            float scaleHeight = newWidthAfterScale/(float)childWidth;
-            int newHeightAfterScale = (int)(childHeight*scaleHeight);
-            float heightUnderHead = (childHeight - newHeightAfterScale)/2;
-            previousItemHeightUnderhead -= heightUnderHead;
+            int newWidthAfterScale = (int)(childView.getWidth()*widthScale);
+            float scaleHeight = newWidthAfterScale/(float)childView.getWidth();
+            int newHeightAfterScale = (int)(childView.getHeight()*scaleHeight);
+            int currentTop = childView.getTop()+(childView.getHeight()-newHeightAfterScale)/2;
 
             if (i == 0) {
                 float defaultPivotY = childView.getPivotY();
                 float deltaPivotY = defaultPivotY - (float)currentValue;
-                float redundantOverhead = newHeightAfterScale/2 - deltaPivotY;
-                childView.setTranslationY(redundantOverhead);
-                previousItemHeightUnderhead += redundantOverhead;
+                childView.setTranslationY(newHeightAfterScale/2 - deltaPivotY);
             } else {
-                childView.setTranslationY(previousItemHeightUnderhead);
+                childView.setTranslationY((int)previousItemBottomPoint - currentTop);
             }
-
-            ReadStoriesBaseViewHolder holder = (ReadStoriesBaseViewHolder)recyclerView.getChildViewHolder(childView);
-            if (holder instanceof ReadStoriesPopulatedViewHolder) {
-                ReadStoriesPopulatedViewHolder populatedViewHolder = (ReadStoriesPopulatedViewHolder) holder;
-                float startDelta = newHeightAfterScale - populatedViewHolder.imageView.getHeight()*scaleHeight;
-                startDelta -= AndroidUtils.getDimensionPixelSize(R.dimen.sizeTiniest);
-                Point start = new Point(firstStartY, (int)startDelta);
-                Point end = new Point(FINISH_POSITION, 0);
-                float currentDelta = MathUtils.getPointY(start, end, currentValue);
-                previousItemHeightUnderhead -= currentDelta;
-            }
+            previousItemBottomPoint = currentTop + newHeightAfterScale + childView.getTranslationY();
+            previousItemBottomPoint -= calculateNextItemOverhead(recyclerView.getChildViewHolder(childView), scaleHeight, newHeightAfterScale, currentValue);
 
             childView.setScaleX(widthScale);
             childView.setScaleY(scaleHeight);
+        }
+    }
+
+    private float calculateNextItemOverhead(RecyclerView.ViewHolder childViewHolder, float scaleHeight, int newHeightAfterScale, int currentValue) {
+        ReadStoriesBaseViewHolder holder = (ReadStoriesBaseViewHolder)childViewHolder;
+        if (holder instanceof ReadStoriesPopulatedViewHolder) {
+            ReadStoriesPopulatedViewHolder populatedViewHolder = (ReadStoriesPopulatedViewHolder) holder;
+            float startDelta = newHeightAfterScale - populatedViewHolder.imageView.getHeight()*scaleHeight;
+            startDelta -= AndroidUtils.getDimensionPixelSize(R.dimen.sizeTiniest);
+            Point start = new Point(firstStartY, (int)startDelta);
+            Point end = new Point(FINISH_POSITION, 0);
+            return MathUtils.getPointY(start, end, currentValue);
+        } else {
+            return 0;
         }
     }
 
